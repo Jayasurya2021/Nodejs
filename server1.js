@@ -20,16 +20,16 @@ fs.writeFile(
                 if (err) throw err;
                 console.log('processs compleate rename')
             })
-            fs.readFile(path.join(__dirname,'files','text2.txt'),
+        fs.readFile(path.join(__dirname, 'files', 'text2.txt'),
             'utf8',
-            (err, data)=>{
-                if(err) throw err;
+            (err, data) => {
+                if (err) throw err;
                 console.log(data)
             })
     }
-)  
+)
 
-process.on('uncaughtException',(err)=>{
+process.on('uncaughtException', (err) => {
     console.log(`this is the error: ${err}`)
     process.exit(1)
 })
