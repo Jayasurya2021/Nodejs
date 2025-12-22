@@ -7,12 +7,12 @@
   "type": "commonjs",
   "main": "Server.js",
   "scripts": {
-    
     "start": "node server.js",
     "dev": "nodemon Server.js"
   },
   "dependencies": {
     "express": "^5.2.1",
+    "mongoosh": "^0.0.7",
     "nodemon": "^3.1.11"
   }
 }
