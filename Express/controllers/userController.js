@@ -1,7 +1,3 @@
 
 
-exports.data = (req, res)=>{
-   
-}
-
 

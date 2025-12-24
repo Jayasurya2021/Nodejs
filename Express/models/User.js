@@ -3,14 +3,16 @@ const mongoose = require('mongoose')
 const datas = mongoose.Schema({
    name:{
       type:String,
-      require:true
+      required:true
    },
    age:{
       type:Number,
-      require:true
+      required:true
    }
-})
+},
+{ timestamps: true }
+)
 
-const userData = mongoose.model("students",datas)
+const userData = mongoose.model("datas",datas)
 
 module.exports = userData
