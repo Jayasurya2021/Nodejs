@@ -1,5 +1,5 @@
 const express = require('express');
-// const getdata = require('./routers/get_data')
+const getdata = require('./routers/get_data')
 // const auth = require('./routers/auth')
 const app = express()
 const port = 5000
@@ -19,6 +19,8 @@ app.use(express.json())
 //         res.statusCode(400).json({ error: error.message })
 //     }
 // })
+
+app.use('/',getdata);
 
 app.post("/surya", async (req, res) => {
     try {
@@ -58,10 +60,23 @@ app.put("/gets/:id",async(req, res)=>{
         }
         const update = await userData.findById(id)
         res.status(400).json(update)
-
-
     } catch (error) {
         res.status(500).json({error: error.message})
+    }
+})
+
+app.delete("/gets/:id",async(req,res)=>{
+    try {
+        const {id} = req.params
+        const datas = await userData.findByIdAndDelete(id)
+        if(!datas){
+            res.status(404).json({message: "data is removed"})
+        }
+        await userData.findById(id)
+        res.status(400).json({message: "Data is deleted"})
+
+    } catch (error) {
+        
     }
 })
 
