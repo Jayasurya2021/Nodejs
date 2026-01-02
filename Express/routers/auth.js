@@ -1,5 +1,10 @@
-const express = require('express')
-const router = express.router()
-const authocontroller = require('../controllers/authoconteroller')
+const router = require('express').Router()
 
-router.post('/verification',authocontroller)
+const {registerData, LoginData} = require('../controllers/authontication')
+
+
+router.post('/Register',registerData)
+router.get('/login',LoginData)
+
+
+module.exports = router
