@@ -1,6 +1,6 @@
 const {userData} = require('../models/userModels')
 const bcrypt = require('bcrypt')
-
+const jwt = require('jsonwebtoken')
 
 
 const registerData = async (req, res) => {
@@ -45,9 +45,12 @@ const LoginData = async (req, res) => {
 
             return res.status(400).json({ message: "password incorrect" })
             
-        }else{
-            return res.status(200).json({message:'login successful'})
         }
+       
+
+
+            res.status(200).json({message:'login successful'})
+        
     } catch (error) {
         res.status(400).json({ message: error.message })
     }
