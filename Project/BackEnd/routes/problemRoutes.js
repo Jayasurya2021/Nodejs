@@ -1,12 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { createProblem, getAllProblems, updateProblemStatus } = require("../controller/problemController");
+const { createProblem, getAdminProblems, getUserProblems, updateProblemStatus } = require("../controller/problemController");
+const { authUser, authAdmin } = require("../middleware/authMiddleware");
 
-const authMiddleware = require("../middleware/authMiddleware");
+// User APIs
+router.post("/user/problems", authUser, createProblem);
+router.get("/user/myproblems", authUser, getUserProblems);
 
-router.post("/report", authMiddleware, createProblem);
-router.get("/", getAllProblems);
-router.patch("/:id/status", updateProblemStatus);
+// Admin APIs
+router.get("/admin/problems", authAdmin, getAdminProblems);
+router.patch("/admin/problems/:id", authAdmin, updateProblemStatus);
 
 
 module.exports = router;

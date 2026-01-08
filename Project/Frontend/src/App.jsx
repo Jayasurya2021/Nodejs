@@ -16,13 +16,13 @@ function App() {
     <>
       <Navbar />
       <Routes>
+        <Route path="/admin" element={<AdminPanel />} />
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/dashboard" element={<DashBoard />} />
         <Route path="/report-problem" element={<ReportProblem />} />
-        <Route path="/admin" element={<AdminPanel />} />
         <Route path="/complaint/:id" element={<ComplaintDetail />} />
+        <Route path="/DashBoard" element={<DashBoard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
 
+
 function Navbar() {
+    const navigate = useNavigate();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isVisible, setIsVisible] = useState(true);
@@ -73,12 +75,21 @@ function Navbar() {
 
                         {user ? (
                             <div className="flex items-center gap-6">
-                                <Link to="/dashboard" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
-                                    Dashboard
-                                </Link>
-                                <Link to="/report-problem" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
-                                    Register Problem
-                                </Link>
+                                {user.role === 'admin' && (
+                                    <Link to="/admin" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
+                                        Admin Panel
+                                    </Link>
+                                )}
+                                {user.role === 'user' && (
+                                    <Link to="/Dashboard" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
+                                        My Issues
+                                    </Link>
+                                )}
+                                {user.role === 'user' && (
+                                    <Link to="/report-problem" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
+                                        Report
+                                    </Link>
+                                )}
                                 <div className="flex items-center gap-3 pl-6 border-l border-slate-200">
                                     <div className="flex flex-col items-end">
                                         <span className="text-xs font-bold text-slate-900">{user.name || "User"}</span>
@@ -87,12 +98,17 @@ function Navbar() {
                                     <div className="h-9 w-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 font-bold text-sm">
                                         {(user.name || "U").charAt(0)}
                                     </div>
+
                                     <button
-                                        onClick={logout}
+                                        onClick={() => {
+                                            logout();
+                                            navigate("/");
+                                        }}
                                         className="text-xs text-red-600 font-semibold hover:text-red-700 ml-2"
                                     >
                                         Logout
                                     </button>
+
                                 </div>
                             </div>
                         ) : (
@@ -143,12 +159,22 @@ function Navbar() {
 
                     {user ? (
                         <>
-                            <Link
-                                to="/dashboard"
-                                className="block rounded-xl px-4 py-3 text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-blue-600"
-                            >
-                                Dashboard
-                            </Link>
+                            {user.role === 'admin' && (
+                                <Link
+                                    to="/admin"
+                                    className="block rounded-xl px-4 py-3 text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-blue-600"
+                                >
+                                    Admin Panel
+                                </Link>
+                            )}
+                            {user.role === 'user' && (
+                                <Link
+                                    to="/user-dashboard"
+                                    className="block rounded-xl px-4 py-3 text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-blue-600"
+                                >
+                                    My Issues
+                                </Link>
+                            )}
                             <Link
                                 to="/report-problem"
                                 className="block rounded-xl px-4 py-3 text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-blue-600"

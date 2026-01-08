@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
+import React, { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../Api/api";
+import { AuthContext } from "../context/AuthContext";
 
 const StatusBadge = ({ status }) => {
   const styles = {
@@ -8,16 +9,13 @@ const StatusBadge = ({ status }) => {
     "in-progress": "bg-blue-100 text-blue-700 border-blue-200",
     resolved: "bg-emerald-100 text-emerald-700 border-emerald-200",
   };
-
   const normalizedStatus = status ? status.toLowerCase() : "";
-
   return (
     <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold border ${styles[normalizedStatus] || "bg-gray-100 text-gray-700 border-gray-200"}`}>
       {status || "Unknown"}
     </span>
   );
 };
-
 const CategoryIcon = ({ category }) => {
   const icons = {
     road: "🚧",
@@ -32,7 +30,9 @@ const CategoryIcon = ({ category }) => {
 
 /* -------- COMPONENT -------- */
 
-const Dashboard = () => {
+const Dashboard = ({ department }) => {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,7 +41,8 @@ const Dashboard = () => {
     const fetchProblems = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/problems", {
+        const res = await api.get("/api/problems", {
+          params: department ? { category: department } : {},
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -60,8 +61,51 @@ const Dashboard = () => {
       }
     };
 
+    // Route Guard: Strict Access Control
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    if (user.role !== "admin") {
+      // Public users cannot access dashboard
+      navigate("/");
+      return;
+    }
+
+    if (department && user.department !== department) {
+      // Admin trying to access wrong department
+      navigate(`/${user.department}`);
+      return;
+    }
+
     fetchProblems();
-  }, []);
+  }, [department, user, navigate]);
+
+  const handleStatusUpdate = async (id, newStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+      await api.patch(
+        `/api/problems/${id}/status`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      // Optimistic update or refetch
+      setComplaints(prev => prev.map(c =>
+        c._id === id ? { ...c, status: newStatus } : c
+      ));
+      // alert("Status updated successfully");
+    } catch (err) {
+      console.error("Failed to update status:", err);
+      // Revert or show error
+      alert("Failed to update status");
+    }
+  };
 
   if (error) {
     return (
@@ -82,7 +126,7 @@ const Dashboard = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
           <div>
             <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Dashboard
+              {department ? `${department.charAt(0).toUpperCase() + department.slice(1)} Department Dashboard` : "Dashboard"}
             </h1>
             <p className="text-slate-500 mt-2 text-lg">
               Overview of your reported community issues.
@@ -90,7 +134,7 @@ const Dashboard = () => {
           </div>
 
           <Link
-            to="/report"
+            to="/report-problem"
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition-all hover:bg-blue-700 hover:-translate-y-0.5 active:scale-95"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -104,8 +148,8 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
           {[
             { label: "Total Reports", value: complaints.length, color: "bg-white border-slate-200" },
-            { label: "Pending", value: complaints.filter(c => c.status === "Pending").length, color: "bg-orange-50 border-orange-100" },
-            { label: "Resolved", value: complaints.filter(c => c.status === "Resolved").length, color: "bg-emerald-50 border-emerald-100" }
+            { label: "Pending", value: complaints.filter(c => c.status === "pending").length, color: "bg-orange-50 border-orange-100" },
+            { label: "Resolved", value: complaints.filter(c => c.status === "resolved").length, color: "bg-emerald-50 border-emerald-100" }
           ].map((stat, idx) => (
             <div key={idx} className={`p-6 rounded-2xl border shadow-sm ${stat.color}`}>
               <p className="text-sm font-medium text-slate-500 uppercase tracking-wide">{stat.label}</p>
@@ -143,7 +187,26 @@ const Dashboard = () => {
                   <div className="h-10 w-10 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 shadow-sm group-hover:bg-blue-50 transition-colors">
                     <CategoryIcon category={c.category} />
                   </div>
-                  <StatusBadge status={c.status} />
+
+                  {department ? (
+                    <div onClick={(e) => e.preventDefault()}>
+                      <select
+                        value={c.status}
+                        onChange={(e) => handleStatusUpdate(c._id, e.target.value)}
+                        className={`text-xs font-bold px-2 py-1 rounded-full border outline-none cursor-pointer z-10 relative
+                              ${c.status === 'pending' ? 'bg-amber-100 text-amber-800 border-amber-200' : ''}
+                              ${c.status === 'in-progress' ? 'bg-blue-100 text-blue-800 border-blue-200' : ''}
+                              ${c.status === 'resolved' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : ''}
+                          `}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="resolved">Resolved</option>
+                      </select>
+                    </div>
+                  ) : (
+                    <StatusBadge status={c.status} />
+                  )}
                 </div>
 
                 <div className="flex-1">
@@ -168,9 +231,10 @@ const Dashboard = () => {
               </Link>
             ))}
           </div>
-        )}
-      </main>
-    </div>
+        )
+        }
+      </main >
+    </div >
   );
 };
 

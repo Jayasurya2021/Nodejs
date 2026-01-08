@@ -1,6 +1,5 @@
-
-
 import { Link } from "react-router-dom";
+import bgImage from "../assets/background-img/background.png";
 
 function LandingPage() {
   const features = [
@@ -46,8 +45,12 @@ function LandingPage() {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900">
 
       {/* Hero Section */}
-      <section className="relative flex min-h-[80vh] items-center justify-center overflow-hidden pt-20">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50 via-slate-50 to-slate-50"></div>
+      <section style={{ backgroundImage: `url(${bgImage})` }} className="relative flex min-h-[80vh] items-center justify-center overflow-hidden pt-20">
+        <div
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat opacity-20"
+
+        ></div>
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-slate-50/50 to-slate-50"></div>
         <div className="mx-auto max-w-5xl px-6 text-center">
           <div className="animate-fade-in-up">
             <span className="rounded-full bg-blue-50 px-4 py-1.5 text-sm font-semibold text-blue-600 ring-1 ring-blue-100">

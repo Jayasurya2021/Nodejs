@@ -17,7 +17,7 @@ const problemSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ["road", "water", "electricity", "garbage"]
+      enum: ["road", "water", "electricity", "garbage", "internet", "streetlight"]
     },
     status: {
       type: String,
@@ -26,7 +26,7 @@ const problemSchema = new mongoose.Schema(
     },
     reportedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User" // reference to registered user
+      ref: "User"
     }
   },
   { timestamps: true }

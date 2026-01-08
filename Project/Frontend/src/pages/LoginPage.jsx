@@ -4,6 +4,7 @@ import useApi from "../Api/useApi";
 import { AuthContext } from "../context/AuthContext";
 import api from "../Api/api"
 import { useContext } from "react";
+import bgImage from "../assets/background-img/background-register.avif";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -30,7 +31,7 @@ function Login() {
 
     try {
       const response = await request(() =>
-        api.post("registerData/login", {
+        api.post("api/auth/login", {
           email,
           password,
         })
@@ -42,7 +43,11 @@ function Login() {
 
         if (token && user) {
           login(user, token);
-          navigate("/dashboard");
+          if (user.role === 'admin') {
+            navigate("/admin");
+          } else {
+            navigate("/user-dashboard");
+          }
         } else {
           // Fallback error if response structure is unexpected but status was 200
           setErrors({ form: "Login succeeded but received invalid data from server." });
@@ -59,8 +64,12 @@ function Login() {
   };
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 animate-fade-in-up">
+    <div
+      style={{ backgroundImage: `url(${bgImage})` }}
+      className="flex min-h-screen w-full items-center justify-center bg-cover bg-center bg-no-repeat bg-fixed px-4 py-12 sm:px-6 lg:px-8 relative"
+    >
+      <div className="absolute inset-0 bg-black/10 backdrop-blur-[4px]"></div>
+      <div className="w-full max-w-md space-y-8 animate-fade-in-up relative z-10">
 
         {/* Header of the form */}
         <div className="text-center">
@@ -76,7 +85,7 @@ function Login() {
         </div>
 
         {/* login form */}
-        <div className="bg-white py-8 px-4 shadow-xl shadow-slate-200/50 rounded-2xl sm:px-10 border border-slate-100">
+        <div className="bg-white/50 backdrop-blur-lg py-8 px-4 shadow-xl shadow-slate-200/50 rounded-2xl sm:px-10 border border-white/50">
           <form className="space-y-6" onSubmit={handleSubmit}>
 
             {/* Email Input */}
@@ -196,7 +205,7 @@ function Login() {
                 <div className="w-full border-t border-slate-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-slate-500">
+                <span className="px-2 text-slate-500">
                   Don't have an account?
                 </span>
               </div>

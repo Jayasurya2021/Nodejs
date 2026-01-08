@@ -14,11 +14,9 @@ app.use(express.json())
 // Connect Database 
 connectDB();
 
+app.use('/api', Auth)
 
-app.use('/registerData', Auth)
-
-
-app.use("/api/problems", problemRoutes);
+app.use('/api', problemRoutes);
 
 
 app.listen(PORT, () => {

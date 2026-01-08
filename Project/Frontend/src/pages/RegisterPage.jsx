@@ -2,11 +2,14 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import useApi from "../Api/useApi";
 import api from "../Api/api";
+import bgImage from "../assets/background-img/background-register.avif";
 
-function Register() {
+function Register({ department: propDepartment }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [department, setDepartment] = useState(propDepartment || "");
+    const [role, setRole] = useState(propDepartment ? "admin" : "user");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [validationErrors, setValidationErrors] = useState({});
 
@@ -27,6 +30,7 @@ function Register() {
             newErrors.password = "Password must be at least 6 characters";
         if (password !== confirmPassword)
             newErrors.confirmPassword = "Passwords do not match";
+        if (role === "admin" && !department) newErrors.department = "Please select a department";
 
         if (Object.keys(newErrors).length > 0) {
             setValidationErrors(newErrors);
@@ -34,16 +38,19 @@ function Register() {
         }
 
         try {
-            await request(() => api.post("registerData/register", {
+            const endpoint = role === "admin" ? "api/admin/register" : "api/user/register";
+            await request(() => api.post(endpoint, {
                 name,
                 email,
-                password
+                password,
+                department: role === "admin" ? department : undefined,
             }));
 
             // after form submission reset the form datas
             setName("");
             setEmail("");
             setPassword("");
+            setDepartment("");
             setConfirmPassword("");
             alert("Account created successfully!");
             navigate("/login");
@@ -55,13 +62,17 @@ function Register() {
         }
     };
     return (
-        <div className="flex min-h-screen w-full items-center justify-center bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
-            <div className="w-full max-w-md space-y-8 animate-fade-in-up">
+        <div
+            style={{ backgroundImage: `url(${bgImage})` }}
+            className="flex min-h-screen w-full items-center justify-center bg-cover bg-center bg-no-repeat bg-fixed px-4 py-12 sm:px-6 lg:px-8 relative"
+        >
+            <div className="absolute inset-0 bg-black/10 backdrop-blur-[5px]"></div>
+            <div className="w-full max-w-md space-y-8 animate-fade-in-up relative z-10">
 
                 {/* Header */}
                 <div className="text-center">
                     <h2 className="mt-6 text-3xl font-extrabold text-slate-900 tracking-tight">
-                        Create your account
+                        {propDepartment ? `Create your ${propDepartment.charAt(0).toUpperCase() + propDepartment.slice(1)} account` : "Create your account"}
                     </h2>
                     <p className="mt-2 text-sm text-slate-600">
                         Join MyCommunity and start making a difference
@@ -69,7 +80,7 @@ function Register() {
                 </div>
 
                 {/* Card */}
-                <div className="bg-white py-8 px-4 shadow-xl shadow-slate-200/50 rounded-2xl sm:px-10 border border-slate-100">
+                <div className="bg-white/50 backdrop-blur-lg py-8 px-4 shadow-xl shadow-slate-200/50 rounded-2xl sm:px-10 border border-white/50">
                     <form className="space-y-6" onSubmit={handleSubmit}>
 
                         {/* Name Input */}
@@ -163,6 +174,71 @@ function Register() {
                             </div>
                         </div>
 
+                        {/* Role Selection */}
+                        {!propDepartment && (
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    I am a...
+                                </label>
+                                <div className="flex gap-4">
+                                    <label className="flex items-center space-x-2 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            value="user"
+                                            checked={role === "user"}
+                                            onChange={(e) => {
+                                                setRole(e.target.value);
+                                                setDepartment(""); // Clear department when switching to user
+                                            }}
+                                            className="form-radio h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                                        />
+                                        <span className="text-slate-700">Public User</span>
+                                    </label>
+                                    <label className="flex items-center space-x-2 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            value="admin"
+                                            checked={role === "admin"}
+                                            onChange={(e) => setRole(e.target.value)}
+                                            className="form-radio h-4 w-4 text-blue-600 border-slate-300 focus:ring-blue-500"
+                                        />
+                                        <span className="text-slate-700">Department Staff (Admin)</span>
+                                    </label>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Department Dropdown */}
+                        {(role === "admin" || propDepartment) && (
+                            <div>
+                                <label htmlFor="department" className="block text-sm font-medium text-slate-700">
+                                    Department
+                                </label>
+                                <div className="mt-1">
+                                    <select
+                                        id="department"
+                                        name="department"
+                                        required
+                                        disabled={loading || !!propDepartment}
+                                        value={department}
+                                        onChange={(e) => setDepartment(e.target.value)}
+                                        className={`appearance-none block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors bg-white ${propDepartment ? 'bg-slate-100' : ''}`}
+                                    >
+                                        <option value="" disabled>Select your department</option>
+                                        <option value="water">Water Supply Department</option>
+                                        <option value="road">Public Works Department</option>
+                                        <option value="electricity">Electricity Board</option>
+                                        <option value="garbage">Municipal Sanitation</option>
+                                        <option value="internet">BSNL / Broadband</option>
+                                        <option value="streetlight">Municipal Electrical</option>
+                                    </select>
+                                    {validationErrors.department && (
+                                        <p className="mt-1 text-sm text-red-600">{validationErrors.department}</p>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {/* API Error Alert */}
                         {apiError && (
                             <div className="rounded-md bg-red-50 p-4">
@@ -214,7 +290,7 @@ function Register() {
                                 <div className="w-full border-t border-slate-300" />
                             </div>
                             <div className="relative flex justify-center text-sm">
-                                <span className="px-2 bg-white text-slate-500">
+                                <span className="px-2 text-slate-500">
                                     Already have an account?
                                 </span>
                             </div>
