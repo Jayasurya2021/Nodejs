@@ -24,7 +24,21 @@ const problemSchema = new mongoose.Schema(
       enum: ["pending", "in-progress", "resolved"],
       default: "pending"
     },
+    adminRemarks: {
+      type: String,
+      default: ""
+    },
+    image: {
+      type: String // Path to user upload
+    },
+    resolvedImage: {
+      type: String // Path to admin proof
+    },
     reportedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    },
+    updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User"
     }

@@ -46,7 +46,7 @@ function Login() {
           if (user.role === 'admin') {
             navigate("/admin");
           } else {
-            navigate("/user-dashboard");
+            navigate("/DashBoard");
           }
         } else {
           // Fallback error if response structure is unexpected but status was 200

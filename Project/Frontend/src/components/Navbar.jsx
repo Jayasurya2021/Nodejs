@@ -81,8 +81,8 @@ function Navbar() {
                                     </Link>
                                 )}
                                 {user.role === 'user' && (
-                                    <Link to="/Dashboard" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
-                                        My Issues
+                                    <Link to="/DashBoard" className="text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors">
+                                        DashBoard
                                     </Link>
                                 )}
                                 {user.role === 'user' && (
@@ -169,7 +169,7 @@ function Navbar() {
                             )}
                             {user.role === 'user' && (
                                 <Link
-                                    to="/user-dashboard"
+                                    to="/DashBoard"
                                     className="block rounded-xl px-4 py-3 text-base font-semibold text-slate-700 hover:bg-slate-50 hover:text-blue-600"
                                 >
                                     My Issues

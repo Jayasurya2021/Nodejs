@@ -17,6 +17,7 @@ connectDB();
 app.use('/api', Auth)
 
 app.use('/api', problemRoutes);
+app.use('/uploads', express.static('uploads'));
 
 
 app.listen(PORT, () => {

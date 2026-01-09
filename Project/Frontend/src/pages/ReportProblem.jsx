@@ -62,19 +62,25 @@ const ReportProblem = () => {
         );
     };
 
+    const [image, setImage] = useState(null);
+
+    const handleImageChange = (e) => {
+        setImage(e.target.files[0]);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
 
-        if (!title || !description || !location || !category) {
-            setError("All fields are required");
+        if (!title || !description || !location || !category || !image) {
+            setError("All fields are required, including an image");
             return;
         }
 
         setIsLoading(true);
 
         try {
-            const token = localStorage.getItem('token'); // or useContext/Auth hook
+            const token = localStorage.getItem('token');
 
             if (!token) {
                 setError("Please login to report issues");
@@ -83,11 +89,19 @@ const ReportProblem = () => {
                 return;
             }
 
-            const body = { title, description, category, location };
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('description', description);
+            formData.append('category', category);
+            formData.append('location', location);
+            if (image) {
+                formData.append('image', image);
+            }
 
-            // Pass token via config (assuming your api instance supports it)
-            await api.post("/api/user/problems", body, {
-                headers: { Authorization: `Bearer ${token}` }
+            await api.post("/api/user/problems", formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
             });
 
             alert("Problem reported successfully ✅");
@@ -96,9 +110,10 @@ const ReportProblem = () => {
             setDescription("");
             setCategory("");
             setLocation("");
+            setImage(null);
             setIsLoading(false);
 
-            navigate("/dashboard");
+            navigate("/DashBoard");
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.message || "Something went wrong");
@@ -107,38 +122,40 @@ const ReportProblem = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-slate-50 font-sans selection:bg-blue-100">
             <Navbar />
 
-            <div className="container mx-auto px-4 max-w-2xl py-24 pb-12">
-                <div className="text-center mb-10">
-                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Report a Problem</h1>
-                    <p className="mt-2 text-slate-500">
-                        Spot an issue? Fill out the form below to let us know.
+            <div className="container mx-auto px-4 max-w-4xl py-24 pb-12">
+                <div className="text-center mb-12">
+                    <span className="inline-block py-1 px-3 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider mb-3">Community Watch</span>
+                    <h1 className="text-4xl font-bold text-slate-900 tracking-tight mb-4">Report an Issue</h1>
+                    <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+                        Help us maintain our community standards by reporting infrastructure or service problems.
                     </p>
                 </div>
 
-                <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-                    <div className="p-8">
-                        <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden relative">
+                    {/* Decorative header line */}
+                    <div className="h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-emerald-500"></div>
 
-                            {/* Title */}
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Issue Title</label>
-                                <input
-                                    type="text"
-                                    placeholder="e.g. Large Pothole on Main St"
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none font-medium placeholder-slate-400"
-                                />
-                            </div>
+                    <div className="p-8 md:p-12">
+                        <form onSubmit={handleSubmit} className="space-y-8">
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Category */}
-                                {/* Category Grid */}
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-bold text-slate-700 mb-4">Select Category</label>
+                            {/* Section 1: Basic Info */}
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">Issue Title</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Briefly summarize the problem (e.g. Broken Streetlight)"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        className="w-full px-5 py-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none font-bold text-slate-700 placeholder-slate-400"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-4">Category</label>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {categoriesList.map((cat) => (
                                             <div
@@ -149,19 +166,19 @@ const ReportProblem = () => {
                                                     : "bg-white border-slate-100 hover:border-slate-300 hover:shadow-md"
                                                     }`}
                                             >
-                                                <div className={`flex-shrink-0 h-12 w-12 rounded-xl flex items-center justify-center text-2xl ${category === cat.id ? 'bg-white/50' : 'bg-slate-50'}`}>
+                                                <div className={`flex-shrink-0 h-10 w-10 rounded-xl flex items-center justify-center text-xl shadow-sm ${category === cat.id ? 'bg-white/50' : 'bg-slate-50'}`}>
                                                     {cat.icon}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <h3 className={`font-bold text-sm ${category === cat.id ? 'text-current' : 'text-slate-900'}`}>
                                                         {cat.title}
                                                     </h3>
-                                                    <p className={`text-xs mt-1 ${category === cat.id ? 'text-current/80' : 'text-slate-500'}`}>
+                                                    <p className={`text-[10px] mt-0.5 font-medium ${category === cat.id ? 'text-current/70' : 'text-slate-400'}`}>
                                                         {cat.sub}
                                                     </p>
                                                 </div>
                                                 {category === cat.id && (
-                                                    <div className="absolute top-4 right-4 text-current">
+                                                    <div className="absolute top-3 right-3 text-current">
                                                         <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                                         </svg>
@@ -171,88 +188,133 @@ const ReportProblem = () => {
                                         ))}
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* Location */}
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Location</label>
-                                    <div className="relative">
-                                        <input
-                                            type="text"
-                                            placeholder="Enter address or use current location"
-                                            value={location}
-                                            onChange={(e) => setLocation(e.target.value)}
-                                            className="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none font-medium placeholder-slate-400"
-                                        />
-                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={handleGetLocation}
-                                            disabled={gettingLocation}
-                                            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors disabled:opacity-50"
-                                            title="Use my current location"
-                                        >
-                                            {gettingLocation ? (
-                                                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                </svg>
-                                            ) : (
+                            <hr className="border-slate-100" />
+
+                            {/* Section 2: Details & Location */}
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Location</label>
+                                        <div className="relative group">
+                                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors">
                                                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18d-2 2-2-2 4 4 4-4m6-6h.01M6 6h.01M6 18h.01M18 18h.01M6 12h.01M18 12h.01" />{/* Target icon variant */}
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-                                                    <circle cx="12" cy="9" r="2.5" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 </svg>
-                                            )}
-                                        </button>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                placeholder="Address or Landmark"
+                                                value={location}
+                                                onChange={(e) => setLocation(e.target.value)}
+                                                className="w-full pl-12 pr-12 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none font-medium text-slate-700"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleGetLocation}
+                                                disabled={gettingLocation}
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg text-blue-600 hover:bg-blue-50 transition-colors disabled:opacity-50"
+                                                title="Use my current location"
+                                            >
+                                                {gettingLocation ? (
+                                                    <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                    </svg>
+                                                ) : (
+                                                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18d-2 2-2-2 4 4 4-4m6-6h.01M6 6h.01M6 18h.01M18 18h.01M6 12h.01M18 12h.01" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                                                    </svg>
+                                                )}
+                                            </button>
+                                        </div>
                                     </div>
+
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-2">Evidence Photo</label>
+                                        <div className={`border-2 border-dashed rounded-2xl p-6 transition-all text-center
+                                            ${image ? 'border-green-300 bg-green-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100 hover:border-slate-400'}`}
+                                        >
+                                            <input
+                                                type="file"
+                                                id="file-upload"
+                                                accept="image/*"
+                                                onChange={handleImageChange}
+                                                className="hidden"
+                                            />
+                                            <label htmlFor="file-upload" className="cursor-pointer flex flex-col items-center justify-center">
+                                                {image ? (
+                                                    <>
+                                                        <div className="h-10 w-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-2">
+                                                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
+                                                        <span className="text-sm font-bold text-green-700 truncate max-w-[200px]">{image.name}</span>
+                                                        <span className="text-xs text-green-600 mt-1">Click to change</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <div className="h-10 w-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-2">
+                                                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                            </svg>
+                                                        </div>
+                                                        <span className="text-sm font-bold text-slate-600">Click to upload photo</span>
+                                                        <span className="text-xs text-slate-400 mt-1">JPG, PNG allowed</span>
+                                                    </>
+                                                )}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">Description</label>
+                                    <textarea
+                                        placeholder="Please provide details about the issue..."
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        className="w-full px-5 py-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none font-medium h-full min-h-[160px] resize-none text-slate-700 leading-relaxed"
+                                    />
                                 </div>
                             </div>
 
-                            {/* Description */}
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Description</label>
-                                <textarea
-                                    placeholder="Describe the issue in detail..."
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none font-medium placeholder-slate-400 h-32 resize-none"
-                                />
-                            </div>
-
-                            {/* Error */}
+                            {/* Error Message */}
                             {error && (
-                                <div className="p-3 rounded-lg bg-red-50 border border-red-100 text-red-600 text-sm font-medium flex items-center gap-2">
-                                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                <div className="p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3">
+                                    <svg className="h-5 w-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                     </svg>
-                                    {error}
+                                    <div>
+                                        <h4 className="text-sm font-bold text-red-700">Submission Error</h4>
+                                        <p className="text-xs text-red-600 mt-1">{error}</p>
+                                    </div>
                                 </div>
                             )}
 
-                            {/* Submit */}
+                            {/* Submit Button */}
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 active:translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-slate-800 hover:shadow-xl hover:shadow-slate-900/20 active:scale-[0.99] transition-all disabled:opacity-70 disabled:cursor-wait flex items-center justify-center gap-3"
                             >
                                 {isLoading ? (
                                     <>
-                                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <svg className="animate-spin h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
-                                        Submitting Report...
+                                        <span>Submitting Report...</span>
                                     </>
                                 ) : (
                                     <>
-                                        Submit Report
-                                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                        <span>Submit Report</span>
+                                        <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                         </svg>
                                     </>
                                 )}

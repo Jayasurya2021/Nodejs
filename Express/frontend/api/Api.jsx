@@ -8,7 +8,5 @@ function Api(url) {
     } catch (error) {
 
     }
-
 }
-
 export default Api;
