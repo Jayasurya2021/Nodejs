@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <h1>Create a button. On click, change the text of a paragraph using DOM.</h1>
+        <h1 id="title">text</h1>
+        <button onclick="changeText()">click</button>
+    </div>
+    <div>
+        <h1>Create a button to change the background color of the page using JavaScript.</h1>
+        <div id="colorChange" style="background-color: aqua; height: 100px; width: 100px;"></div>
+        <button onclick="colorchange()">click</button>
+    </div>
+    <div>
+        <h1>Create an input box and a button. On button click, display the input value in a tag.</h1>
+        <h1 id="data"></h1>
+        <input type="text" id="datas">
+        <button onclick="update()">click</button>
+    </div>
+    <div>
+        <h1>Write a program to hide a paragraph on button click using DOM.</h1>
+        <h1 id="hidedata">hide</h1>
+        <button onclick="hide()">click</button>
+    </div>
+    <div>
+        <h1>Write a program to show a hidden div when a button is clicked.</h1>
+        <div id="box" style="background-color: skyblue; width: 100px; height: 100px;"></div>
+        <button onclick="boxcolor()">click</button>
+    </div>
+    <form onsubmit="submitdata()" >
+        <h1>Create a form and validate that input field is not empty on submit.</h1>
+        <input type="text" id="inputdata">
+        <button>submit</button>
+    </form>
+
+    <div>
+        <h1>Change the text color of a paragraph when mouse hovers over it.</h1>
+        <h1 onmouseover="hover()" style="color: aqua; font-size: large;" id="hover">hello</h1>
+    </div>
+
+    <div>
+        <h1>Disable a button after one click using JavaScript.</h1>
+        <button onclick="dissable()" id="dissable">dissable</button>
+    </div>
+    <!-- <div>
+        <h1>Create a counter with Increment and Decrement buttons.</h1>
+        <button onclick="increment()">-</button>
+        <span id="value">0</span>
+        <button onclick="decrement()">+</button>
+    </div> -->
+    <script>
+        // Create a button. On click, change the text of a paragraph using DOM.
+        const title = document.getElementById("title")
+        function changeText() {
+            title.innerText = "change text"
+        }
+        // Create a button to change the background color of the page using JavaScript.
+        const colorChange = document.getElementById("colorChange")
+        function colorchange() {
+            colorChange.style.backgroundColor = "pink"
+        }
+        // Create an input box and a button. On button click, display the input value in a <p> tag.
+        const data = document.getElementById("data")
+        function update() {
+            const datas = document.getElementById("datas").value
+            data.innerText = datas
+        }
+        // Write a program to hide a paragraph on button click using DOM.
+        const hidedata = document.getElementById("hidedata")
+        function hide() {
+            hidedata.style.display = "none"
+        }
+        // Write a program to show a hidden div when a button is clicked.
+        const box = document.getElementById("box")
+        function boxcolor() {
+            if (box.style.backgroundColor === "skyblue") {
+                box.style.backgroundColor = "green"
+            } else {
+                box.style.background = "skyblue"
+            }
+        }
+
+        // Create a form and validate that input field is not empty on submit.
+
+        function submitdata() {
+            const inputdata = document.getElementById("inputdata").value
+            if (inputdata === "") {
+                alert("must be a one characters")
+            }
+        }
+
+        // Change the text color of a paragraph when mouse hovers over it.
+        function hover (){
+            const hover = document.getElementById("hover")
+            if(hover.style.color === "aqua"){
+                 hover.style.color = "green"
+            }else{
+                hover.style.color = "aqua"
+            } 
+        }
+    // Disable a button after one click using JavaScript.
+    function dissable (){
+        const dissable = document.getElementById("dissable")
+        dissable.disabled = true
+    }
+
+    // Create a counter with Increment and Decrement buttons.
+
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
