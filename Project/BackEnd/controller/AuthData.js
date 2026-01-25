@@ -11,14 +11,14 @@ const registerUser = async (req, res) => {
         // Check if email exists in Users
         const existingUser = await userdata.findOne({ email })
         if (existingUser) {
-            return res.status(201).json({ message: "This email already used by a user" })
+            return res.status(400).json({ message: "This email already used by a user" })
         }
 
         // Check if email exists in Admins (Optional: prevent same email in both?)
         // For strict separation, maybe allow or disallow. Let's disallow for clarity.
         const existingAdmin = await admindata.findOne({ email });
         if (existingAdmin) {
-            return res.status(201).json({ message: "This email is registered as admin" })
+            return res.status(400).json({ message: "This email is registered as admin" })
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)
@@ -45,12 +45,12 @@ const registerAdmin = async (req, res) => {
 
         const existingAdmin = await admindata.findOne({ email })
         if (existingAdmin) {
-            return res.status(201).json({ message: "This email already used by an admin" })
+            return res.status(400).json({ message: "This email already used by an admin" })
         }
 
         const existingUser = await userdata.findOne({ email });
         if (existingUser) {
-            return res.status(201).json({ message: "This email is registered as user" })
+            return res.status(400).json({ message: "This email is registered as user" })
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)
