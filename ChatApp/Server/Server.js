@@ -3,8 +3,10 @@ const app = express()
 const PORT = 5000
 const route =require("./routes/Auth")
 const database = require("./config/db")
-app.use(express.json())
+require('dotenv').config();
 database()
+app.use(express.json())
+
 
 
 app.use("/auth",route)
