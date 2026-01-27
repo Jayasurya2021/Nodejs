@@ -36,23 +36,30 @@ const register = async (req, res)=>{
 
 const Login = async (req, res)=>{
     try {
-         const {mobile, password} = req.body
-         const findMobile = await userModels.findOne({mobile})
-         if(!findMobile) {
-            return res.status(400).json({message:"This Mobile Number Already Used"})
+         const {data, password} = req.body
+         const finddata = await userModels.findOne({
+            $or:[
+                {mobile: data},
+                {email: data},
+                {userName: data}
+            ]
+         })
+
+         if(!finddata) {
+            return res.status(400).json({message:"Your are not login"})
          }
-         const passwordCheck = await bcrypt.compare(password, userModels.password)
+         const passwordCheck = await bcrypt.compare(password, finddata.password)
          if(!passwordCheck){
             res.status(400).json({message:"your password is incorrect"})
          }
 
          const token = await jwt.sign(
-            {id: createUser.id},
+            {id: finddata.id},
             process.env.JWT_SECRET,
             {expiresIn:"10d"}
         )
 
-        res.status(200).json({findMobile,token})
+        res.status(200).json({finddata,token})
         
     } catch (error) {
       res.status(400).json({message:error.message})  
