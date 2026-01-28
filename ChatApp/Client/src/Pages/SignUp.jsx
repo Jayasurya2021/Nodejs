@@ -1,14 +1,17 @@
 import { useState } from "react";
+import useApi from "../Api/useApi";
 
 function SignUp() {
 
   const [userData, setUserData] = useState({
+    UserName: "",
     name: "",
     email: "",
     mobile: "",
-    password: "",
-    Username:"",
+    password: ""
+
   });
+  console.log(userData)
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -18,17 +21,21 @@ function SignUp() {
     }));
   }
 
-  function handleSubmit(e){
+  function handleSubmit(e) {
+    const {request} = useApi
     e.preventDefault()
     const emailFormet = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const newErrors = {};
-    if(!userData.name.length<6) newErrors.name = "Minmum six Characters"
-    if(!emailFormet.test(userData.email)) newErrors.email = "Please Enter Valid Email Id"
-    if(!userData.password.length<6) newErrors.password = "Minmum six Characters"
-    if(!userData.mobile.length<=10) newErrors.mobile = "Please Enter Valid Mobile Number"
-   
+    const newErrors = {};
+    if (!userData.name.length < 6) newErrors.name = "Minmum six Characters"
+    if (!emailFormet.test(userData.email)) newErrors.email = "Please Enter Valid Email Id"
+    if (!userData.password.length < 6) newErrors.password = "Minmum six Characters"
+    if (!userData.mobile.length <= 10) newErrors.mobile = "Please Enter Valid Mobile Number"
+    const 
+
+    
+
   }
-  
+
   return (
     <div>
       <h2>Create Account</h2>
@@ -38,14 +45,14 @@ function SignUp() {
           <label>Username</label>
           <input
             type="text"
-            name="Username"
+            name="UserName"
             placeholder="Enter your name"
-            value={userData.name}
+            value={userData.UserName}
             onChange={handleChange}
           />
         </div>
         <div>
-          <label>Full Name</label>
+          <label>Name</label>
           <input
             type="text"
             name="name"
