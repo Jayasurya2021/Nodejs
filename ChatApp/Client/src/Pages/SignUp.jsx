@@ -30,7 +30,6 @@ function SignUp() {
     if (!emailFormet.test(userData.email)) newErrors.email = "Please Enter Valid Email Id"
     if (!userData.password.length < 6) newErrors.password = "Minmum six Characters"
     if (!userData.mobile.length <= 10) newErrors.mobile = "Please Enter Valid Mobile Number"
-    const 
 
     
 

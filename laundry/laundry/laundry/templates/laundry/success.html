@@ -1,0 +1,15 @@
+{% extends 'laundry/base.html' %}
+
+{% block content %}
+<div class="card text-center">
+    <div class="card-body py-5">
+        <div class="display-1 text-success mb-3">✓</div>
+        <h2 class="card-title mb-3">Request Submitted!</h2>
+        <p class="card-text text-muted mb-4">Your laundry request has been successfully queued.</p>
+        <div class="d-flex justify-content-center gap-2">
+            <a href="{% url 'laundry_list' %}" class="btn btn-outline-primary">Track Status</a>
+            <a href="{% url 'laundry_create' %}" class="btn btn-primary">Submit Another</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
