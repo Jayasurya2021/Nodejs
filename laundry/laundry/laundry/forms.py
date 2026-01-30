@@ -5,8 +5,8 @@ from .models import LaundryRequest
 
 class UserRegistrationForm(UserCreationForm):
     ROLE_CHOICES = [
-        ('Student', 'Student'),
-        ('Staff', 'Staff'),
+        ('User', 'User'),
+        ('Service Provider', 'Service Provider'),
     ]
     role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
 

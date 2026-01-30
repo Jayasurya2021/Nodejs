@@ -53,14 +53,17 @@ def laundry_create(request):
 
 @login_required
 def laundry_list(request):
-    is_staff = request.user.groups.filter(name='Staff').exists() or request.user.is_superuser
+    is_staff = request.user.groups.filter(name='Service Provider').exists() or request.user.is_superuser
     
     if request.method == 'POST' and is_staff:
         req_id = request.POST.get('req_id')
         new_status = request.POST.get('status')
-        l_req = LaundryRequest.objects.get(id=req_id)
-        l_req.status = new_status
-        l_req.save()
+        try:
+            l_req = LaundryRequest.objects.get(id=req_id)
+            l_req.status = new_status
+            l_req.save()
+        except LaundryRequest.DoesNotExist:
+            pass # Or handle error appropriately
         return redirect('laundry_list')
 
     if is_staff:

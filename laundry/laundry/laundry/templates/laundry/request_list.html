@@ -47,12 +47,12 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="req_id" value="{{ req.id }}">
                                 <select name="status" class="form-select form-select-sm" style="width: 120px;">
-                                    <option value="Pending" {% if req.status=='Pending' %}selected{% endif %}>Pending
+                                    <option value="Pending" {% if req.status == 'Pending' %}selected{% endif %}>Pending
                                     </option>
-                                    <option value="Washing" {% if req.status=='Washing' %}selected{% endif %}>Washing
+                                    <option value="Washing" {% if req.status == 'Washing' %}selected{% endif %}>Washing
                                     </option>
-                                    <option value="Ready" {% if req.status=='Ready' %}selected{% endif %}>Ready</option>
-                                    <option value="Delivered" {% if req.status=='Delivered' %}selected{% endif %}>
+                                    <option value="Ready" {% if req.status == 'Ready' %}selected{% endif %}>Ready</option>
+                                    <option value="Delivered" {% if req.status == 'Delivered' %}selected{% endif %}>
                                         Delivered</option>
                                 </select>
                                 <button type="submit" class="btn btn-sm btn-primary">Update</button>
