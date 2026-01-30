@@ -63,7 +63,7 @@ function Navbar() {
                             </svg>
                         </div>
                         <span className={`text-xl font-bold font-display tracking-tight transition-colors ${isScrolled || mobileMenuOpen ? 'text-slate-900' : 'text-slate-800'}`}>
-                            MyCommunity
+                            ResolveNow
                         </span>
                     </Link>
 

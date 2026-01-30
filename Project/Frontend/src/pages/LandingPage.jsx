@@ -210,10 +210,10 @@ function LandingPage() {
         <div className="mx-auto max-w-7xl px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-slate-900 flex items-center justify-center text-white font-bold text-xl shadow-lg">C</div>
-            <span className="text-xl font-extrabold text-slate-900 tracking-tight">CommunityConnect</span>
+            <span className="text-xl font-extrabold text-slate-900 tracking-tight">ResolveNow</span>
           </div>
           <p className="text-sm text-slate-500 font-bold">
-            © {new Date().getFullYear()} CommunityConnect.
+            © {new Date().getFullYear()} ResolveNow.
           </p>
           <div className="flex gap-8">
             <a href="#" className="text-slate-500 hover:text-slate-900 transition-colors font-bold text-sm">Privacy</a>
