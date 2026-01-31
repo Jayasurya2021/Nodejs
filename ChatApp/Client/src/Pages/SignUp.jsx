@@ -22,8 +22,9 @@ function SignUp() {
   }
 
   function handleSubmit(e) {
-    const {request} = useApi
     e.preventDefault()
+      const {request, method} = useApi
+
     const emailFormet = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const newErrors = {};
     if (!userData.name.length < 6) newErrors.name = "Minmum six Characters"
@@ -31,8 +32,8 @@ function SignUp() {
     if (!userData.password.length < 6) newErrors.password = "Minmum six Characters"
     if (!userData.mobile.length <= 10) newErrors.mobile = "Please Enter Valid Mobile Number"
 
-    
-
+    request("/auth/register", method, userData)
+    alert("register succesfull")
   }
 
   return (
