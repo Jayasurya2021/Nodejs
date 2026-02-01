@@ -1,9 +1,8 @@
 import { useState } from "react";
-import api from "./Api";
 
 function useApi (){
     const [data, setData] = useState(null)
-    const request= async ({url, method="Get", data})=>{
+    const request= async (apicall)=>{
         try {
             const res = await api({
                url,

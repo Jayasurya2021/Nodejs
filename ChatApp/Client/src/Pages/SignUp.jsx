@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useApi from "../Api/useApi";
+import api from "../Api/Api";
 
 function SignUp() {
 
@@ -11,6 +12,7 @@ function SignUp() {
     password: ""
 
   });
+  const { request } = useApi
   console.log(userData)
 
   function handleChange(e) {
@@ -23,7 +25,7 @@ function SignUp() {
 
   function handleSubmit(e) {
     e.preventDefault()
-      const {request, method} = useApi
+    
 
     const emailFormet = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const newErrors = {};
@@ -32,7 +34,9 @@ function SignUp() {
     if (!userData.password.length < 6) newErrors.password = "Minmum six Characters"
     if (!userData.mobile.length <= 10) newErrors.mobile = "Please Enter Valid Mobile Number"
 
-    request("/auth/register", method, userData)
+    request(() => {
+      api.post("/auth/register", userData )
+    })
     alert("register succesfull")
   }
 
