@@ -1,7 +1,6 @@
 import { useState } from "react";
 import useApi from "../Api/useApi";
-import api from "../Api/Api";
-import { useEffect } from "react";
+
 
 function SignUp() {
 
@@ -13,7 +12,7 @@ function SignUp() {
     password: ""
 
   });
-  const { request } = useApi
+  const { request } = useApi()
   console.log(userData)
 
   function handleChange(e) {
@@ -26,25 +25,29 @@ function SignUp() {
 
   function handleSubmit(e) {
     e.preventDefault()
-    
+
 
     const emailFormet = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const newErrors = {};
-    if (!userData.name.length < 6) newErrors.name = "Minmum six Characters"
+    if (userData.name.length < 6) newErrors.name = "Minmum six Characters"
     if (!emailFormet.test(userData.email)) newErrors.email = "Please Enter Valid Email Id"
     if (!userData.password.length < 6) newErrors.password = "Minmum six Characters"
     if (!userData.mobile.length <= 10) newErrors.mobile = "Please Enter Valid Mobile Number"
 
-    useEffect(()=>{
-      request({
+    try {
+      const res = request({
         url: "auth/register",
-        method: post,
-        data: userData 
+        method: "post",
+        data: userData
       })
-    },[userData])
 
-    localStorage.setItem("token", res.data.token)
-    alert("register succesfull")
+      localStorage.setItem("token", res.token)
+      alert("register succesfull")
+
+    } catch (error) {
+      console.log(error)
+    }
+
 
 
   }

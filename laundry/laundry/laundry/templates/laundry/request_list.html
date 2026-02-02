@@ -1,73 +1,101 @@
 {% extends 'laundry/base.html' %}
 
 {% block content %}
-<div class="card">
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h4 class="mb-0">
-            {% if is_staff %}All Laundry Requests (Staff View){% else %}My Laundry Requests{% endif %}
-        </h4>
-        <a href="{% url 'laundry_create' %}" class="btn btn-sm btn-outline-primary">New Request</a>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>Room</th>
-                        <th>User</th>
-                        <th>Cloth Type</th>
-                        <th>Qty</th>
-                        <th>Service</th>
-                        <th>Status</th>
-                        {% if is_staff %}<th>Action</th>{% endif %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for req in requests %}
-                    <tr>
-                        <td>{{ req.room_number }}</td>
-                        <td>{{ req.user.username }}</td>
-                        <td>{{ req.cloth_type }}</td>
-                        <td>{{ req.quantity }}</td>
-                        <td>{{ req.service_type }}</td>
-                        <td>
-                            {% if req.status == 'Pending' %}
-                            <span class="badge bg-warning text-dark">Pending</span>
-                            {% elif req.status == 'Washing' %}
-                            <span class="badge bg-info text-dark">Washing</span>
-                            {% elif req.status == 'Ready' %}
-                            <span class="badge bg-success">Ready</span>
-                            {% elif req.status == 'Delivered' %}
-                            <span class="badge bg-secondary">Delivered</span>
-                            {% endif %}
-                        </td>
-                        {% if is_staff %}
-                        <td>
-                            <form method="post" class="d-flex gap-2">
-                                {% csrf_token %}
-                                <input type="hidden" name="req_id" value="{{ req.id }}">
-                                <select name="status" class="form-select form-select-sm" style="width: 120px;">
-                                    <option value="Pending" {% if req.status == 'Pending' %}selected{% endif %}>Pending
-                                    </option>
-                                    <option value="Washing" {% if req.status == 'Washing' %}selected{% endif %}>Washing
-                                    </option>
-                                    <option value="Ready" {% if req.status == 'Ready' %}selected{% endif %}>Ready</option>
-                                    <option value="Delivered" {% if req.status == 'Delivered' %}selected{% endif %}>
-                                        Delivered</option>
-                                </select>
-                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
-                            </form>
-                        </td>
-                        {% endif %}
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="{% if is_staff %}7{% else %}6{% endif %}" class="text-center text-muted">No laundry
-                            requests found.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="god-form-container" style="max-width: 1000px; margin-top: 2rem;">
+            <div class="god-card">
+                <div class="god-card-header d-flex justify-content-between align-items-center flex-wrap">
+                    <div>
+                        <h3 class="mb-0">
+                            {% if is_staff %}Request Management{% else %}My Orders{% endif %}
+                        </h3>
+                        <p class="mb-0 opacity-75 small">Track and manage your laundry Service</p>
+                    </div>
+                    <a href="{% url 'laundry_create' %}"
+                        class="btn btn-light btn-sm fw-bold text-primary rounded-pill px-3 shadow-sm mt-2 mt-sm-0">
+                        + New Request
+                    </a>
+                </div>
+                <div class="god-card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0"
+                            style="border-collapse: separate; border-spacing: 0;">
+                            <thead class="bg-light text-secondary small text-uppercase">
+                                <tr>
+                                    <th class="px-4 py-3 border-0">Room</th>
+                                    <th class="px-4 py-3 border-0">User</th>
+                                    <th class="px-4 py-3 border-0">Cloth Type</th>
+                                    <th class="px-4 py-3 border-0 text-center">Qty</th>
+                                    <th class="px-4 py-3 border-0">Service</th>
+                                    <th class="px-4 py-3 border-0">Status</th>
+                                    {% if is_staff %}<th class="px-4 py-3 border-0">Action</th>{% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in requests %}
+                                <tr style="transition: background-color 0.2s;">
+                                    <td class="px-4 py-3 text-secondary fw-bold">{{ req.room_number }}</td>
+                                    <td class="px-4 py-3 text-dark">{{ req.user.username }}</td>
+                                    <td class="px-4 py-3 text-secondary">{{ req.cloth_type }}</td>
+                                    <td class="px-4 py-3 text-center fw-bold">{{ req.quantity }}</td>
+                                    <td class="px-4 py-3">
+                                        <span class="badge bg-light text-dark border">{{ req.service_type }}</span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        {% if req.status == 'Pending' %}
+                                        <span
+                                            class="badge bg-warning text-dark bg-opacity-25 border border-warning px-2 py-1 rounded-pill">Pending</span>
+                                        {% elif req.status == 'Washing' %}
+                                        <span
+                                            class="badge bg-info text-dark bg-opacity-25 border border-info px-2 py-1 rounded-pill">Washing</span>
+                                        {% elif req.status == 'Ready' %}
+                                        <span
+                                            class="badge bg-success text-success bg-opacity-25 border border-success px-2 py-1 rounded-pill">Ready</span>
+                                        {% elif req.status == 'Delivered' %}
+                                        <span
+                                            class="badge bg-secondary text-secondary bg-opacity-25 border border-secondary px-2 py-1 rounded-pill">Delivered</span>
+                                        {% endif %}
+                                    </td>
+                                    {% if is_staff %}
+                                    <td class="px-4 py-3">
+                                        <form method="post" class="d-flex gap-2">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="req_id" value="{{ req.id }}">
+                                            <select name="status"
+                                                class="form-select form-select-sm border-0 bg-light fw-bold"
+                                                style="width: 120px; cursor: pointer;">
+                                                <option value="Pending" {% if req.status=='Pending' %}selected{% endif
+                                                    %}>Pending</option>
+                                                <option value="Washing" {% if req.status=='Washing' %}selected{% endif
+                                                    %}>Washing</option>
+                                                <option value="Ready" {% if req.status=='Ready' %}selected{% endif %}>
+                                                    Ready</option>
+                                                <option value="Delivered" {% if req.status=='Delivered' %}selected{%
+                                                    endif %}>Delivered</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-primary rounded-circle p-1"
+                                                style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                                ✓
+                                            </button>
+                                        </form>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="{% if is_staff %}7{% else %}6{% endif %}"
+                                        class="text-center py-5 text-muted">
+                                        <div class="mb-3" style="font-size: 3rem;">🧺</div>
+                                        <p>No laundry requests found.</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

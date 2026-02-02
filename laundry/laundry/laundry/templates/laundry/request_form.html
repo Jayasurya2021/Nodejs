@@ -1,26 +1,36 @@
 {% extends 'laundry/base.html' %}
 
 {% block content %}
-<div class="card">
-    <div class="card-header bg-white">
-        <h4 class="mb-0">Submit Laundry Request</h4>
-    </div>
-    <div class="card-body">
-        <form method="post">
-            {% csrf_token %}
-            {% for field in form %}
-            <div class="mb-3">
-                <label class="form-label fw-bold">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                <div class="alert alert-danger mt-1">
-                    {{ field.errors }}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-5">
+        <div class="god-form-container mt-4">
+            <div class="god-card">
+                <div class="god-card-header">
+                    <h3>New Laundry Request</h3>
+                    <p class="mb-0 opacity-75 small">Fill in the details below</p>
                 </div>
-                {% endif %}
+                <div class="god-card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="form-group-god">
+                            {{ field }}
+                            <label class="form-label-god" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {% if field.errors %}
+                            <div class="text-danger small mt-1 ps-1">
+                                {{ field.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-god">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary w-100">Submit Request</button>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,32 +1,39 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from .models import LaundryRequest
+
+class UserLoginForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super(UserLoginForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control-god'
+            field.widget.attrs['placeholder'] = ' '
 
 class UserRegistrationForm(UserCreationForm):
     ROLE_CHOICES = [
         ('User', 'User'),
         ('Service Provider', 'Service Provider'),
     ]
-    role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.Select(attrs={'class': 'form-control-god'}))
 
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email']
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-        }
+
+    def __init__(self, *args, **kwargs):
+        super(UserRegistrationForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control-god'
+            field.widget.attrs['placeholder'] = ' '  # Required for floating label CSS trick
 
 class LaundryRequestForm(forms.ModelForm):
     class Meta:
         model = LaundryRequest
         fields = ['room_number', 'cloth_type', 'quantity', 'service_type']
-        widgets = {
-            'room_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Room Number'}),
-            'cloth_type': forms.Select(attrs={'class': 'form-control'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
-            'service_type': forms.Select(attrs={'class': 'form-control'}),
-        }
+        
+    def __init__(self, *args, **kwargs):
+        super(LaundryRequestForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control-god'
+            field.widget.attrs['placeholder'] = ' '

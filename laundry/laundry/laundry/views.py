@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from .forms import LaundryRequestForm, UserRegistrationForm
+from .forms import LaundryRequestForm, UserRegistrationForm, UserLoginForm
 from .models import LaundryRequest
 
 def register(request):
@@ -22,13 +22,13 @@ def register(request):
 
 def user_login(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
             return redirect('landing_page')
     else:
-        form = AuthenticationForm()
+        form = UserLoginForm()
     return render(request, 'registration/login.html', {'form': form})
 
 def landing_page(request):

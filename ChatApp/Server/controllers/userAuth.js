@@ -1,70 +1,70 @@
-const userModels = require ("../models/userData");
+const userModels = require("../models/userData");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 
-const register = async (req, res)=>{
+const register = async (req, res) => {
     try {
-        const {userName, name, email, mobile, password} = req.body
-        const findEmailId = await userModels.findOne({email})
-        const findMobile = await userModels.findOne({mobile})
-        if(findEmailId){
-           return res.status(201).json({message:"this email id already used"})
+        const { userName, name, email, mobile, password } = req.body
+        const findEmailId = await userModels.findOne({ email })
+        const findMobile = await userModels.findOne({ mobile })
+        if (findEmailId) {
+            return res.status(201).json({ message: "this email id already used" })
         }
-        if(findMobile){
-           return res.status(201).json({message:"this mobile number already used"})
+        if (findMobile) {
+            return res.status(201).json({ message: "this mobile number already used" })
         }
-        const hassedPassword = await bcrypt.hash(password,10)
+        const hassedPassword = await bcrypt.hash(password, 10)
         const createUser = await userModels.create({
             userName,
             name,
             email,
             mobile,
-            password:hassedPassword
+            password: hassedPassword
         })
         const token = await jwt.sign(
-            {id: createUser.id},
+            { id: createUser.id },
             process.env.JWT_SECRET,
-            {expiresIn:"10d"}
+            { expiresIn: "10d" }
         )
-        res.status(200).json({createUser,token})
+        res.status(201).json({ message: "register succesful", token })
     } catch (error) {
-      res.status(400).json({error:error.message})  
+        res.status(400).json({ error: error.message })
     }
 }
 
 
-const Login = async (req, res)=>{
+const Login = async (req, res) => {
     try {
-         const {data, password} = req.body
-         const finddata = await userModels.findOne({
-            $or:[
-                {mobile: data},
-                {email: data},
-                {userName: data}
+        const { data, password } = req.body
+        const finddata = await userModels.findOne({
+            $or: [
+                { mobile: data },
+                { email: data },
+                { userName: data }
             ]
-         })
+        })
 
-         if(!finddata) {
-            return res.status(400).json({message:"Your are not login"})
-         }
-         const passwordCheck = await bcrypt.compare(password, finddata.password)
-         if(!passwordCheck){
-            res.status(400).json({message:"your password is incorrect"})
-         }
+        if (!finddata) {
+            return res.status(400).json({ message: "Your are not login" })
+        }
+        const passwordCheck = await bcrypt.compare(password, finddata.password)
+        if (!passwordCheck) {
+            return res.status(400).json({ message: "your password is incorrect" })
+        }
 
-         const token = await jwt.sign(
-            {id: finddata.id},
+        const token = await jwt.sign(
+            { id: finddata.id },
             process.env.JWT_SECRET,
-            {expiresIn:"10d"}
+            { expiresIn: "10d" }
         )
 
-        res.status(200).json({finddata,token})
-        
+        res.status(200).json({ message: "register succesfull", token })
+
     } catch (error) {
-      res.status(400).json({message:error.message})  
+        res.status(400).json({ message: error.message })
     }
-   
+
 }
 
 module.exports = {
