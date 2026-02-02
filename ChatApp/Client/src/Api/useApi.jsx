@@ -1,15 +1,15 @@
 import { useState } from "react";
-
+import api from "./Api"
 function useApi (){
-    const [data, setData] = useState(null)
-    const request= async (apicall)=>{
+    const [userData, setUserData] = useState(null)
+    const request= async ({url, method="get", })=>{
         try {
             const res = await api({
                url,
                method,
                data 
             })
-            setData(res.data)
+            setUserData(res.data)
             return res.data
 
         } catch (error) {
@@ -18,7 +18,7 @@ function useApi (){
         }
     }
     
-    return {request,data }
+    return {request,userData }
 }
 
 export default useApi;

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useApi from "../Api/useApi";
 import api from "../Api/Api";
+import { useEffect } from "react";
 
 function SignUp() {
 
@@ -34,10 +35,18 @@ function SignUp() {
     if (!userData.password.length < 6) newErrors.password = "Minmum six Characters"
     if (!userData.mobile.length <= 10) newErrors.mobile = "Please Enter Valid Mobile Number"
 
-    request(() => {
-      api.post("/auth/register", userData )
-    })
+    useEffect(()=>{
+      request({
+        url: "auth/register",
+        method: post,
+        data: userData 
+      })
+    },[userData])
+
+    localStorage.setItem("token", res.data.token)
     alert("register succesfull")
+
+
   }
 
   return (
