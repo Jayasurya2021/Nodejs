@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useApi from "../Api/useApi";
+import api from "../Api/Api"
 
 
 function SignUp() {
@@ -11,8 +11,7 @@ function SignUp() {
     mobile: "",
     password: ""
 
-  });
-  const { request } = useApi()
+  })
   console.log(userData)
 
   function handleChange(e) {
@@ -23,7 +22,7 @@ function SignUp() {
     }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
 
 
@@ -35,11 +34,15 @@ function SignUp() {
     if (!userData.mobile.length <= 10) newErrors.mobile = "Please Enter Valid Mobile Number"
 
     try {
-      const res = request({
-        url: "auth/register",
-        method: "post",
-        data: userData
-      })
+      const res = await api.post("auth/register",
+        {
+          userName: userData.UserName,
+          name: userData.name,
+          email: userData.email,
+          mobile: userData.mobile,
+          password: userData.password
+        }
+      )
 
       localStorage.setItem("token", res.token)
       alert("register succesfull")

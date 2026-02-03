@@ -27,7 +27,7 @@ const register = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: "10d" }
         )
-        res.status(201).json({ message: "register succesful", token })
+        res.status(201).json({ message: res.message, token })
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
