@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form onsubmit="HandleSubmit(event)">
+        <input type="text" , placeholder="name" id="name"><br><br>
+        <input type="text" , placeholder="email" id="email"><br><br>
+        <input type="text" , placeholder="gender" id="gender"><br><br>
+        <input type="password" , placeholder="password" id="password"><br><br>
+        <input type="password" , placeholder="re-Enter password" id="rePassword"><br><br>
+        <button type="submit">submit</button>
+    </form>
+
+
+    <script>
+        function HandleSubmit(event) {
+            event.preventDefault();
+            let name = document.getElementById("name").value
+            let email = document.getElementById("email").value
+            let gender = document.getElementById("gender").value
+            let password = document.getElementById("password").value
+            let rePassword = document.getElementById("rePassword").value
+
+            if (password !== rePassword) {
+                alert("Passwords do not match");
+                return;
+            }
+
+            fetch("http://localhost:5000/auth/register",
+                {
+                    method: "POST",
+                    headers: {
+                        "content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        gender: gender,
+                        password: password
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    alert("register succesful")
+                    window.location.href = "login.html"
+                    console.log(data)
+                })
+                .catch(err => console.log(err))
+        }
+
+    </script>
+
+</body>
+
+</html>
