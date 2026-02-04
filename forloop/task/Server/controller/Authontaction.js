@@ -29,10 +29,10 @@ const login = async (req, res) => {
         const findEmail = await userModels.findOne({ email: email })
         const comparePassword = await bcrypt.compare(password, findEmail.password)
         if (!findEmail) {
-            res.status(400).json({ success: false, message: "this email not register" })
+            res.status(400).json({ message: "this email not register" })
         }
         if (!comparePassword) {
-            res.status(400).json({ success: false, message: "password is mismatch" })
+            res.status(400).json({ message: "password is mismatch" })
         }
         const token = jwt.sign(
             {
@@ -42,15 +42,11 @@ const login = async (req, res) => {
             "secreateKey1234",
             { expiresIn: "10d" }
         )
-        res.status(200).json({ success: true, message: "login succesfull", token })
+        res.status(200).json({ message: "login succesfull", token })
         console.log( `token: ${token}`)
     } catch (error) {
-        res.status(400).json({ success: false, message: error.message })
+        res.status(400).json({ message: error.message })
     }
-}
-
-const userData = async (req, res)=>{
-    
 }
 
 module.exports = {

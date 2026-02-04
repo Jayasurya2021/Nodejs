@@ -7,13 +7,35 @@
 </head>
 <body>
 
-    <h1 id="homePage">this is home page</h1>
+    <h1 id="homePage">please Login</h1>
 
 
     <script>
         let homePage = document.getElementById("homePage")
+        let token = localStorage.getItem("token")
 
-        fetch("http://localhost:5000/auth/login")
+        if (!token) {
+            window.location.href = "login.html"
+            
+        }
+        function HandleChangeData (data){
+            homePage.innerHTML = data
+        }
+        
+       fetch("http://localhost:5000/auth/userdata",
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: "Bearer " + token
+                    }
+                })
+                .then(res=>res.json())
+                .then(data=>{
+                    console.log(data.userDatas)
+                    HandleChangeData(data.userDatas)
+                })
+                .catch(err=>console.log(err))
         
     </script>
     
