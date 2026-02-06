@@ -40,13 +40,14 @@ function SignUp() {
     if (userData.password !== userData.confirmPassword) {
       alert("Password and Confirm Password not match");
       return;
-    }  ssfdf
+    }
         try {
             const res = Api.post("/auth/register", userData)
             if (!res.token) {
                 alert("register fail")
             }
             localStorage.setItem("token", res.data.token)
+
         } catch (error) {
             console.log(error)
         }
