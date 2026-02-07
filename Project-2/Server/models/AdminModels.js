@@ -16,6 +16,9 @@ const adminModels = mongoose.Schema({
     password:{
         type: String,
         required: true
+    },
+    role:{
+        value: "Admin"
     }
 })
 
