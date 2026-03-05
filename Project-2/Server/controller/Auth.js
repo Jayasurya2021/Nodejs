@@ -1,7 +1,7 @@
 const userModels = require("../models/userModel")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const AdminModels = require("../models/AdminModels")
+const {AdminModels, userModels }= require("../models/AdminModels")
 
 
 const register = async (req, res) => {
@@ -55,7 +55,6 @@ const register = async (req, res) => {
             res.status(200).json({ message: "Register succesfull", adminUser, token })
             console.log(adminUser, token)
         }
-
 
 
     } catch (error) {

@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+:root {
+  --bs-primary: #2d7a4f;
+  --bs-primary-rgb: 45, 122, 79;
+
+  --color-bg: hsl(140, 20%, 97%);
+  --color-fg: hsl(150, 40%, 10%);
+  --color-primary: hsl(145, 63%, 32%);
+  --color-primary-fg: #fff;
+  --color-secondary: hsl(80, 45%, 55%);
+  --color-muted: hsl(140, 15%, 92%);
+  --color-muted-fg: hsl(150, 10%, 45%);
+  --color-accent: hsl(35, 90%, 55%);
+  --color-accent-fg: #fff;
+  --color-destructive: hsl(0, 72%, 51%);
+  --color-border: hsl(140, 15%, 88%);
+  --color-card: hsl(140, 15%, 95%);
+
+  --gradient-hero: linear-gradient(135deg, hsl(145, 63%, 32%), hsl(160, 50%, 25%));
+  --gradient-warm: linear-gradient(135deg, hsl(35, 90%, 55%), hsl(45, 85%, 60%));
+  --shadow-card: 0 4px 24px -4px hsl(145 63% 32% / 0.12);
+  --shadow-elevated: 0 12px 40px -8px hsl(145 63% 32% / 0.2);
+  --radius: 0.75rem;
+
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-fg);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+}
+
+/* ─── Custom utility classes ─── */
+
+.font-display { font-family: var(--font-display); }
+
+.text-gradient-hero {
+  background: var(--gradient-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-gradient-hero {
+  background: var(--gradient-hero) !important;
+}
+
+.bg-gradient-warm {
+  background: var(--gradient-warm) !important;
+}
+
+.shadow-card {
+  box-shadow: var(--shadow-card) !important;
+}
+
+.shadow-elevated {
+  box-shadow: var(--shadow-elevated) !important;
+}
+
+.text-primary-custom { color: var(--color-primary) !important; }
+.text-muted-custom  { color: var(--color-muted-fg) !important; }
+.text-accent        { color: var(--color-accent) !important; }
+.text-destructive   { color: var(--color-destructive) !important; }
+
+.bg-primary-custom  { background-color: var(--color-primary) !important; }
+.bg-muted           { background-color: var(--color-muted) !important; }
+.bg-card            { background-color: var(--color-card) !important; }
+.border-custom      { border-color: var(--color-border) !important; }
+
+.btn-primary-custom {
+  background: var(--gradient-hero);
+  border: none;
+  color: #fff;
+}
+.btn-primary-custom:hover { opacity: 0.9; color: #fff; }
+
+.btn-accent {
+  background-color: var(--color-accent);
+  border: none;
+  color: var(--color-accent-fg);
+}
+.btn-accent:hover { opacity: 0.9; color: var(--color-accent-fg); }
+
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background-color: rgba(45, 122, 79, 0.1);
+  color: var(--color-primary);
+}
+
+.hero-section {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(10,30,20,0.8), rgba(10,30,20,0.5), transparent);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  padding: 5rem 0;
+}
+
+.rounded-custom { border-radius: var(--radius) !important; }
+
+.alert-icon-wrap {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+}
+
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220,53,69,0.4); }
+  50%       { box-shadow: 0 0 0 12px rgba(220,53,69,0); }
+}
+
+/* ─── Navbar override ─── */
+.navbar-brand-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--gradient-hero);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* when header is fixed we need offset on body so content isn't hidden */
+body {
+  padding-top: 68px; /* matches header height */
+}
+
+/* make sure the navbar can't be hidden by any other rules */
+header, .fixed-top {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100%;
+  z-index: 1030;
+}
+
+/* ─── Dashboard level badges ─── */
+.level-info     { background-color: rgba(45,122,79,0.12); color: var(--color-primary); }
+.level-warning  { background-color: rgba(220,160,30,0.12); color: var(--color-accent); }
+.level-critical { background-color: rgba(220,53,69,0.12); color: var(--color-destructive); }
