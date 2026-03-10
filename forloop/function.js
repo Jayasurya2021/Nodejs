@@ -88,13 +88,21 @@ function stringReverce(string) {
 stringReverce("surya")
 
 
-function paragraphReverce(para){
-    var reverce = ""
-    for(let i = para.length - 1; i >= 0; i--){
-        if(para === " "){
+// function paragraphReverce(para){
+//     var reverce = ""
+//     for(let i = para.length - 1; i >= 0; i--){
+//         if(para === " "){
 
-        }
+//         }
+//     }
+// }
+
+// paragraphReverce("java is easy")
+for (let i = 1; i <= 40; i++) {
+    let patten = " "
+    for (let j = 1; j <= i; j++) {
+        patten += `${j},`
     }
+    console.log(patten)
 }
 
-paragraphReverce("java is easy")
