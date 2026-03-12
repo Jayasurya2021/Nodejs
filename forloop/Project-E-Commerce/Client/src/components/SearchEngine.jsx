@@ -14,20 +14,35 @@ function SearchEngine() {
     }
 
     return (
-        <div>
-            <input type="text"
-                value={search}
-                placeholder="search..."
-                onChange={(e) => {
-                    handleChange();
-                    setSearch(e.target.value)
-                }} /><br />
-            {data ? data.map((e, i) => (
-                <li key={i}>{e}</li>
-            )) : " "
+        <div className="relative w-full max-w-md">
 
-            }
-        </div>
+  {/* Search Input */}
+  <input
+    type="text"
+    value={search}
+    placeholder="Search products..."
+    onChange={(e) => {
+      handleChange();
+      setSearch(e.target.value);
+    }}
+    className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black"
+  />
+
+  {/* Search Results */}
+  {data && data.length > 0 && (
+    <ul className="absolute w-full bg-white border border-gray-200 rounded-lg mt-2 shadow-lg max-h-60 overflow-y-auto">
+      {data.map((e, i) => (
+        <li
+          key={i}
+          className="px-4 py-2 hover:bg-gray-100 cursor-pointer transition"
+        >
+          {e}
+        </li>
+      ))}
+    </ul>
+  )}
+
+</div>
     )
 }
 
