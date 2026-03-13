@@ -12,7 +12,7 @@ function ProductsAdd() {
         stock: "",
         keywords: []
     });
-    const { datas, loading, error } = useFetch()
+    const { fetchData, datas, loading, error } = useFetch()
 
     function handleChange(e) {
         const { name, value } = e.target
@@ -37,19 +37,26 @@ function ProductsAdd() {
             ...prev, keywords: prev.keywords.filter((_, i) => i !== index)
         }))
     }
-
-
     function handleSubmit(e) {
-        e.preventDafault();
-        fetch("/api/product", product, "POST")
-        if (datas) {
-            alert("product Added")
-            console.log(datas)
-        } else {
-            console.log(error)
-            alert("fill the all requirement feild")
-        }
+        e.preventDefault();
+        fetchData("http://localhost:5000/admin/addproduct", "POST", product)
 
+        if (datas) {
+            alert("product is added")
+            console.log(datas)
+
+        } if (error) {
+            console.log(error)
+        }
+        setProduct({
+            name: "",
+            description: "",
+            price: "",
+            category: "",
+            brand: "",
+            stock: "",
+            keywords: []
+        })
     }
 
     return (
