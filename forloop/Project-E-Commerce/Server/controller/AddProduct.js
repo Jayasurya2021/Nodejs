@@ -4,7 +4,11 @@ async function AddProduct(req, res) {
     try {
         const data = req.body
         const AddProduct = await ProductModel.create(data)
-        res.status(200).json({ message: AddProduct })
+
+        res.status(200).json({
+            message: "product add sucessfully",
+            product: AddProduct
+        })
         console.log(AddProduct)
     } catch (error) {
         res.status(400).json({ message: error.message })

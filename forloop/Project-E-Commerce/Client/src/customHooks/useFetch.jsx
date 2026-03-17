@@ -1,9 +1,9 @@
 import axios from "axios"
 import { useState } from "react"
-
+import { toast } from "react-toastify";
 
 function useFetch() {
-    const [datas, setData] = useState([])
+    const [data, setData] = useState(null)
     const [loading, SetLoading] = useState(false)
     const [error, setError] = useState(null)
 
@@ -16,18 +16,25 @@ function useFetch() {
                 method: method,
                 data: body
             })
+
             if (!res.data) {
                 throw new Error("product not valid");
             }
             setData(res.data)
+            if (res.data?.message) {
+                toast.success(res.data.message)
+            }
         } catch (error) {
-            setError(error)
+            const errorMsg =
+                err.response?.data?.message || "Something went wrong";
+            setError(errorMsg)
+            toast.error(errorMsg)
         } finally {
             SetLoading(false)
         }
     }
 
-    return { fetchData, datas, loading, error }
+    return { fetchData, data, loading, error }
 
 }
 
