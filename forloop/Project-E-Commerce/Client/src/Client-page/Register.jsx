@@ -1,6 +1,41 @@
-
+import { useState } from "react"
+import useFetch from "../customHooks/useFetch"
+import { toast } from "react-toastify"
 
 const Register = () => {
+
+
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "user"
+  })
+
+  const { fetchData, data, loading, error } = useFetch()
+
+  function handleChange(e) {
+    const { name, value } = e.target
+    setUserData({ ...userData, [name]: value })
+    console.log(userData)
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    if(userData.password !== userData.confirmPassword){
+     toast.error("Password Mismatch")
+    } 
+    fetchData("http://localhost:5000/client/register", "POST", userData)
+    if(data){
+      console.log(data)
+
+    }else{
+      console.log(error)
+    }
+  }
+
+
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <form
@@ -45,7 +80,7 @@ const Register = () => {
           type="submit"
           className="w-full bg-yellow-400 hover:bg-yellow-500 py-2 rounded font-semibold"
         >
-          {loading ? "Creating..." : "Create your Amazon account"}
+          {loading ? "Creating..." : "Create your account"}
         </button>
       </form>
     </div>

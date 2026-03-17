@@ -1,7 +1,7 @@
 const express = require("express")
-const route = express.Router()
+const AdminRoute = express.Router()
 const AddProduct = require("../controller/AddProduct")
 
-route.post("/addproduct", AddProduct)
+AdminRoute.post("/addproduct", AddProduct)
 
-module.exports = route
+module.exports = AdminRoute
