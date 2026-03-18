@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt")
 const user = require("../models/CllientRegisterModel")
+const jwt = require("jsonwebtoken")
+
 async function ClientRegister(req, res) {
     try {
         const { name, email, password } = req.body
@@ -10,11 +12,16 @@ async function ClientRegister(req, res) {
             email: email,
             password: hashedPassword
         })
+        const token = jwt.sign({ id: userData._id, email: email },
+            "privateKey",
+            { expiresIn: "3d" })
         if (userData) {
             console.log(userData)
+
             res.status(200).json({
                 message: "Register Succesfull",
-                data: userData
+                data: userData,
+                token: token
             })
         }
 
@@ -44,11 +51,15 @@ async function Login(req, res) {
                 message: "your Password is Incorrect"
             })
         }
+        const token = jwt.sign({ id: userData._id, email: email },
+            "privateKey",
+            { expiresIn: "3d" })
 
         res.status(200).json({
-            message: "Login Successfull"
+            message: "Login Successfull",
+            token: token
         })
-    }catch(error){
+    } catch (error) {
         res.status(400).json({
             message: error.message
         })
@@ -57,5 +68,6 @@ async function Login(req, res) {
 }
 
 module.exports = {
-    ClientRegister
+    ClientRegister,
+    Login
 }
