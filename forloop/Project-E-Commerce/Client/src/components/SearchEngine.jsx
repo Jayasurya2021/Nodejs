@@ -7,7 +7,7 @@ function SearchEngine() {
     const [search, setSearch] = useState("")
 
     const debouncing = useDebouncing(search, 500)
-    const { data, loading } = useFetch(`http://localhost:5000/searchdata?search=${debouncing}`, "GET",)
+    const { data, loading } = useFetch(`/searchdata?search=${debouncing}`, "GET",)
     console.log(debouncing)
     function handleChange (){
         

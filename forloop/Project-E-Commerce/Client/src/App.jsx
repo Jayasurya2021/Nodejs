@@ -5,6 +5,7 @@ import ProductsAdd from './Admin-page/ProductsAdd'
 import { Route, BrowserRouter, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Register from './Client-page/Register'
+import Login from './Client-page/Login'
 function App() {
 
 
@@ -28,6 +29,7 @@ function App() {
           <Route path='/' element={<LandingPage />} />
           <Route path='/productAdd' element={<ProductsAdd />} />
           <Route path='/clientRegister' element={<Register />} />
+          <Route path='/clientlogin' element={<Login />} />
         </Routes>
       </BrowserRouter>
 

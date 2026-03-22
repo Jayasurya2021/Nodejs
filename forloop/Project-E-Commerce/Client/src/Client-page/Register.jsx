@@ -1,8 +1,10 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import useFetch from "../customHooks/useFetch"
 import { toast } from "react-toastify"
-
+import { useNavigate } from "react-router-dom"
 const Register = () => {
+
+  const navigate = useNavigate();
 
 
   const [userData, setUserData] = useState({
@@ -23,17 +25,32 @@ const Register = () => {
 
   function handleSubmit(e) {
     e.preventDefault();
-    if(userData.password !== userData.confirmPassword){
-     toast.error("Password Mismatch")
-    } 
-    fetchData("http://localhost:5000/client/register", "POST", userData)
-    if(data){
-      console.log(data)
-
-    }else{
-      console.log(error)
+    if (userData.password !== userData.confirmPassword) {
+      toast.error("Password Mismatch")
+      return;
     }
+    console.log("check Password Mismatch")
+    fetchData("/client/register", "POST", userData)
+    console.log("fetch check")
   }
+  useEffect(() => {
+      if (data?.token) {
+        console.log("check")
+        setUserData({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          role: "user"
+        })
+        localStorage.setItem("token", data.token)
+        console.log(data)
+        navigate("/clientlogin")
+
+      } else {
+        console.log(error)
+      }
+    }, [data, error])
 
 
   return (

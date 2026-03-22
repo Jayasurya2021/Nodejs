@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useFetch from "../customHooks/useFetch"
 
+
 function ProductsAdd() {
     const [keyword, SetKeyword] = useState("")
     const [product, setProduct] = useState({
@@ -39,7 +40,7 @@ function ProductsAdd() {
     }
     function handleSubmit(e) {
         e.preventDefault();
-        fetchData("http://localhost:5000/admin/addproduct", "POST", product)
+        fetchData("/admin/addproduct", "POST", product)
 
         if (data) {
             console.log(data)
