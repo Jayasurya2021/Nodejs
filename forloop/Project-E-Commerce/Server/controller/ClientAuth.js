@@ -20,6 +20,7 @@ async function ClientRegister(req, res) {
             email: email,
             password: hashedPassword
         })
+         console.log(userData)
         const token = jwt.sign({ id: userData._id, email: email },
             "privateKey",
             { expiresIn: "3d" })
@@ -31,6 +32,7 @@ async function ClientRegister(req, res) {
             token
 
         })
+       
     } catch (error) {
         console.log(error)
         return res.status(500).jsno({

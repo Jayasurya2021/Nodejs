@@ -12,16 +12,7 @@ function App() {
   return (
     <>
       <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="dark"
-        toastClassName="bg-gray-900 text-white rounded-xl shadow-lg px-4 py-3"
-        bodyClassName="text-sm font-medium"
-        progressClassName="bg-green-500"
+       
       />
       <BrowserRouter>
         <Routes>
