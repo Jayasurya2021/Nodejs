@@ -11,6 +11,7 @@ app.use(express.json())
 app.use(cors({
     origin: process.env.FRONT_END_URL
 }))
+
 app.use("/admin", AdminRoute)
 app.use("/client", ClientRoute)
 

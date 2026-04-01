@@ -19,7 +19,7 @@ function Login() {
 
     function handleSubmit(e) {
         e.preventDefault();
-        fetchData("/login", "POST", userData)
+        fetchData("/client/login", "POST", userData)
     }
 
     useEffect(() => {
