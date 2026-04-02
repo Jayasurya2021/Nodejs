@@ -13,27 +13,27 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-   category: {
-    type: String,
-    enum: [
-      "tshirt",
-      "shirt",
-      "jeans",
-      "pants",
-      "shorts",
-      "hoodie",
-      "jacket",
-      "blazer",
-      "suit",
-      "kurta",
-      "sherwani",
-      "trackpants",
-      "sweatshirt",
-      "innerwear",
-      "socks"
-    ],
-    required: true
-  },
+    category: {
+        type: String,
+        enum: [
+            "tshirt",
+            "shirt",
+            "jeans",
+            "pants",
+            "shorts",
+            "hoodie",
+            "jacket",
+            "blazer",
+            "suit",
+            "kurta",
+            "sherwani",
+            "trackpants",
+            "sweatshirt",
+            "innerwear",
+            "socks"
+        ],
+        required: true
+    },
     brand: {
         type: String
     },
@@ -49,16 +49,20 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    image:{
+    thumbnail: {
         type: String,
-        required : true
+        required: true
     },
+    images: [{
+        type: String,
+        required: true
+    }],
     keywords: [
-    {
-      type: String
-    }
-  ]
+        {
+            type: String
+        }
+    ]
 }, { timestamps: true });
 
-const Schema =  mongoose.model("Product", productSchema);
+const Schema = mongoose.model("Product", productSchema);
 module.exports = Schema
