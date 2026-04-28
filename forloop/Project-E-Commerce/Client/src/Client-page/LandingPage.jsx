@@ -4,7 +4,7 @@ import SlideBaner from "../components/SlideBaner";
 function LandingPage() {
   return (
     <>
-      <div className="w-full">
+      <div  >
         <Navbar />
         <SlideBaner />
       </div>

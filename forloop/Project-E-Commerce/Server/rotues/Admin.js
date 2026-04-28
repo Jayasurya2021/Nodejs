@@ -1,6 +1,6 @@
 const express = require("express")
 const AdminRoute = express.Router()
-const AddProduct = require("../controller/AddProduct")
+const { AddProduct } = require("../controller/AddProduct")
 const { uploads } = require("../Middleware/ImageMiddleware")
 
 AdminRoute.post("/addproduct", uploads.fields([
