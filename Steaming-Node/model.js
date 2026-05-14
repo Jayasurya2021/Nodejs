@@ -9,13 +9,13 @@ const OtpSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    createdAt: {
+    expiresAt: {
         type: Date,
-        default: Date.now,
-        expries: 60
-
+        required: true
     }
 })
+
+OtpSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model("opt", OtpSchema)
 
