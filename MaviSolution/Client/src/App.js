@@ -8,24 +8,39 @@ import Stack from './components/Stack';
 import Process from './components/Process';
 import { CTA, Footer } from './components/CtaFooter';
 
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Register from './components/Register';
+import Login from './components/Login';
 import UserDetails from './components/UserDetails';
+
 
 function App() {
   return (
-    <div className="min-h-screen bg-bg text-[#e8f4ff] font-sans">
-      <Navbar />
-      <Hero />
-      <Marquee />
-      <Services />
-      <Metrics />
-      <Stack />
-      <Process />
-      <CTA />
-      <UserDetails />
-      <Footer />
-    </div>
+    <Router>
+      <div className="min-h-screen bg-bg text-[#e8f4ff] font-sans">
+        <Routes>
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={
+            <>
+              <Navbar />
+              <Hero />
+              <Marquee />
+              <Services />
+              <Metrics />
+              <Stack />
+              <Process />
+              <CTA />
+              <UserDetails />
+              <Footer />
+            </>
+          } />
+        </Routes>
+      </div>
+    </Router>
   );
 }
+
 
 
 export default App;

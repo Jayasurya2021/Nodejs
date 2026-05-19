@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -14,9 +16,9 @@ export default function Navbar() {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 md:px-16 py-5 transition-all duration-300 ${scrolled ? 'bg-[#050a0f]/90 backdrop-blur-md border-b border-accent/10' : 'bg-transparent'}`}>
-      <a href="#hero" className="font-mono text-xl font-medium text-accent tracking-wide">
+      <Link to="/" className="font-mono text-xl font-medium text-accent tracking-wide">
         MaVi<span className="text-[#e8f4ff]">Solution</span>
-      </a>
+      </Link>
 
       {/* Desktop links */}
       <ul className="hidden md:flex items-center gap-10">
@@ -31,6 +33,22 @@ export default function Navbar() {
           </li>
         ))}
         <li>
+          <Link
+            to="/login"
+            className="text-xs text-muted uppercase tracking-widest hover:text-accent transition-colors duration-200"
+          >
+            Login
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/register"
+            className="text-xs text-muted uppercase tracking-widest hover:text-accent transition-colors duration-200"
+          >
+            Register
+          </Link>
+        </li>
+        <li>
           <a
             href="#contact"
             className="font-mono text-xs text-accent border border-accent px-5 py-2 rounded-sm tracking-widest uppercase hover:bg-accent hover:text-bg transition-all duration-200"
@@ -39,6 +57,7 @@ export default function Navbar() {
           </a>
         </li>
       </ul>
+
 
       {/* Mobile menu button */}
       <button
@@ -65,6 +84,20 @@ export default function Navbar() {
               {l}
             </a>
           ))}
+          <Link
+            to="/login"
+            className="text-sm text-muted uppercase tracking-widest hover:text-accent transition-colors"
+            onClick={() => setMenuOpen(false)}
+          >
+            Login
+          </Link>
+          <Link
+            to="/register"
+            className="text-sm text-muted uppercase tracking-widest hover:text-accent transition-colors"
+            onClick={() => setMenuOpen(false)}
+          >
+            Register
+          </Link>
           <a
             href="#contact"
             className="font-mono text-xs text-accent border border-accent px-5 py-2 rounded-sm tracking-widest uppercase text-center hover:bg-accent hover:text-bg transition-all"
@@ -72,6 +105,7 @@ export default function Navbar() {
           >
             Get in Touch
           </a>
+
         </div>
       )}
     </nav>
