@@ -15,15 +15,7 @@ export default function Register() {
     setLoading(true)
     setMessage(null)
     try {
-      const { data, error } = await supabase.auth.signUp({ 
-        email, 
-        password,
-        options: {
-          data: {
-            full_name: name
-          }
-        }
-      })
+      const { data, error } = await supabase.auth.signUp({ email, password })
       if (error) throw error
       setMessage('Registration successful. Please check your email and then login.')
       setTimeout(() => navigate('/login'), 1200)
