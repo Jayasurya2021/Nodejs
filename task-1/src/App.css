@@ -1,0 +1,8 @@
+/* App.css — component-level overrides and supplementary styles */
+
+/* Ensure #root fills the full viewport */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
