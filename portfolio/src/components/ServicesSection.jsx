@@ -102,6 +102,7 @@ const services = [
 ───────────────────────────────────────────── */
 function ServiceRow({ service, index, activeService, setActiveService }) {
     const ref = useRef(null)
+    const [ishover, setIsHover] = useState(false)
 
     useEffect(() => {
         const el = ref.current
@@ -109,7 +110,7 @@ function ServiceRow({ service, index, activeService, setActiveService }) {
 
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if (entry.isIntersecting) {
+                if (entry.isIntersecting && !ishover) {
                     setActiveService(index)
                 }
             },
@@ -123,12 +124,20 @@ function ServiceRow({ service, index, activeService, setActiveService }) {
 
     return (
         <motion.div
+
             ref={ref}
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-80px' }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: index * 0.06 }}
-            onMouseEnter={() => setActiveService(index)}
+            onMouseEnter={() => {
+                setIsHover(true)
+                setActiveService(index)
+            }}
+            onMouseLeave={() => {
+                setIsHover(false)
+            }}
+
             className="group relative"
         >
             {/* Active left accent bar */}
@@ -395,7 +404,7 @@ export default function ServicesSection() {
                                                         {current.title}
                                                     </h4>
                                                 </div>
-                                                <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${current.accent} flex items-center justify-center shadow-lg`}>
+                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg`}>
                                                     <ArrowUpRight size={16} className="text-white" />
                                                 </div>
                                             </motion.div>

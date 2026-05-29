@@ -98,7 +98,7 @@ function StackedCard({ project, index, total }) {
     // Margin bottom dictates how long the user scrolls before the next card overlaps.
     // The gap is reduced to 40vh for a tighter stacking feel.
     // The last card is given 60vh margin so the page can scroll far enough to pin it on top of the 3rd card.
-    const scrollSpacing = index === total - 1 ? '40vh' : '40vh'
+    const scrollSpacing = index === total - 1 ? '10vh' : '10vh'
 
     return (
         <div
