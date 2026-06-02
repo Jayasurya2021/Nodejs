@@ -4,7 +4,7 @@ import { ArrowDown } from 'lucide-react';
 
 export default function HeroVideoBanner() {
     // Premium, stable stock video from Mixkit (Modern City Skyscrapers)
-    const VIDEO_URL = "https://pixabay.com/videos/digital-network-data-connection-298814/";
+    const VIDEO_URL = "https://videos.pexels.com/video-files/3255275/3255275-hd_1920_1080_25fps.mp4";
 
     return (
         <section className="relative h-screen w-full overflow-hidden bg-black" id="hero">

@@ -980,6 +980,7 @@ export default function SmokeCursor({
 
     // Named event handlers for proper cleanup
     function handleMouseDown(e) {
+      if (e.target.closest('#contact')) return;
       let pointer = pointers[0];
       let posX = scaleByPixelRatio(e.clientX);
       let posY = scaleByPixelRatio(e.clientY);
@@ -989,6 +990,7 @@ export default function SmokeCursor({
 
     let firstMouseMoveHandled = false;
     function handleMouseMove(e) {
+      if (e.target.closest('#contact')) return;
       let pointer = pointers[0];
       let posX = scaleByPixelRatio(e.clientX);
       let posY = scaleByPixelRatio(e.clientY);
@@ -1002,6 +1004,7 @@ export default function SmokeCursor({
     }
 
     function handleTouchStart(e) {
+      if (e.target.closest('#contact')) return;
       const touches = e.targetTouches;
       let pointer = pointers[0];
       for (let i = 0; i < touches.length; i++) {
@@ -1012,6 +1015,7 @@ export default function SmokeCursor({
     }
 
     function handleTouchMove(e) {
+      if (e.target.closest('#contact')) return;
       const touches = e.targetTouches;
       let pointer = pointers[0];
       for (let i = 0; i < touches.length; i++) {

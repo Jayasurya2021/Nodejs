@@ -11,7 +11,11 @@ import SmokeCursor from './Animation/SmokeCursor'
 import HeroVideoBanner from './HeroVideoBanner'
 import ProjectsSection from './ProjectsSection';
 import AboutSection from './AboutSection';
-import ServicesSection from './ServicesSection'
+import ServicesSection from './ServicesSection';
+import ContactSection from './ContactSection';
+import ContactInfoArea from './ContactInfoArea';
+import FooterSection from './FooterSection';
+import WhatsAppButton from './WhatsAppButton';
 
 /* ─────────────────────────────────────────────
    SLIDE BAR COMPONENT (replaces building banner)
@@ -176,11 +180,6 @@ function useScrollReveal(options = {}) {
    MAIN PAGE
 ───────────────────────────────────────────── */
 function MainPage() {
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [isSubmitted, setIsSubmitted] = useState(false)
-    const [formData, setFormData] = useState({
-        name: '', email: '', projectType: 'luxury-villa', message: '', agree: true
-    })
     const [activeFilter, setActiveFilter] = useState('all')
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
@@ -197,70 +196,11 @@ function MainPage() {
         }
     })
 
-    const [contactForm, setContactForm] = useState({
-        name: '', email: '', phone: '', projectType: '', message: ''
-    })
-    const [contactSubmitted, setContactSubmitted] = useState(false)
-    const [hoveredCard, setHoveredCard] = useState(null)
-    const [hoveredProject, setHoveredProject] = useState(null)
-
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 50)
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
-
-    const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target
-        setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        setIsSubmitted(true)
-        setTimeout(() => {
-            setIsSubmitted(false)
-            setIsModalOpen(false)
-            setFormData({ name: '', email: '', projectType: 'luxury-villa', message: '', agree: true })
-        }, 2500)
-    }
-
-    const handleContactChange = (e) => {
-        const { name, value } = e.target
-        setContactForm(prev => ({ ...prev, [name]: value }))
-    }
-
-    const handleContactSubmit = async (e) => {
-        e.preventDefault()
-        try {
-            const response = await fetch('http://localhost:5000/api/contact', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: contactForm.name, email: contactForm.email,
-                    phone: contactForm.phone, service: contactForm.projectType,
-                    message: contactForm.message
-                }),
-            })
-            const data = await response.json()
-            if (data.success) {
-                setContactSubmitted(true)
-                setTimeout(() => {
-                    setContactSubmitted(false)
-                    setContactForm({ name: '', email: '', phone: '', projectType: '', message: '' })
-                }, 3000)
-            } else {
-                alert('Error: ' + data.message)
-            }
-        } catch (error) {
-            // Demo mode: show success anyway
-            setContactSubmitted(true)
-            setTimeout(() => {
-                setContactSubmitted(false)
-                setContactForm({ name: '', email: '', phone: '', projectType: '', message: '' })
-            }, 3000)
-        }
-    }
 
     const portfolioItems = [
         { id: 1, title: 'Aura Heights', category: 'commercial', location: 'Dubai, UAE', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80', area: '450,000 sq ft', year: '2025' },
@@ -365,7 +305,7 @@ function MainPage() {
                     <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })}
                         style={{
                             padding: '0.75rem 1.75rem',
                             backgroundColor: '#7e22ce',
@@ -401,8 +341,8 @@ function MainPage() {
                             ))}
                         </nav>
                         <button className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: 24, padding: '14px 24px' }}
-                            onClick={() => { setMobileMenuOpen(false); setIsModalOpen(true) }}>
-                            Get Consultationxccxc
+                            onClick={() => { setMobileMenuOpen(false); document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }) }}>
+                            Get Consultation
                         </button>
                     </div>
                 </div>
@@ -419,6 +359,18 @@ function MainPage() {
 
             {/* ── WHO WE ARE SECTION ── */}
             <AboutSection />
+
+            {/* 1. CONTACT SECTION */}
+            <ContactSection />
+
+            {/* 2. CONTACT INFORMATION AREA */}
+            <ContactInfoArea />
+
+            {/* 3. WHATSAPP BUTTON */}
+            <WhatsAppButton />
+
+            {/* 4. FOOTER SECTION */}
+            <FooterSection />
         </div>
     )
 }
