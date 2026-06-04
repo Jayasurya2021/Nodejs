@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function WhatsAppButton() {
     const [isHovered, setIsHovered] = useState(false);
 
-    const phoneNumber = "910000000000"; // Replace with actual number
+    const phoneNumber = "6385467340"; // Replace with actual number
     const message = encodeURIComponent("Hello, I recently submitted a project inquiry and would like to discuss it further.");
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
 

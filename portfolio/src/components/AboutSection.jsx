@@ -82,7 +82,7 @@ export default function AboutSection() {
                                         initial={{ opacity: 0, x: -40, filter: 'blur(8px)' }}
                                         whileInView={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                                         viewport={{ once: false, amount: 0.4 }}
-                                        transition={{ duration: 0.8, ease: "easeOut" }}
+                                        transition={{ duration: 0.8, ease: "easeOut" }}sfds
                                         className="w-full max-w-[400px]"
                                     >
 
