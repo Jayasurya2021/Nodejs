@@ -24,6 +24,8 @@ function two(a, b) {
 }
 one(2, 5)
 
+
+
 //array data show in map method
 
 let arry = ["apple", "banana", "pinapple"]
