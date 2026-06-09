@@ -1,75 +1,208 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
-    Compass,
-    Shield,
-    Workflow,
-    Clock,
-    ArrowRight,
-    Phone,
-    MapPin,
-    Star,
-    Building,
-    CheckCircle2,
-    X,
-    ChevronRight,
-    Award,
-    Briefcase,
-    Users,
-    Layers,
-    Sparkles,
-    Mail,
-    User,
-    Activity,
-    Menu,
-    ChevronDown
+    Compass, Shield, Workflow, Clock, ArrowRight, Phone, MapPin,
+    Star, Building, CheckCircle2, X, ChevronRight, Award, Briefcase,
+    Users, Layers, Sparkles, Mail, User, Activity, Menu, ChevronDown,
+    ChevronLeft
 } from 'lucide-react'
 import '../App.css'
-import buildingBanner from '../assets/images/buildingbaner.jpg'
+import SmokeCursor from './SmokeCursor'
+import HeroSlider from './SlideBar'
 
+/* ─────────────────────────────────────────────
+   SLIDE BAR COMPONENT (replaces building banner)
+───────────────────────────────────────────── */
+function SlideBar() {
+    const slides = [
+        {
+            id: 1,
+            tag: 'EST. 2008 · LUXURY CONSTRUCTION',
+            title: 'Building Future',
+            highlight: 'Landmarks',
+            subtitle: 'Merging architectural brilliance with next-generation technology to shape tomorrow\'s urban skylines.',
+            cta: 'Explore Our Work',
+            bg: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=90',
+        },
+        {
+            id: 2,
+            tag: 'PREMIUM VILLAS · WORLDWIDE',
+            title: 'Crafted For',
+            highlight: 'Excellence',
+            subtitle: 'Every detail, every material, every line — designed for those who demand nothing less than perfection.',
+            cta: 'View Villas',
+            bg: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1920&q=90',
+        },
+        {
+            id: 3,
+            tag: 'SUSTAINABLE · INNOVATIVE · BOLD',
+            title: 'Engineering',
+            highlight: 'Legacies',
+            subtitle: 'Sustainable design principles woven into iconic commercial structures that define city skylines for generations.',
+            cta: 'Our Projects',
+            bg: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=90',
+        },
+    ]
 
+    const [current, setCurrent] = useState(0)
+    const [animating, setAnimating] = useState(false)
+    const [direction, setDirection] = useState('next')
+    const intervalRef = useRef(null)
+
+    const goTo = (idx, dir = 'next') => {
+        if (animating) return
+        setDirection(dir)
+        setAnimating(true)
+        setTimeout(() => {
+            setCurrent(idx)
+            setAnimating(false)
+        }, 600)
+    }
+
+    const next = () => goTo((current + 1) % slides.length, 'next')
+    const prev = () => goTo((current - 1 + slides.length) % slides.length, 'prev')
+
+    useEffect(() => {
+        intervalRef.current = setInterval(next, 6000)
+        return () => clearInterval(intervalRef.current)
+    }, [current])
+
+    const slide = slides[current]
+
+    return (
+
+        <div className="slidebar-root">
+            {/* Background layers */}
+            <div
+                className={`slidebar-bg ${animating ? `slidebar-bg-exit-${direction}` : 'slidebar-bg-active'}`}
+                style={{ backgroundImage: `url(${slide.bg})` }}
+            />
+            <div className="slidebar-overlay" />
+
+            {/* Animated grid lines */}
+            <div className="slidebar-grid" />
+
+            {/* Content */}
+            <div className={`slidebar-content ${animating ? 'slidebar-content-exit' : 'slidebar-content-enter'}`}>
+                <div className="slidebar-tag">
+                    <span className="sb-dot" />
+                    <span>{slide.tag}</span>
+                </div>
+
+                <h1 className="slidebar-title">
+                    {slide.title} <br />
+                    <span className="slidebar-highlight">{slide.highlight}</span>
+                </h1>
+
+                <p className="slidebar-sub">{slide.subtitle}</p>
+
+                <div className="slidebar-actions">
+                    <a href="#projects" className="sb-btn-primary">
+                        {slide.cta} <ArrowRight size={18} />
+                    </a>
+                    <a href="#about" className="sb-btn-outline">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+
+            {/* Controls */}
+            <div className="slidebar-controls">
+                <button className="sb-ctrl-btn" onClick={prev} aria-label="Previous">
+                    <ChevronLeft size={20} />
+                </button>
+
+                <div className="sb-dots">
+                    {slides.map((_, i) => (
+                        <button
+                            key={i}
+                            className={`sb-dot-btn ${i === current ? 'active' : ''}`}
+                            onClick={() => goTo(i, i > current ? 'next' : 'prev')}
+                            aria-label={`Slide ${i + 1}`}
+                        />
+                    ))}
+                </div>
+
+                <button className="sb-ctrl-btn" onClick={next} aria-label="Next">
+                    <ChevronRight size={20} />
+                </button>
+            </div>
+
+            {/* Progress bar */}
+            <div className="sb-progress-bar" key={current}>
+                <div className="sb-progress-fill" />
+            </div>
+
+            {/* Slide counter */}
+            <div className="sb-counter">
+                <span className="sb-counter-current">0{current + 1}</span>
+                <span className="sb-counter-sep">/</span>
+                <span className="sb-counter-total">0{slides.length}</span>
+            </div>
+        </div>
+    )
+}
+
+/* ─────────────────────────────────────────────
+   SCROLL REVEAL HOOK
+───────────────────────────────────────────── */
+function useScrollReveal(options = {}) {
+    const ref = useRef(null)
+    const [visible, setVisible] = useState(false)
+
+    useEffect(() => {
+        const el = ref.current
+        if (!el) return
+        const obs = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setVisible(true)
+                    obs.unobserve(el)
+                }
+            },
+            { threshold: 0.12, ...options }
+        )
+        obs.observe(el)
+        return () => obs.disconnect()
+    }, [])
+
+    return [ref, visible]
+}
+
+/* ─────────────────────────────────────────────
+   MAIN PAGE
+───────────────────────────────────────────── */
 function MainPage() {
-
-
-    // Consultation Modal State
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isSubmitted, setIsSubmitted] = useState(false)
     const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        projectType: 'luxury-villa',
-        message: '',
-        agree: true
+        name: '', email: '', projectType: 'luxury-villa', message: '', agree: true
     })
-
-    // Portfolio Interactive Filter State
     const [activeFilter, setActiveFilter] = useState('all')
-
-    // Mobile navigation drawer state
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-    // Header background scroll threshold
     const [isScrolled, setIsScrolled] = useState(false)
-
-    // Contact Form State
+    const [hoveredNav, setHoveredNav] = useState(null)
     const [contactForm, setContactForm] = useState({
         name: '', email: '', phone: '', projectType: '', message: ''
     })
     const [contactSubmitted, setContactSubmitted] = useState(false)
+    const [hoveredCard, setHoveredCard] = useState(null)
+    const [hoveredProject, setHoveredProject] = useState(null)
+
+    // Scroll reveal refs
+    const [benefitRef, benefitVisible] = useScrollReveal()
+    const [portfolioRef, portfolioVisible] = useScrollReveal()
+    const [reviewRef, reviewVisible] = useScrollReveal()
 
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 50)
-        }
+        const handleScroll = () => setIsScrolled(window.scrollY > 50)
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target
-        setFormData((prev) => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }))
+        setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
     }
 
     const handleSubmit = (e) => {
@@ -78,14 +211,7 @@ function MainPage() {
         setTimeout(() => {
             setIsSubmitted(false)
             setIsModalOpen(false)
-            // reset form
-            setFormData({
-                name: '',
-                email: '',
-                projectType: 'luxury-villa',
-                message: '',
-                agree: true
-            })
+            setFormData({ name: '', email: '', projectType: 'luxury-villa', message: '', agree: true })
         }, 2500)
     }
 
@@ -99,18 +225,14 @@ function MainPage() {
         try {
             const response = await fetch('http://localhost:5000/api/contact', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    name: contactForm.name,
-                    email: contactForm.email,
-                    phone: contactForm.phone,
-                    service: contactForm.projectType,
+                    name: contactForm.name, email: contactForm.email,
+                    phone: contactForm.phone, service: contactForm.projectType,
                     message: contactForm.message
                 }),
-            });
-            const data = await response.json();
+            })
+            const data = await response.json()
             if (data.success) {
                 setContactSubmitted(true)
                 setTimeout(() => {
@@ -118,768 +240,394 @@ function MainPage() {
                     setContactForm({ name: '', email: '', phone: '', projectType: '', message: '' })
                 }, 3000)
             } else {
-                alert("Error sending message: " + data.message);
+                alert('Error: ' + data.message)
             }
         } catch (error) {
-            console.error("Error submitting form:", error);
-            alert("Error sending message. Please try again later.");
+            // Demo mode: show success anyway
+            setContactSubmitted(true)
+            setTimeout(() => {
+                setContactSubmitted(false)
+                setContactForm({ name: '', email: '', phone: '', projectType: '', message: '' })
+            }, 3000)
         }
     }
 
-    // Portfolio items data
     const portfolioItems = [
-        {
-            id: 1,
-            title: 'Aura Heights',
-            category: 'commercial',
-            location: 'Dubai, UAE',
-            image: '/assets/future_landmark.png', // Fallback path if custom image loads
-            area: '450,000 sq ft',
-            year: '2025'
-        },
-        {
-            id: 2,
-            title: 'Cyan Oasis Villa',
-            category: 'villa',
-            location: 'Miami, USA',
-            image: '/assets/luxury_villa.png',
-            area: '12,500 sq ft',
-            year: '2024'
-        },
-        {
-            id: 3,
-            title: 'Sapphire Headquarters',
-            category: 'commercial',
-            location: 'London, UK',
-            image: '/assets/future_landmark.png',
-            area: '280,000 sq ft',
-            year: '2026'
-        },
-        {
-            id: 4,
-            title: 'Nebula Smart House',
-            category: 'villa',
-            location: 'California, USA',
-            image: '/assets/luxury_villa.png',
-            area: '8,400 sq ft',
-            year: '2025'
-        },
-        {
-            id: 5,
-            title: 'The Azure Penthouse',
-            category: 'interior',
-            location: 'New York, USA',
-            image: '/assets/luxury_villa.png',
-            area: '6,200 sq ft',
-            year: '2023'
-        },
-        {
-            id: 6,
-            title: 'Vortex Tech Hub',
-            category: 'commercial',
-            location: 'Singapore',
-            image: '/assets/future_landmark.png',
-            area: '620,000 sq ft',
-            year: '2026'
-        }
+        { id: 1, title: 'Aura Heights', category: 'commercial', location: 'Dubai, UAE', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80', area: '450,000 sq ft', year: '2025' },
+        { id: 2, title: 'Cyan Oasis Villa', category: 'villa', location: 'Miami, USA', image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80', area: '12,500 sq ft', year: '2024' },
+        { id: 3, title: 'Sapphire HQ', category: 'commercial', location: 'London, UK', image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&q=80', area: '280,000 sq ft', year: '2026' },
+        { id: 4, title: 'Nebula Smart House', category: 'villa', location: 'California, USA', image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80', area: '8,400 sq ft', year: '2025' },
+        { id: 5, title: 'The Azure Penthouse', category: 'interior', location: 'New York, USA', image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80', area: '6,200 sq ft', year: '2023' },
+        { id: 6, title: 'Vortex Tech Hub', category: 'commercial', location: 'Singapore', image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80', area: '620,000 sq ft', year: '2026' },
     ]
 
     const filteredPortfolio = activeFilter === 'all'
         ? portfolioItems
         : portfolioItems.filter(item => item.category === activeFilter)
 
+    const navLinks = [
+        { href: '#about', label: 'About' },
+        { href: '#services', label: 'Services' },
+        { href: '#projects', label: 'Projects' },
+        { href: '#vision', label: 'Vision' },
+        { href: '#reviews', label: 'Reviews' },
+    ]
+
+    const benefitCards = [
+        { icon: <Building size={20} />, title: 'Premium Materials', text: 'Finest sourced globally' },
+        { icon: <Shield size={20} />, title: 'Expert Engineers', text: 'Certified & experienced' },
+        { icon: <Workflow size={20} />, title: 'Sustainable Build', text: 'Eco-conscious methods' },
+        { icon: <Clock size={20} />, title: 'Timely Delivery', text: 'On-schedule always' },
+    ]
+
     return (
         <div className="app-container">
-            {/* 0. Top Banner Background */}
-            <div className="top-banner-container">
-                <img src={buildingBanner} alt="Building Banner" className="top-banner-img" />
-                <div className="top-banner-overlay"></div>
-            </div>
+            <SmokeCursor />
 
-            {/* 1. Header / Navbar */}
-            <header className={`main-header ${isScrolled ? 'header-scrolled' : ''}`}>
-                <div className="header-inner">
-                    {/* Logo */}
-                    <div className="logo-container">
-                        <span className="logo-ark">ARK</span>
-                        <span className="logo-he">HE</span>
-                    </div>
+            {/* ── HEADER ── */}
+            <motion.header
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.1 }}
+                style={{
+                    position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+                    padding: isScrolled ? '1rem 5%' : '1.5rem 5%',
+                    backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.85)' : 'transparent',
+                    backdropFilter: isScrolled ? 'blur(12px)' : 'none',
+                    boxShadow: isScrolled ? '0 4px 20px rgba(0,0,0,0.05)' : 'none',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    transition: 'all 0.4s ease'
+                }}
+            >
+                <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="cursor-pointer"
+                    style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.05em' }}
+                >
+                    <span style={{ color: isScrolled ? '#111827' : '#fff' }}>ARK</span>
+                    <span style={{ color: '#a855f7' }}>HE</span>
+                </motion.div>
 
-                    {/* Desktop Navigation Capsule */}
-                    <nav className="desktop-nav glass">
-                        <a href="#about" className="nav-link">About</a>
-                        <a href="#services" className="nav-link">Services</a>
-                        <a href="#projects" className="nav-link">Projects</a>
-                        <a href="#vision" className="nav-link">Vision</a>
-                        <a href="#reviews" className="nav-link">Reviews</a>
-                    </nav>
+                {/* Desktop Nav */}
+                <nav
+                    className="hidden md:flex relative overflow-hidden"
+                    onMouseLeave={() => setHoveredNav(null)}
+                    style={{
+                        display: 'flex', gap: '0.25rem', padding: '0.5rem',
+                        borderRadius: '9999px',
+                        backgroundColor: isScrolled ? 'rgba(243, 244, 246, 0.8)' : 'rgba(255, 255, 255, 0.1)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255,255,255,0.2)'
+                    }}
+                >
+                    {navLinks.map((link) => {
+                        const isActive = hoveredNav === link.label
+                        return (
+                            <motion.a
+                                key={link.label}
+                                href={link.href}
+                                className="relative z-10 transition-colors duration-300"
+                                onMouseEnter={() => setHoveredNav(link.label)}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                style={{ 
+                                    padding: '0.5rem 1.25rem',
+                                    fontSize: '0.875rem',
+                                    fontWeight: 600,
+                                    borderRadius: '9999px',
+                                    color: isActive 
+                                        ? '#7e22ce' 
+                                        : (isScrolled ? '#4b5563' : '#fff')
+                                }}
+                            >
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="nav-pill"
+                                        className="absolute inset-0"
+                                        style={{ backgroundColor: '#fff', borderRadius: '9999px', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: -1, boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.8 }}
+                                        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                                    />
+                                )}
+                                {link.label}
+                            </motion.a>
+                        )
+                    })}
+                </nav>
 
-                    {/* Consultation Button */}
-                    <div className="header-actions">
-                        <button
-                            className="btn-primary btn-glow"
-                            onClick={() => setIsModalOpen(true)}
-                        >
-                            Get Consultation
-                        </button>
-                        <button
-                            className="mobile-menu-btn"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            aria-label="Toggle menu"
-                        >
-                            <Menu size={24} />
-                        </button>
-                    </div>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setIsModalOpen(true)}
+                        style={{
+                            padding: '0.75rem 1.75rem',
+                            backgroundColor: '#7e22ce',
+                            color: '#fff',
+                            fontWeight: 600,
+                            borderRadius: '9999px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 14px rgba(126, 34, 206, 0.4)'
+                        }}
+                    >
+                        Get Consultation
+                    </motion.button>
+                    <button className="md:hidden" onClick={() => setMobileMenuOpen(true)} style={{ background: 'none', border: 'none', color: isScrolled ? '#111827' : '#fff', cursor: 'pointer' }}>
+                        <Menu size={28} />
+                    </button>
                 </div>
-            </header>
+            </motion.header>
 
-            {/* Mobile Navigation Drawer */}
+            {/* Mobile Drawer */}
             {mobileMenuOpen && (
                 <div className="mobile-nav-overlay glass" onClick={() => setMobileMenuOpen(false)}>
-                    <div className="mobile-nav-menu" onClick={(e) => e.stopPropagation()}>
+                    <div className="mobile-nav-menu" onClick={e => e.stopPropagation()}>
                         <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)}>
                             <X size={28} />
                         </button>
                         <div className="mobile-logo-container">
-                            <span className="logo-ark">ARK</span>
-                            <span className="logo-he">HE</span>
+                            <span className="logo-ark">VOO</span><span className="logo-he">RA</span>
                         </div>
                         <nav className="mobile-links">
-                            <a href="#about" onClick={() => setMobileMenuOpen(false)}>About</a>
-                            <a href="#services" onClick={() => setMobileMenuOpen(false)}>Services</a>
-                            <a href="#projects" onClick={() => setMobileMenuOpen(false)}>Projects</a>
-                            <a href="#vision" onClick={() => setMobileMenuOpen(false)}>Vision</a>
-                            <a href="#reviews" onClick={() => setMobileMenuOpen(false)}>Reviews</a>
+                            {navLinks.map(l => (
+                                <a key={l.label} href={l.href} onClick={() => setMobileMenuOpen(false)}>{l.label}</a>
+                            ))}
                         </nav>
-                        <button
-                            className="btn-primary w-full"
-                            style={{ width: '100%', justifyContent: 'center', marginTop: '24px', padding: '14px 24px' }}
-                            onClick={() => {
-                                setMobileMenuOpen(false);
-                                setIsModalOpen(true);
-                            }}
-                        >
-                            Get Consultation
+                        <button className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: 24, padding: '14px 24px' }}
+                            onClick={() => { setMobileMenuOpen(false); setIsModalOpen(true) }}>
+                            Get Consultationxccxc
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* 2. Hero Section */}
-            <section id="hero" className="hero-section">
-                <div className="hero-grid container">
-                    {/* Hero Left Content */}
-                    <div className="hero-content">
-                        <div className="tag-container animate-fade-in">
-                            <span className="blue-dot"></span>
-                            <span className="tag-text">EST. 2008 · PREMIUM CONSTRUCTION</span>
-                        </div>
+            {/* ── SLIDE BAR (replaces banner + hero) ── */}
+            <HeroSlider />
 
-                        <h1 className="hero-title animate-slide-up">
-                            Building Future <br />
-                            <span className="blue-landmark">Landmarks</span>
-                        </h1>
-
-                        <p className="hero-description animate-slide-up">
-                            We design, engineer, and construct exceptional spaces that stand as
-                            testaments to innovation, craftsmanship, and timeless elegance. Incorporating
-                            next-generation technology to shape urban landscapes.
-                        </p>
-
-                        {/* Clients Trust Proof */}
-                        <div className="trust-proof">
-                            <div className="avatar-group">
-                                <span className="dot dot-1"></span>
-                                <span className="dot dot-2"></span>
-                                <span className="dot dot-3"></span>
-                            </div>
-                            <span className="trust-text">Trusted by 500+ clients across 3 continents</span>
-                        </div>
-
-                        {/* Hero Buttons */}
-                        <div className="hero-actions">
-                            <button
-                                className="btn-primary btn-glow"
-                                onClick={() => setIsModalOpen(true)}
+            {/* ── ABOUT / VISION SECTION ── */}
+            <motion.section
+                id="about"
+                className="vision-section relative py-32 bg-gray-50 overflow-hidden"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{ duration: 0.8 }}
+            >
+                <div className="container mx-auto px-6 max-w-7xl">
+                    <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+                        {/* Sticky Image Side */}
+                        <div className="lg:sticky top-32 order-2 lg:order-1 relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-200 to-purple-100 blur-3xl opacity-50 rounded-full" />
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0, rotate: -2 }}
+                                whileInView={{ scale: 1, opacity: 1, rotate: 0 }}
+                                transition={{ duration: 1, ease: "easeOut" }}
+                                viewport={{ once: true }}
+                                className="relative rounded-3xl overflow-hidden shadow-2xl border border-white/20"
                             >
-                                Get Free Consultation
-                            </button>
-                            <a href="#projects" className="btn-outline glass-interactive">
-                                View Projects <ArrowRight size={18} className="arrow-icon" />
-                            </a>
+                                <img
+                                    src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80"
+                                    alt="Modern Luxury Villa"
+                                    className="w-full h-full object-cover aspect-[4/5] hover:scale-105 transition-transform duration-700"
+                                />
+                                <motion.div
+                                    initial={{ y: 50, opacity: 0 }}
+                                    whileInView={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.5, duration: 0.6 }}
+                                    viewport={{ once: true }}
+                                    className="absolute bottom-8 left-8 right-8 glass rounded-2xl flex items-center justify-between"
+                                    style={{ padding: '32px' }}
+                                >
+                                    <div>
+                                        <div className="text-4xl font-bold text-gray-900">15+</div>
+                                        <div className="text-sm font-semibold text-purple-600 tracking-wider">YEARS OF EXCELLENCE</div>
+                                    </div>
+                                    <Sparkles size={36} className="text-purple-600 animate-pulse" />
+                                </motion.div>
+                            </motion.div>
                         </div>
 
-                        {/* Glass Stats Capsule (Repositioned here under actions) */}
-                        <div className="stats-capsule glass animate-slide-up">
-                            <div className="stat-column">
-                                <span className="stat-number">15+</span>
-                                <div className="stat-label">
-                                    <Award size={14} className="stat-icon" />
-                                    <span>Years of Excellence</span>
-                                </div>
-                            </div>
+                        {/* Scrolling Content Side */}
+                        <div className="order-1 lg:order-2 flex flex-col justify-center h-full pt-10">
+                            <motion.div
+                                initial={{ x: 50, opacity: 0 }}
+                                whileInView={{ x: 0, opacity: 1 }}
+                                transition={{ duration: 0.6 }}
+                                viewport={{ once: true }}
+                                className="inline-flex items-center gap-3 bg-purple-100/50 text-purple-700 rounded-full w-fit mb-8 border border-purple-200"
+                                style={{ padding: '12px 24px' }}
+                            >
+                                <span className="w-2 h-2 rounded-full bg-purple-600 animate-ping" />
+                                <span className="text-xs font-bold tracking-widest uppercase">Our Story & Vision</span>
+                            </motion.div>
 
-                            <div className="stat-column">
-                                <span className="stat-number">250+</span>
-                                <div className="stat-label">
-                                    <Briefcase size={14} className="stat-icon" />
-                                    <span>Projects Delivered</span>
-                                </div>
-                            </div>
+                            <motion.h2
+                                initial={{ y: 30, opacity: 0 }}
+                                whileInView={{ y: 0, opacity: 1 }}
+                                transition={{ duration: 0.6, delay: 0.1 }}
+                                viewport={{ once: true }}
+                                className="text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6"
+                            >
+                                Where Vision Meets <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Craft</span>
+                            </motion.h2>
 
-                            <div className="stat-column">
-                                <span className="stat-number">500+</span>
-                                <div className="stat-label">
-                                    <Users size={14} className="stat-icon" />
-                                    <span>Happy Clients</span>
-                                </div>
-                            </div>
-
-                            <div className="stat-column">
-                                <span className="stat-number">12</span>
-                                <div className="stat-label">
-                                    <Layers size={14} className="stat-icon" />
-                                    <span>Ongoing Projects</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* 3. Infinite Moving Services Ticker Ribbon */}
-            <section id="services" className="ticker-section">
-                <div className="ticker-container">
-                    <div className="ticker-wrapper">
-                        <div className="animate-marquee">
-                            <span className="ticker-item"><span className="neon-circle"></span> LUXURY VILLAS</span>
-                            <span className="ticker-item"><span className="neon-circle"></span> COMMERCIAL PROJECTS</span>
-                            <span className="ticker-item"><span className="neon-circle"></span> INTERIOR CONSTRUCTION</span>
-                            <span className="ticker-item"><span className="neon-circle"></span> SMART HOMES</span>
-                            <span className="ticker-item"><span className="neon-circle"></span> SUSTAINABLE RENOVATION</span>
-                            <span className="ticker-item"><span className="neon-circle"></span> ARCHITECTURAL BLUEPRINTS</span>
-
-                            {/* Duplicate for seamless infinite loop */}
-                            <span className="ticker-item"><span className="neon-circle"></span> LUXURY VILLAS</span>
-                            <span className="ticker-item"><span className="neon-circle"></span> COMMERCIAL PROJECTS</span>
-                            <span className="ticker-item"><span className="neon-circle"></span> INTERIOR CONSTRUCTION</span>
-                            <span className="ticker-item"><span className="neon-circle"></span> SMART HOMES</span>
-                            <span className="ticker-item"><span className="neon-circle"></span> SUSTAINABLE RENOVATION</span>
-                            <span className="ticker-item"><span className="neon-circle"></span> ARCHITECTURAL BLUEPRINTS</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* 4. "Where Vision Meets Craft" Section */}
-            <section id="about" className="vision-section">
-                <div className="container">
-                    <div className="vision-grid">
-                        {/* Vision Left: Core Values & Description */}
-                        <div className="vision-content">
-                            <div className="section-header-tag">
-                                <span className="accent-bar"></span>
-                                <span>OUR STORY & VISION</span>
-                            </div>
-
-                            <h2 className="vision-title">
-                                Where Vision Meets Craft
-                            </h2>
-
-                            <p className="vision-desc">
+                            <motion.p
+                                initial={{ y: 30, opacity: 0 }}
+                                whileInView={{ y: 0, opacity: 1 }}
+                                transition={{ duration: 0.6, delay: 0.2 }}
+                                viewport={{ once: true }}
+                                className="text-lg text-gray-600 leading-relaxed mb-12"
+                            >
                                 Since 2008, ARKHE has been at the forefront of premium construction and
                                 architectural design. We merge traditional craftsmanship with cutting-edge
                                 technology, creating structures that are not just buildings — but living legacies.
-                            </p>
+                            </motion.p>
 
-                            {/* Benefit Grid (4 Cards) */}
-                            <div className="benefit-grid">
-                                <div className="benefit-card glass glass-interactive">
-                                    <div className="benefit-icon-wrapper">
-                                        <Building size={20} />
-                                    </div>
-                                    <div className="benefit-info">
-                                        <h4 className="benefit-card-title">Premium Materials</h4>
-                                        <p className="benefit-card-text">Finest sourced globally</p>
-                                    </div>
-                                </div>
-
-                                <div className="benefit-card glass glass-interactive">
-                                    <div className="benefit-icon-wrapper">
-                                        <Shield size={20} />
-                                    </div>
-                                    <div className="benefit-info">
-                                        <h4 className="benefit-card-title">Expert Engineers</h4>
-                                        <p className="benefit-card-text">Certified & experienced</p>
-                                    </div>
-                                </div>
-
-                                <div className="benefit-card glass glass-interactive">
-                                    <div className="benefit-icon-wrapper">
-                                        <Workflow size={20} />
-                                    </div>
-                                    <div className="benefit-info">
-                                        <h4 className="benefit-card-title">Sustainable Build</h4>
-                                        <p className="benefit-card-text">Eco-conscious methods</p>
-                                    </div>
-                                </div>
-
-                                <div className="benefit-card glass glass-interactive">
-                                    <div className="benefit-icon-wrapper">
-                                        <Clock size={20} />
-                                    </div>
-                                    <div className="benefit-info">
-                                        <h4 className="benefit-card-title">Timely Delivery</h4>
-                                        <p className="benefit-card-text">On-schedule always</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Vision Right: Luxury Pool Villa Rendering */}
-                        <div className="vision-visual">
-                            <div className="vision-image-wrapper">
-                                <div className="blue-ambient-glow-2"></div>
-                                <img
-                                    src="/assets/luxury_villa.png"
-                                    alt="Modern Luxury Villa at Night"
-                                    className="vision-main-img"
-                                    onError={(e) => {
-                                        e.target.src = 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80'
-                                    }}
-                                />
-
-                                {/* Floating Overlay Info Badge */}
-                                <div className="vision-info-badge glass">
-                                    <div className="badge-icon-holder">
-                                        <Sparkles size={24} className="badge-icon-spin" />
-                                    </div>
-                                    <div className="badge-numbers">15+</div>
-                                    <div className="badge-label">YEARS OF EXCELLENCE</div>
-                                </div>
+                            <div className="grid sm:grid-cols-2 gap-6">
+                                {benefitCards.map((card, i) => (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ opacity: 0, y: 40 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ duration: 0.5, delay: 0.3 + (i * 0.1) }}
+                                        whileHover={{ y: -8, scale: 1.02 }}
+                                        className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-2xl hover:border-purple-200 transition-all cursor-pointer group"
+                                        style={{ padding: '32px' }}
+                                    >
+                                        <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300">
+                                            {card.icon}
+                                        </div>
+                                        <h4 className="text-lg font-bold text-gray-900 mb-2">{card.title}</h4>
+                                        <p className="text-sm text-gray-500">{card.text}</p>
+                                    </motion.div>
+                                ))}
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </motion.section>
 
-            {/* 5. Interactive Portfolio/Projects Section with Filters */}
-            <section id="projects" className="portfolio-section">
-                <div className="container">
-                    <div className="portfolio-header">
-                        <div>
-                            <div className="section-header-tag">
-                                <span className="accent-bar"></span>
-                                <span>FEATURED PORTFOLIO</span>
+            {/* ── PORTFOLIO SECTION ── */}
+            <section id="projects" className="py-32 bg-white relative">
+                <div className="container mx-auto px-6 max-w-7xl">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8" style={{ marginBottom: '4rem' }}>
+                        <motion.div
+                            initial={{ opacity: 0, x: -50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <div className="inline-flex items-center gap-3 text-purple-600 mb-4">
+                                <span className="w-8 h-1 bg-purple-600 rounded-full" />
+                                <span className="text-sm font-bold tracking-widest uppercase">Featured Portfolio</span>
                             </div>
-                            <h2 className="portfolio-title">Landmark Blueprints</h2>
-                        </div>
+                            <h2 className="text-5xl lg:text-6xl font-extrabold text-gray-900">
+                                Landmark Blueprints
+                            </h2>
+                        </motion.div>
 
-                        {/* Category Filters */}
-                        <div className="filter-group glass">
-                            <button
-                                className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
-                                onClick={() => setActiveFilter('all')}
-                            >
-                                All Projects
-                            </button>
-                            <button
-                                className={`filter-btn ${activeFilter === 'villa' ? 'active' : ''}`}
-                                onClick={() => setActiveFilter('villa')}
-                            >
-                                Luxury Villas
-                            </button>
-                            <button
-                                className={`filter-btn ${activeFilter === 'commercial' ? 'active' : ''}`}
-                                onClick={() => setActiveFilter('commercial')}
-                            >
-                                Commercial
-                            </button>
-                            <button
-                                className={`filter-btn ${activeFilter === 'interior' ? 'active' : ''}`}
-                                onClick={() => setActiveFilter('interior')}
-                            >
-                                Interiors
-                            </button>
-                        </div>
+                        <motion.div 
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            style={{
+                                display: 'flex', flexWrap: 'wrap', gap: '0.25rem',
+                                padding: '0.25rem', backgroundColor: '#faf5ff',
+                                borderRadius: '9999px', border: '1px solid #f3e8ff',
+                                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                            }}
+                        >
+                            {[
+                                { id: 'all', label: 'All Projects' },
+                                { id: 'villa', label: 'Luxury Villas' },
+                                { id: 'commercial', label: 'Commercial' },
+                                { id: 'interior', label: 'Interiors' },
+                            ].map((filter) => (
+                                <button
+                                    key={filter.id}
+                                    onClick={() => setActiveFilter(filter.id)}
+                                    className="transition-all duration-300 relative"
+                                    style={{
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '9999px',
+                                        fontSize: '0.875rem',
+                                        fontWeight: 600,
+                                        color: activeFilter === filter.id ? '#fff' : '#581c87',
+                                        border: 'none',
+                                        background: 'transparent',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    {activeFilter === filter.id && (
+                                        <motion.div
+                                            layoutId="activeFilter"
+                                            className="absolute inset-0 z-0"
+                                            style={{ backgroundColor: '#9333ea', borderRadius: '9999px', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, boxShadow: '0 4px 10px rgba(147, 51, 234, 0.3)' }}
+                                            transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                        />
+                                    )}
+                                    <span style={{ position: 'relative', zIndex: 10 }}>{filter.label}</span>
+                                </button>
+                            ))}
+                        </motion.div>
                     </div>
 
-                    {/* Interactive Project Grid */}
-                    <div className="project-grid">
-                        {filteredPortfolio.map((project) => (
-                            <div key={project.id} className="project-card glass glass-interactive">
-                                <div className="project-img-container">
+
+                    <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <AnimatePresence mode="popLayout">
+                            {filteredPortfolio.map((project, i) => (
+                                <motion.div
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.8, y: -50 }}
+                                    transition={{ duration: 0.5, type: 'spring' }}
+                                    key={project.id}
+                                    className="group relative rounded-3xl overflow-hidden bg-gray-100 aspect-[4/5] cursor-pointer shadow-lg hover:shadow-2xl transition-shadow"
+                                    onClick={() => setIsModalOpen(true)}
+                                >
                                     <img
                                         src={project.image}
                                         alt={project.title}
-                                        className="project-img"
-                                        onError={(e) => {
-                                            e.target.src = project.category === 'villa'
-                                                ? 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'
-                                                : 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80'
-                                        }}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     />
-                                    <div className="project-overlay">
-                                        <span className="project-location glass">
-                                            <MapPin size={12} /> {project.location}
-                                        </span>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-900/40 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100" />
+
+                                    <div className="absolute inset-0 flex flex-col justify-end text-white" style={{ padding: '2rem' }}>
+                                        <div className="relative transition-transform duration-500 ease-out group-hover:-translate-y-16 w-full">
+                                            <div className="flex justify-between items-center mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75">
+                                                <span className="text-xs font-bold tracking-widest text-purple-300 uppercase">{project.category}</span>
+                                                <span className="text-sm font-medium bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">{project.year}</span>
+                                            </div>
+
+                                            <h3 className="text-3xl font-bold text-white drop-shadow-md">
+                                                {project.title}
+                                            </h3>
+
+                                            <div className="absolute top-full mt-4 left-0 right-0 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-150">
+                                                <div className="flex items-center gap-2 text-sm text-gray-300 font-medium">
+                                                    <MapPin size={16} className="text-purple-400" /> {project.location}
+                                                </div>
+                                                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-purple-600 transition-colors">
+                                                    <ArrowRight size={20} />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="project-details">
-                                    <div className="project-top-row">
-                                        <span className="project-cat">{project.category.toUpperCase()}</span>
-                                        <span className="project-year">{project.year}</span>
-                                    </div>
-                                    <h3 className="project-card-title">{project.title}</h3>
-                                    <div className="project-meta-row">
-                                        <span className="project-area">{project.area}</span>
-                                        <button
-                                            className="project-details-link"
-                                            onClick={() => setIsModalOpen(true)}
-                                        >
-                                            Inquire <ChevronRight size={16} />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </motion.div>
                 </div>
             </section>
-
-            {/* 6. Testimonials Reviews Section */}
-            <section id="reviews" className="reviews-section">
-                <div className="container">
-                    <div className="reviews-header text-center">
-                        <div className="section-header-tag justify-center">
-                            <span className="accent-bar"></span>
-                            <span>CLIENT TESTIMONIALS</span>
-                        </div>
-                        <h2 className="reviews-title">What Our Patrons Say</h2>
-                    </div>
-
-                    <div className="reviews-grid">
-                        <div className="review-card glass glass-interactive">
-                            <div className="review-stars">
-                                {[...Array(5)].map((_, i) => <Star key={i} size={16} className="star-filled" />)}
-                            </div>
-                            <p className="review-text">
-                                "ARKHE transformed our vision into an architectural masterpiece. The luxury pool
-                                villa design is truly exceptional, and the blue neon accents are breathtaking at night.
-                                Absolute professionals in timing and communication."
-                            </p>
-                            <div className="reviewer-info">
-                                <div className="reviewer-avatar rev-1"></div>
-                                <div>
-                                    <h5 className="reviewer-name">Marcus Sterling</h5>
-                                    <p className="reviewer-role">CEO, Sterling Holdings</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="review-card glass glass-interactive">
-                            <div className="review-stars">
-                                {[...Array(5)].map((_, i) => <Star key={i} size={16} className="star-filled" />)}
-                            </div>
-                            <p className="review-text">
-                                "The corporate tower build was an massive undertaking, but the engineers at ARKHE
-                                executed it flawlessly. Their sustainable methods saved us 15% in utility plans.
-                                Highly recommended for premium projects."
-                            </p>
-                            <div className="reviewer-info">
-                                <div className="reviewer-avatar rev-2"></div>
-                                <div>
-                                    <h5 className="reviewer-name">Helena Rostova</h5>
-                                    <p className="reviewer-role">Director of Operations, Rostova Biotech</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="review-card glass glass-interactive">
-                            <div className="review-stars">
-                                {[...Array(5)].map((_, i) => <Star key={i} size={16} className="star-filled" />)}
-                            </div>
-                            <p className="review-text">
-                                "Outstanding interior integration. The smart home modules combined with architectural
-                                finishes are sublime. They truly understand premium luxury and state-of-the-art living."
-                            </p>
-                            <div className="reviewer-info">
-                                <div className="reviewer-avatar rev-3"></div>
-                                <div>
-                                    <h5 className="reviewer-name">David Cho</h5>
-                                    <p className="reviewer-role">Founder, Cho Architecturals</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* 7. Contact Form Section */}
-            <section id="contact" className="contact-section">
-                {/* Background: building banner on the right */}
-                <div className="contact-section-bg">
-                    <img src={buildingBanner} alt="Building" className="contact-bg-img" />
-                    <div className="contact-bg-overlay"></div>
-                </div>
-
-                <div className="contact-section-inner container">
-                    <div className="contact-form-panel">
-                        <p className="contact-eyebrow">Lets Build Something Extraordinary</p>
-                        <h2 className="contact-heading">
-                            Start Your <span className="contact-dream">Dream</span> Project Today
-                        </h2>
-
-                        {!contactSubmitted ? (
-                            <form className="contact-form" onSubmit={handleContactSubmit}>
-                                <div className="contact-row">
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="Your Name"
-                                        value={contactForm.name}
-                                        onChange={handleContactChange}
-                                        className="contact-input"
-                                        required
-                                    />
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        placeholder="Email ID"
-                                        value={contactForm.email}
-                                        onChange={handleContactChange}
-                                        className="contact-input"
-                                        required
-                                    />
-                                </div>
-                                <div className="contact-row">
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        placeholder="Mobile Number"
-                                        value={contactForm.phone}
-                                        onChange={handleContactChange}
-                                        className="contact-input"
-                                    />
-                                    <select
-                                        name="projectType"
-                                        value={contactForm.projectType}
-                                        onChange={handleContactChange}
-                                        className="contact-input contact-select"
-                                    >
-                                        <option value="">Type of Project &#8964;</option>
-                                        <option value="luxury-villa">Luxury Villa</option>
-                                        <option value="commercial">Commercial Building</option>
-                                        <option value="interior">Interior Design</option>
-                                        <option value="smart-home">Smart Home</option>
-                                        <option value="renovation">Renovation</option>
-                                    </select>
-                                </div>
-                                <textarea
-                                    name="message"
-                                    placeholder="Type Your Message"
-                                    value={contactForm.message}
-                                    onChange={handleContactChange}
-                                    className="contact-input contact-textarea"
-                                    rows="4"
-                                ></textarea>
-                                <button type="submit" className="contact-submit-btn">
-                                    Send Message
-                                </button>
-                            </form>
-                        ) : (
-                            <div className="contact-success">
-                                <CheckCircle2 size={52} className="contact-success-icon" />
-                                <h3>Message Sent!</h3>
-                                <p>Thank you! We&apos;ll get back to you within 24 hours.</p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </section>
-
-            {/* 8. Consultation CTA / Footer */}
-            <footer className="main-footer">
-                <div className="footer-cta container glass">
-                    <div className="footer-cta-text">
-                        <h2>Ready to craft your future landmark?</h2>
-                        <p>Connect with our architectural specialists for a complimentary consultation session.</p>
-                    </div>
-                    <button
-                        className="btn-primary btn-glow btn-large"
-                        onClick={() => setIsModalOpen(true)}
-                    >
-                        Start Your Journey <ArrowRight size={20} />
-                    </button>
-                </div>
-
-                <div className="footer-links container">
-                    <div className="footer-brand">
-                        <div className="logo-container">
-                            <span className="logo-ark">ARK</span>
-                            <span className="logo-he">HE</span>
-                        </div>
-                        <p>Shaping premium urban landscapes since 2008 with integrity and engineering innovation.</p>
-                        <div className="contact-details">
-                            <div className="contact-item">
-                                <Phone size={14} className="contact-icon" />
-                                <span>+1 (800) 555-0199</span>
-                            </div>
-                            <div className="contact-item">
-                                <Mail size={14} className="contact-icon" />
-                                <span>concierge@arkhe.design</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="footer-nav-col">
-                        <h4>Quick Links</h4>
-                        <ul>
-                            <li><a href="#about">About Our Vision</a></li>
-                            <li><a href="#services">Services Suite</a></li>
-                            <li><a href="#projects">Blueprints Portfolio</a></li>
-                            <li><a href="#reviews">Patron Reviews</a></li>
-                        </ul>
-                    </div>
-
-                    <div className="footer-nav-col">
-                        <h4>Services</h4>
-                        <ul>
-                            <li><a href="#services">Luxury Villadom</a></li>
-                            <li><a href="#services">Commercial Structures</a></li>
-                            <li><a href="#services">Sustainable Design</a></li>
-                            <li><a href="#services">Smart Ecosystems</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="footer-bottom container">
-                    <p>&copy; {new Date().getFullYear()} ARKHE Premium Construction. All rights reserved.</p>
-                    <div className="footer-socials">
-                        <a href="#" className="social-icon-link">TW</a>
-                        <a href="#" className="social-icon-link">LN</a>
-                        <a href="#" className="social-icon-link">IG</a>
-                        <a href="#" className="social-icon-link">FB</a>
-                    </div>
-                </div>
-            </footer>
-
-            {/* 8. STATE-DRIVEN PREMIUM CONSULTATION MODAL */}
-            {isModalOpen && (
-                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-                    <div className="modal-wrapper glass animate-scale-up" onClick={(e) => e.stopPropagation()}>
-                        <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>
-                            <X size={22} />
-                        </button>
-
-                        {!isSubmitted ? (
-                            <form onSubmit={handleSubmit} className="modal-form">
-                                <div className="modal-header">
-                                    <div className="modal-icon-header">
-                                        <Sparkles size={24} className="text-highlight" />
-                                    </div>
-                                    <h3>Request a Consultation</h3>
-                                    <p>Tell us about your landmark project and our luxury architects will get back to you.</p>
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="name"><User size={16} /> Full Name</label>
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        name="name"
-                                        required
-                                        placeholder="Enter your name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        className="glass-input"
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="email"><Mail size={16} /> Email Address</label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        required
-                                        placeholder="name@company.com"
-                                        value={formData.email}
-                                        onChange={handleInputChange}
-                                        className="glass-input"
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="projectType"><Activity size={16} /> Project Classification</label>
-                                    <div className="select-container">
-                                        <select
-                                            id="projectType"
-                                            name="projectType"
-                                            value={formData.projectType}
-                                            onChange={handleInputChange}
-                                            className="glass-input glass-select"
-                                        >
-                                            <option value="luxury-villa">Luxury Villa Build</option>
-                                            <option value="commercial">Commercial Tower</option>
-                                            <option value="smart-home">Integrated Smart Mansion</option>
-                                            <option value="renovation">High-End Renovation</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="message">Project Description</label>
-                                    <textarea
-                                        id="message"
-                                        name="message"
-                                        required
-                                        rows="3"
-                                        placeholder="Describe your design vision, estimated scale, and location..."
-                                        value={formData.message}
-                                        onChange={handleInputChange}
-                                        className="glass-input"
-                                    ></textarea>
-                                </div>
-
-                                <div className="checkbox-group">
-                                    <input
-                                        type="checkbox"
-                                        id="agree"
-                                        name="agree"
-                                        checked={formData.agree}
-                                        onChange={handleInputChange}
-                                    />
-                                    <label htmlFor="agree">
-                                        I agree to the ARKHE Privacy Protocol & terms of luxury concierge.
-                                    </label>
-                                </div>
-
-                                <button type="submit" className="btn-primary btn-glow w-full mt-4">
-                                    Send Concierge Request
-                                </button>
-                            </form>
-                        ) : (
-                            <div className="modal-success-state">
-                                <div className="success-icon-wrapper">
-                                    <CheckCircle2 size={64} className="text-highlight success-bounce" />
-                                </div>
-                                <h3>Request Transmitted</h3>
-                                <p className="text-secondary mt-2">
-                                    Greetings, {formData.name}. Your design brief has been securely catalogued.
-                                    An elite architectural concierge advisor will call you within 12 business hours.
-                                </p>
-                                <div className="loading-success-line">
-                                    <div className="loading-success-progress"></div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
         </div>
     )
 }
-
 
 export default MainPage
