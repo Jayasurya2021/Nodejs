@@ -26,9 +26,9 @@ const Todo = () => {
                 <input type="text" value={task} placeholder='task' onChange={(e) => setTask(e.target.value)} />
                 <button type='submit'>add Task</button>
                 <h1>tasks</h1>
-                {listTask.length <= 0 ? "No Tasks Available" : listTask.map((e, i) => (
+                {listTask.length === 0 ? "No Tasks Available" : listTask.map((e, i) => (
                     <div key={i}>
-                        <h5>{JSON.stringify(e)}</h5>
+                        <h5>{e}</h5>
                         <button type='button' onClick={() => deleteTask(i)}>
                             delete
                         </button>
