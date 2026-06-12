@@ -9,5 +9,14 @@ const students =
         company: {}
     }];
 
+    function totalMarks(...marks) {
+    return marks.reduce((acc, curr) => acc + curr, 0)
+}
 
-    module.exports = students
+module.exports = totalMarks
+
+
+    module.exports = {
+        students,
+        totalMarks
+    }

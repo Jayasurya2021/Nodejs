@@ -1,6 +1,5 @@
 const { add, sub } = require("./math.js")
-const student = require("./students.js")
-const totalMarks = require("./utils.js")
+const { students, totalMarks } = require("./students.js")
 // Task 6: Default Parameters Task Create a function welcomeUser(). 
 // Requirements: If name is passed → print name If no name passed → print
 //  "Guest" Example welcomeUser(); welcomeUser("Ravi");
@@ -41,5 +40,5 @@ console.log(sub(30, 10))
 //  company: {} } ]; Export this array. utils.js Create and Export: Function 1
 //  calculateTotalMarks(...marks) Use Rest Parameter. Return total marks.
 
-console.log(student)
+console.log(students)
 console.log(totalMarks(30, 40, 50, 60))
