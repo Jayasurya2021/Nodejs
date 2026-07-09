@@ -1,23 +1,34 @@
 const mongoose = require('mongoose');
 
-const reviewSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  name: { type: String, required: true },
-  rating: { type: Number, required: true },
-  comment: { type: String, required: true }
-}, {
-  timestamps: true
+const variantSchema = new mongoose.Schema({
+  size: { type: String },
+  color: { type: String },
+  colorCode: { type: String },
+  stock: { type: Number, default: 0 },
+  sku: { type: String },
+  additionalPrice: { type: Number, default: 0 }
+});
+
+const specificationSchema = new mongoose.Schema({
+  key: { type: String, required: true },
+  value: { type: String, required: true }
 });
 
 const productSchema = new mongoose.Schema({
-  name: {
+  title: {
     type: String,
-    required: [true, 'Please add a product name'],
-    trim: true
+    required: [true, 'Please add a product title'],
+    trim: true,
+    index: true
+  },
+  slug: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  shortDescription: {
+    type: String,
+    required: true
   },
   description: {
     type: String,
@@ -28,39 +39,77 @@ const productSchema = new mongoose.Schema({
     required: [true, 'Please add a price'],
     default: 0
   },
+  offerPrice: {
+    type: Number
+  },
+  discount: {
+    type: Number, // Percentage 0-100
+    default: 0
+  },
+  stock: {
+    type: Number,
+    required: true,
+    default: 0
+  },
+  brand: {
+    type: String,
+    required: true,
+    index: true
+  },
+  category: {
+    type: String,
+    required: true,
+    index: true
+  },
+  subCategory: {
+    type: String
+  },
   images: [
     {
       url: { type: String, required: true },
       public_id: { type: String }
     }
   ],
-  brand: {
-    type: String,
-    required: true
+  thumbnail: {
+    url: { type: String },
+    public_id: { type: String }
   },
-  category: {
-    type: String,
-    required: true
-  },
-  sizes: [{
-    type: String,
-    enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL', '30', '32', '34', '36', 'One Size']
-  }],
-  colors: [{
-    name: { type: String },
-    hex: { type: String }
-  }],
-  material: {
+  variants: [variantSchema],
+  specifications: [specificationSchema],
+  features: [{
     type: String
+  }],
+  tags: [{
+    type: String,
+    index: true
+  }],
+  searchKeywords: [{
+    type: String,
+    index: true
+  }],
+  ratingSummary: {
+    averageRating: { type: Number, default: 0 },
+    totalReviews: { type: Number, default: 0 },
+    ratings: {
+      5: { type: Number, default: 0 },
+      4: { type: Number, default: 0 },
+      3: { type: Number, default: 0 },
+      2: { type: Number, default: 0 },
+      1: { type: Number, default: 0 }
+    }
   },
-  countInStock: {
-    type: Number,
-    required: true,
-    default: 0
+  status: {
+    type: String,
+    enum: ['active', 'draft', 'archived'],
+    default: 'active'
   },
-  discount: {
-    type: Number, // Percentage 0-100
-    default: 0
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  updatedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   },
   isNewArrival: {
     type: Boolean,
@@ -69,24 +118,18 @@ const productSchema = new mongoose.Schema({
   isTrending: {
     type: Boolean,
     default: false
-  },
-  isLimitedEdition: {
-    type: Boolean,
-    default: false
-  },
-  reviews: [reviewSchema],
-  rating: {
-    type: Number,
-    required: true,
-    default: 0
-  },
-  numReviews: {
-    type: Number,
-    required: true,
-    default: 0
   }
 }, {
   timestamps: true
+});
+
+// Text index for optimized full-text search
+productSchema.index({
+  title: 'text',
+  brand: 'text',
+  category: 'text',
+  tags: 'text',
+  searchKeywords: 'text'
 });
 
 const Product = mongoose.model('Product', productSchema);

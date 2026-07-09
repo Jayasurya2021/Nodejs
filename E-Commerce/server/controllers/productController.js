@@ -1,15 +1,16 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const Product = require('../models/productModel');
+const { generateKeywords } = require('../utils/geminiAI');
 
 // @desc    Fetch all products with pagination, filtering & sorting
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-  const pageSize = Number(req.query.pageSize) || 12;
-  const page = Number(req.query.pageNumber) || 1;
+  const pageSize = Number(req.query.limit) || 12;
+  const page = Number(req.query.page) || 1;
   const keyword = req.query.keyword
     ? {
-        name: {
+        title: {
           $regex: req.query.keyword,
           $options: 'i',
         },
@@ -20,6 +21,8 @@ const getProducts = asyncHandler(async (req, res) => {
   if (req.query.category) filter.category = req.query.category;
   if (req.query.brand) filter.brand = req.query.brand;
   if (req.query.isNewArrival) filter.isNewArrival = req.query.isNewArrival === 'true';
+  if (req.query.status) filter.status = req.query.status;
+  else filter.status = 'active'; // Default to active products for public view
   
   // Price filter
   if (req.query.minPrice || req.query.maxPrice) {
@@ -67,22 +70,63 @@ const getProductById = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get related products
+// @route   GET /api/products/:id/related
+// @access  Public
+const getRelatedProducts = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  
+  if (!product) {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+
+  // Create an aggregation pipeline to find related products based on priority
+  // Priority: 1. Category, 2. Brand, 3. Tags, 4. AI Keywords
+  const relatedProducts = await Product.aggregate([
+    {
+      $match: {
+        _id: { $ne: product._id }, // Exclude current product
+        status: 'active'
+      }
+    },
+    {
+      $addFields: {
+        score: {
+          $add: [
+            { $cond: [{ $eq: ['$category', product.category] }, 10, 0] },
+            { $cond: [{ $eq: ['$brand', product.brand] }, 8, 0] },
+            { $size: { $setIntersection: ['$tags', product.tags || []] } },
+            { $size: { $setIntersection: ['$searchKeywords', product.searchKeywords || []] } }
+          ]
+        }
+      }
+    },
+    { $match: { score: { $gt: 0 } } },
+    { $sort: { score: -1, 'ratingSummary.averageRating': -1 } },
+    { $limit: 8 }
+  ]);
+
+  res.json(relatedProducts);
+});
+
 // @desc    Create a product
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
+  // Generate initial dummy product for admin to edit
   const product = new Product({
-    name: 'Sample name',
+    title: 'Sample Product Title',
+    slug: 'sample-product-slug-' + Date.now(),
+    shortDescription: 'Sample short description',
+    description: 'Sample detailed description',
     price: 0,
-    user: req.user._id,
+    brand: 'Sample Brand',
+    category: 'Sample Category',
+    stock: 0,
+    createdBy: req.user._id,
     images: [{ url: 'https://via.placeholder.com/600x800?text=Premium+Fashion' }],
-    brand: 'Sample brand',
-    category: 'Sample category',
-    countInStock: 0,
-    numReviews: 0,
-    description: 'Sample description',
-    sizes: ['M', 'L'],
-    colors: [{ name: 'Black', hex: '#000000' }]
+    status: 'draft'
   });
 
   const createdProduct = await product.save();
@@ -93,23 +137,45 @@ const createProduct = asyncHandler(async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 const updateProduct = asyncHandler(async (req, res) => {
-  const { name, price, description, images, brand, category, countInStock, sizes, colors, isNewArrival, isTrending, discount } = req.body;
-
   const product = await Product.findById(req.params.id);
 
   if (product) {
-    product.name = name || product.name;
-    product.price = price || product.price;
-    product.description = description || product.description;
-    product.images = images || product.images;
-    product.brand = brand || product.brand;
-    product.category = category || product.category;
-    product.countInStock = countInStock || product.countInStock;
-    product.sizes = sizes || product.sizes;
-    product.colors = colors || product.colors;
-    product.isNewArrival = isNewArrival !== undefined ? isNewArrival : product.isNewArrival;
-    product.isTrending = isTrending !== undefined ? isTrending : product.isTrending;
-    product.discount = discount !== undefined ? discount : product.discount;
+    // Update simple fields
+    const fieldsToUpdate = [
+      'title', 'slug', 'shortDescription', 'description', 'price', 
+      'offerPrice', 'discount', 'stock', 'brand', 'category', 'subCategory', 
+      'images', 'thumbnail', 'variants', 'specifications', 'features', 
+      'tags', 'status', 'isNewArrival', 'isTrending'
+    ];
+
+    fieldsToUpdate.forEach(field => {
+      if (req.body[field] !== undefined) {
+        product[field] = req.body[field];
+      }
+    });
+
+    product.updatedBy = req.user._id;
+
+    // Call Gemini AI to generate searchKeywords automatically
+    // We do this if title, description, category, brand, tags, or features have changed
+    // To simplify, we generate it on every update that provides these fields
+    if (
+      req.body.title || req.body.description || req.body.category || 
+      req.body.brand || req.body.tags || req.body.features
+    ) {
+      const keywords = await generateKeywords({
+        title: product.title,
+        description: product.description,
+        category: product.category,
+        brand: product.brand,
+        tags: product.tags,
+        features: product.features
+      });
+
+      if (keywords && keywords.length > 0) {
+        product.searchKeywords = keywords;
+      }
+    }
 
     const updatedProduct = await product.save();
     res.json(updatedProduct);
@@ -134,60 +200,11 @@ const deleteProduct = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Create new review
-// @route   POST /api/products/:id/reviews
-// @access  Private
-const createProductReview = asyncHandler(async (req, res) => {
-  const { rating, comment } = req.body;
-
-  const product = await Product.findById(req.params.id);
-
-  if (product) {
-    const alreadyReviewed = product.reviews.find(
-      (r) => r.user.toString() === req.user._id.toString()
-    );
-
-    if (alreadyReviewed) {
-      res.status(400);
-      throw new Error('Product already reviewed');
-    }
-
-    const review = {
-      name: req.user.name,
-      rating: Number(rating),
-      comment,
-      user: req.user._id
-    };
-
-    product.reviews.push(review);
-
-    product.numReviews = product.reviews.length;
-    product.rating =
-      product.reviews.reduce((acc, item) => item.rating + acc, 0) /
-      product.reviews.length;
-
-    await product.save();
-    res.status(201).json({ message: 'Review added' });
-  } else {
-    res.status(404);
-    throw new Error('Product not found');
-  }
-});
-
-// @desc    Get top rated products
-// @route   GET /api/products/top
-// @access  Public
-const getTopProducts = asyncHandler(async (req, res) => {
-  const products = await Product.find({}).sort({ rating: -1 }).limit(4);
-  res.json(products);
-});
-
 module.exports = {
   getProducts,
   getProductById,
+  getRelatedProducts,
   createProduct,
   updateProduct,
-  deleteProduct,
-  createProductReview,
-  getTopProducts
+  deleteProduct
 };

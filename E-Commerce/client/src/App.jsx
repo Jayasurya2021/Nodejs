@@ -11,6 +11,9 @@ import Checkout from './pages/Checkout';
 import Profile from './pages/Profile';
 import OrderDetails from './pages/OrderDetails';
 
+import AdminDashboard from './pages/admin/AdminDashboard';
+import ProductEdit from './pages/admin/ProductEdit';
+
 function App() {
   return (
     <Router>
@@ -26,6 +29,10 @@ function App() {
           <Route path="checkout" element={<Checkout />} />
           <Route path="profile" element={<Profile />} />
           <Route path="order/:id" element={<OrderDetails />} />
+          
+          {/* Admin Routes */}
+          <Route path="admin/dashboard" element={<AdminDashboard />} />
+          <Route path="admin/product/:id/edit" element={<ProductEdit />} />
         </Route>
       </Routes>
     </Router>

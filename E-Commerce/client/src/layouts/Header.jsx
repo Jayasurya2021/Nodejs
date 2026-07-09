@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiShoppingBag, FiUser, FiSearch, FiMenu, FiX } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
+import SearchInput from '../components/Search/SearchInput';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const { cartItems } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.auth);
@@ -59,7 +61,10 @@ const Header = () => {
 
             {/* Icons */}
             <div className="flex items-center space-x-6">
-              <button className="hover:scale-110 transition-transform">
+              <button 
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                className="hover:scale-110 transition-transform"
+              >
                 <FiSearch className="w-5 h-5" />
               </button>
               
@@ -86,6 +91,13 @@ const Header = () => {
             </div>
           </div>
         </div>
+
+        {/* Search Dropdown */}
+        <AnimatePresence>
+          {isSearchOpen && (
+            <SearchInput isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+          )}
+        </AnimatePresence>
       </motion.header>
 
       {/* Mobile Menu Overlay */}
