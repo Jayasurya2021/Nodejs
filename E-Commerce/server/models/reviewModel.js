@@ -15,7 +15,9 @@ const reviewSchema = new mongoose.Schema({
   rating: { type: Number, required: true },
   title: { type: String, required: true },
   comment: { type: String, required: true },
-  images: [{ type: String }] // Array of image URLs
+  images: [{ type: String }], // Array of image URLs
+  isVerifiedPurchase: { type: Boolean, default: false },
+  helpfulCount: { type: Number, default: 0 }
 }, {
   timestamps: true
 });

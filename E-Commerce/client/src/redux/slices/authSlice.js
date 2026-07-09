@@ -62,9 +62,9 @@ export const logout = createAsyncThunk('auth/logout', async () => {
 // Google Sign-In
 export const googleLogin = createAsyncThunk(
   'auth/googleLogin',
-  async (googleToken, thunkAPI) => {
+  async ({ token, role }, thunkAPI) => {
     try {
-      const response = await axios.post(API_URL + 'google', { token: googleToken });
+      const response = await axios.post(API_URL + 'google', { token, role });
       if (response.data?.user) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }

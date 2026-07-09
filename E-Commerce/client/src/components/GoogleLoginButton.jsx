@@ -33,8 +33,9 @@ const Spinner = () => (
  *
  * @param {string} redirectTo - Path to navigate to after successful authentication
  * @param {string} label     - Button text label (default: "Continue with Google")
+ * @param {string} role      - Role chosen if registering (default: 'buyer')
  */
-const GoogleLoginButton = ({ redirectTo = '/', label = 'Continue with Google' }) => {
+const GoogleLoginButton = ({ redirectTo = '/', label = 'Continue with Google', role = 'buyer' }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -52,7 +53,7 @@ const GoogleLoginButton = ({ redirectTo = '/', label = 'Continue with Google' })
     }
 
     try {
-      const resultAction = await dispatch(googleLogin(tokenResponse.access_token));
+      const resultAction = await dispatch(googleLogin({ token: tokenResponse.access_token, role }));
 
       if (googleLogin.fulfilled.match(resultAction)) {
         toast.success('Welcome to LUXE! 🎉', {

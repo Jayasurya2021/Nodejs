@@ -22,7 +22,7 @@ const getProducts = asyncHandler(async (req, res) => {
   if (req.query.brand) filter.brand = req.query.brand;
   if (req.query.isNewArrival) filter.isNewArrival = req.query.isNewArrival === 'true';
   if (req.query.status) filter.status = req.query.status;
-  else filter.status = 'active'; // Default to active products for public view
+  else filter.status = 'approved'; // Default to approved products for public view
   
   // Price filter
   if (req.query.minPrice || req.query.maxPrice) {
@@ -87,7 +87,7 @@ const getRelatedProducts = asyncHandler(async (req, res) => {
     {
       $match: {
         _id: { $ne: product._id }, // Exclude current product
-        status: 'active'
+        status: 'approved'
       }
     },
     {
@@ -112,9 +112,9 @@ const getRelatedProducts = asyncHandler(async (req, res) => {
 
 // @desc    Create a product
 // @route   POST /api/products
-// @access  Private/Admin
+// @access  Private/Seller or Admin
 const createProduct = asyncHandler(async (req, res) => {
-  // Generate initial dummy product for admin to edit
+  // Generate initial dummy product for seller/admin to edit
   const product = new Product({
     title: 'Sample Product Title',
     slug: 'sample-product-slug-' + Date.now(),
@@ -124,9 +124,10 @@ const createProduct = asyncHandler(async (req, res) => {
     brand: 'Sample Brand',
     category: 'Sample Category',
     stock: 0,
+    seller: req.user._id,
     createdBy: req.user._id,
     images: [{ url: 'https://via.placeholder.com/600x800?text=Premium+Fashion' }],
-    status: 'draft'
+    status: req.user.role === 'admin' ? 'approved' : 'pending'
   });
 
   const createdProduct = await product.save();
@@ -135,11 +136,16 @@ const createProduct = asyncHandler(async (req, res) => {
 
 // @desc    Update a product
 // @route   PUT /api/products/:id
-// @access  Private/Admin
+// @access  Private/Seller or Admin
 const updateProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
 
   if (product) {
+    if (req.user.role === 'seller' && product.seller.toString() !== req.user._id.toString()) {
+      res.status(403);
+      throw new Error('Not authorized to update this product');
+    }
+
     // Update simple fields
     const fieldsToUpdate = [
       'title', 'slug', 'shortDescription', 'description', 'price', 
@@ -150,6 +156,9 @@ const updateProduct = asyncHandler(async (req, res) => {
 
     fieldsToUpdate.forEach(field => {
       if (req.body[field] !== undefined) {
+        if (field === 'status' && req.user.role !== 'admin') {
+          return; // Sellers cannot manually change status
+        }
         product[field] = req.body[field];
       }
     });
@@ -187,11 +196,16 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 // @desc    Delete a product
 // @route   DELETE /api/products/:id
-// @access  Private/Admin
+// @access  Private/Seller or Admin
 const deleteProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
 
   if (product) {
+    if (req.user.role === 'seller' && product.seller.toString() !== req.user._id.toString()) {
+      res.status(403);
+      throw new Error('Not authorized to delete this product');
+    }
+    
     await Product.deleteOne({ _id: product._id });
     res.json({ message: 'Product removed' });
   } else {

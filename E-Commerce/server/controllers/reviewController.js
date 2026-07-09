@@ -1,6 +1,7 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const Review = require('../models/reviewModel');
 const Product = require('../models/productModel');
+const Order = require('../models/orderModel');
 
 // @desc    Get reviews for a product
 // @route   GET /api/reviews/product/:productId
@@ -44,7 +45,6 @@ const createReview = asyncHandler(async (req, res) => {
     throw new Error('Product not found');
   }
 
-  // Check if user already reviewed
   const alreadyReviewed = await Review.findOne({
     product: productId,
     user: req.user._id
@@ -55,6 +55,18 @@ const createReview = asyncHandler(async (req, res) => {
     throw new Error('You have already reviewed this product');
   }
 
+  // Enforce Verified Purchase Rule
+  const hasPurchased = await Order.findOne({
+    user: req.user._id,
+    isPaid: true,
+    'orderItems.product': productId
+  });
+
+  if (!hasPurchased) {
+    res.status(400);
+    throw new Error('You can only review products you have purchased.');
+  }
+
   const review = await Review.create({
     product: productId,
     user: req.user._id,
@@ -62,7 +74,8 @@ const createReview = asyncHandler(async (req, res) => {
     rating: Number(rating),
     title,
     comment,
-    images: images || []
+    images: images || [],
+    isVerifiedPurchase: true
   });
 
   res.status(201).json({ message: 'Review added', review });

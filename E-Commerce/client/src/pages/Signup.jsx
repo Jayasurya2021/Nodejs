@@ -15,13 +15,13 @@ const BENEFITS = [
 ];
 
 const Signup = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', confirmPassword: '', role: 'buyer' });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const [passwordStrength, setPasswordStrength] = useState(0);
 
-  const { name, email, password, confirmPassword } = formData;
+  const { name, email, password, confirmPassword, role } = formData;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { search } = useLocation();
@@ -53,7 +53,7 @@ const Signup = () => {
       toast.error('Passwords do not match');
       return;
     }
-    dispatch(register({ name, email, password }));
+    dispatch(register({ name, email, password, role }));
   };
 
   const strengthColors = ['bg-gray-200', 'bg-red-400', 'bg-yellow-400', 'bg-blue-400', 'bg-green-500'];
@@ -185,6 +185,24 @@ const Signup = () => {
               </Link>
             </motion.p>
           </div>
+
+          {/* Role Selection */}
+          <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="mb-6 flex p-1 bg-gray-100 rounded-lg">
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, role: 'buyer' })}
+              className={`flex-1 py-2 text-sm font-semibold rounded-md transition-colors ${role === 'buyer' ? 'bg-white text-black shadow' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Buyer Account
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, role: 'seller' })}
+              className={`flex-1 py-2 text-sm font-semibold rounded-md transition-colors ${role === 'seller' ? 'bg-white text-black shadow' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Seller Account
+            </button>
+          </motion.div>
 
           {/* Form */}
           <form onSubmit={onSubmit} className="space-y-5">
@@ -328,6 +346,7 @@ const Signup = () => {
               <GoogleLoginButton
                 redirectTo={redirect || '/'}
                 label="Sign up with Google"
+                role={role}
               />
 
               <button type="button" className="flex items-center justify-center gap-2 py-3.5 border border-gray-200 hover:border-black hover:bg-gray-50 transition-all duration-300 text-sm font-medium text-gray-700">

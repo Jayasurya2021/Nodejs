@@ -2,13 +2,15 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiShoppingBag, FiUser, FiSearch, FiMenu, FiX } from 'react-icons/fi';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../redux/slices/authSlice';
 import SearchInput from '../components/Search/SearchInput';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const { cartItems } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.auth);
@@ -21,12 +23,44 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { title: 'New Arrivals', path: '/shop?isNewArrival=true' },
-    { title: 'Shop', path: '/shop' },
-    { title: 'Collections', path: '/collections' },
-    { title: 'About', path: '/about' },
-  ];
+  // Role-based navigation
+  const getNavLinks = () => {
+    if (!user) {
+      return [
+        { title: 'New Arrivals', path: '/shop?isNewArrival=true' },
+        { title: 'Shop', path: '/shop' },
+        { title: 'Collections', path: '/collections' },
+        { title: 'About', path: '/about' },
+      ];
+    }
+    
+    switch(user.role) {
+      case 'seller':
+        return [
+          { title: 'Dashboard', path: '/seller/dashboard' },
+          { title: 'Products', path: '/seller/products' },
+          { title: 'Orders', path: '/seller/orders' },
+          { title: 'Analytics', path: '/seller/analytics' },
+        ];
+      case 'admin':
+        return [
+          { title: 'Dashboard', path: '/admin/dashboard' },
+          { title: 'Users', path: '/admin/users' },
+          { title: 'Products', path: '/admin/products' },
+          { title: 'Orders', path: '/admin/orders' },
+        ];
+      case 'buyer':
+      default:
+        return [
+          { title: 'Shop', path: '/shop' },
+          { title: 'Wishlist', path: '/wishlist' },
+          { title: 'Orders', path: '/orders' },
+          { title: 'Profile', path: '/profile' },
+        ];
+    }
+  };
+
+  const navLinks = getNavLinks();
 
   return (
     <>
@@ -68,18 +102,20 @@ const Header = () => {
                 <FiSearch className="w-5 h-5" />
               </button>
               
-              <Link to={user ? '/profile' : '/login'} className="hover:scale-110 transition-transform">
+              <Link to={user ? (user.role === 'admin' ? '/admin/dashboard' : user.role === 'seller' ? '/seller/dashboard' : '/profile') : '/login'} className="hover:scale-110 transition-transform">
                 <FiUser className="w-5 h-5" />
               </Link>
               
-              <Link to="/cart" className="relative hover:scale-110 transition-transform">
-                <FiShoppingBag className="w-5 h-5" />
-                {cartItems.length > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
-                    {cartItems.length}
-                  </span>
-                )}
-              </Link>
+              {(!user || user.role === 'buyer') && (
+                <Link to="/cart" className="relative hover:scale-110 transition-transform">
+                  <FiShoppingBag className="w-5 h-5" />
+                  {cartItems.length > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+                      {cartItems.length}
+                    </span>
+                  )}
+                </Link>
+              )}
 
               {/* Mobile menu button */}
               <button
@@ -146,7 +182,13 @@ const Header = () => {
 
               <div className="mt-auto pt-6 border-t border-border">
                 {user ? (
-                  <button className="w-full py-3 bg-primary text-white font-medium tracking-wider uppercase rounded hover:bg-black transition-colors">
+                  <button 
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      dispatch(logout());
+                    }}
+                    className="w-full py-3 bg-primary text-white font-medium tracking-wider uppercase rounded hover:bg-black transition-colors"
+                  >
                     Logout
                   </button>
                 ) : (

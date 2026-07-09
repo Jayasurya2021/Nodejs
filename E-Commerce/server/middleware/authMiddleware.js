@@ -35,4 +35,34 @@ const admin = (req, res, next) => {
   }
 };
 
-module.exports = { protect, admin };
+// Seller middleware
+const isSeller = (req, res, next) => {
+  if (req.user && req.user.role === 'seller') {
+    next();
+  } else {
+    res.status(403);
+    throw new Error('Not authorized as seller');
+  }
+};
+
+// Buyer middleware
+const isBuyer = (req, res, next) => {
+  if (req.user && req.user.role === 'buyer') {
+    next();
+  } else {
+    res.status(403);
+    throw new Error('Not authorized as buyer');
+  }
+};
+
+// Seller or Admin middleware
+const isSellerOrAdmin = (req, res, next) => {
+  if (req.user && (req.user.role === 'seller' || req.user.role === 'admin')) {
+    next();
+  } else {
+    res.status(403);
+    throw new Error('Not authorized as seller or admin');
+  }
+};
+
+module.exports = { protect, admin, isSeller, isBuyer, isSellerOrAdmin };

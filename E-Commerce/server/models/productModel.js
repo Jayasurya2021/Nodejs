@@ -100,8 +100,13 @@ const productSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['active', 'draft', 'archived'],
-    default: 'active'
+    enum: ['pending', 'approved', 'rejected', 'archived'],
+    default: 'pending'
+  },
+  seller: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

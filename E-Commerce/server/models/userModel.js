@@ -51,8 +51,8 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
+    enum: ['buyer', 'seller', 'admin'],
+    default: 'buyer'
   },
   addresses: [addressSchema],
   wishlist: [{
@@ -69,11 +69,11 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Encrypt password using bcrypt
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
-    next();
-  }
+// Encrypt password using bcrypt before saving
+// Skip if password was not modified, or if the user has no password (Google-only users)
+userSchema.pre("save", async function () {
+  if (!this.password) return;
+  if (!this.isModified("password")) return;
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
@@ -81,6 +81,7 @@ userSchema.pre('save', async function(next) {
 
 // Match user entered password to hashed password in database
 userSchema.methods.matchPassword = async function(enteredPassword) {
+  if (!enteredPassword) return false;
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

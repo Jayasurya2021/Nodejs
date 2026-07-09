@@ -1,3 +1,9 @@
+/**
+ * @file authController.js
+ * @description Authentication controllers for local and Google Sign-In.
+ * All async errors propagate to the global errorHandler via asyncHandler.
+ */
+
 const asyncHandler = require('../middleware/asyncHandler');
 const User = require('../models/userModel');
 const generateToken = require('../utils/generateToken');
@@ -6,34 +12,61 @@ const axios = require('axios');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// @desc    Auth user & get token
+// ─── Local Auth ──────────────────────────────────────────────────────────────
+
+// @desc    Authenticate user & issue JWT
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    res.status(400);
+    throw new Error('Please provide email and password');
+  }
+
   const user = await User.findOne({ email }).select('+password');
 
-  if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id);
-
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role
-    });
-  } else {
+  if (!user) {
     res.status(401);
     throw new Error('Invalid email or password');
   }
+
+  if (user.authProvider === 'google' && !user.password) {
+    res.status(400);
+    throw new Error('This account uses Google Sign-In.');
+  }
+
+  if (!(await user.matchPassword(password))) {
+    res.status(401);
+    throw new Error('Invalid email or password');
+  }
+
+  generateToken(res, user._id);
+
+  res.json({
+    success: true,
+    message: "Login successful",
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      profileImage: user.profileImage
+    }
+  });
 });
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, role } = req.body;
+
+  if (!name || !email || !password) {
+    res.status(400);
+    throw new Error('Please provide name, email and password');
+  }
 
   const userExists = await User.findOne({ email });
 
@@ -42,45 +75,53 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
-  const user = await User.create({
-    name,
-    email,
-    password
-  });
+  let userRole = 'buyer';
+  if (role === 'seller') {
+    userRole = 'seller';
+  }
 
-  if (user) {
-    generateToken(res, user._id);
+  const user = await User.create({ name, email, password, role: userRole });
 
-    res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role
-    });
-  } else {
+  if (!user) {
     res.status(400);
     throw new Error('Invalid user data');
   }
+
+  generateToken(res, user._id);
+
+  res.status(201).json({
+    success: true,
+    message: "Login successful",
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      profileImage: user.profileImage
+    }
+  });
 });
 
-// @desc    Google Sign In
+// ─── Google OAuth ────────────────────────────────────────────────────────────
+
+// @desc    Sign in / register with Google
 // @route   POST /api/auth/google
 // @access  Public
-const googleSignIn = asyncHandler(async (req, res, next) => {
-  const { token } = req.body;
+const googleSignIn = asyncHandler(async (req, res) => {
+  const { token, role } = req.body;
 
   if (!token) {
     res.status(400);
-    return next(new Error('No token provided'));
+    throw new Error('No Google token provided');
   }
 
   let email, name, picture, sub;
 
-  // Determine token type: id_token (3-part JWT) vs access_token (opaque string)
+  // Distinguish between an id_token (3-part JWT) and an access_token (opaque)
   const isIdToken = token.split('.').length === 3;
 
   if (isIdToken) {
-    // --- ID Token flow (e.g., from GoogleLogin credential) ---
+    // ── ID Token flow ──────────────────────────────────────────────────────
     let payload;
     try {
       const ticket = await client.verifyIdToken({
@@ -90,57 +131,58 @@ const googleSignIn = asyncHandler(async (req, res, next) => {
       payload = ticket.getPayload();
     } catch {
       res.status(401);
-      return next(new Error('Invalid or expired Google ID token'));
+      throw new Error('Invalid or expired Google ID token');
     }
-    email   = payload.email;
-    name    = payload.name;
-    picture = payload.picture;
-    sub     = payload.sub;
+    ({ email, name, picture, sub } = payload);
   } else {
-    // --- Access Token flow (from useGoogleLogin hook) ---
+    // ── Access Token flow (from useGoogleLogin hook) ───────────────────────
     let data;
     try {
-      const response = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.get(
+        'https://www.googleapis.com/oauth2/v3/userinfo',
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       data = response.data;
     } catch {
       res.status(401);
-      return next(new Error('Invalid or expired Google access token'));
+      throw new Error('Invalid or expired Google access token');
     }
-    email   = data.email;
-    name    = data.name;
-    picture = data.picture;
-    sub     = data.sub;
+    ({ email, name, picture, sub } = data);
   }
 
   if (!email) {
     res.status(400);
-    return next(new Error('Could not retrieve email from Google. Please ensure email access is granted.'));
+    throw new Error('Could not retrieve email from Google. Please grant email access.');
   }
 
-  // Find or create user by email
+  // Find existing user or create a new Google-only account
   let user = await User.findOne({ email });
 
   if (user) {
-    // Link Google account if not already linked, update profile image if changed
+    // Link Google ID / update avatar if needed
     let dirty = false;
-    if (!user.googleId)                   { user.googleId = sub;        dirty = true; }
-    if (user.profileImage !== picture)    { user.profileImage = picture; dirty = true; }
+    if (!user.googleId)                { user.googleId = sub;        dirty = true; }
+    if (user.profileImage !== picture) { user.profileImage = picture; dirty = true; }
     if (dirty) await user.save();
   } else {
-    // New Google-only user — no password required
+    let userRole = 'buyer';
+    if (role === 'seller') {
+      userRole = 'seller';
+    }
+
+    // New Google user — password field intentionally omitted
     user = await User.create({
       name,
       email,
       googleId: sub,
       profileImage: picture,
       authProvider: 'google',
-      emailVerified: true
+      emailVerified: true,
+      role: userRole
     });
   }
 
-  // Issue JWT cookie (same as local auth)
+  // Issue the same HTTP-only JWT cookie used by local auth
   generateToken(res, user._id);
 
   res.status(200).json({
@@ -156,8 +198,9 @@ const googleSignIn = asyncHandler(async (req, res, next) => {
   });
 });
 
+// ─── Profile ─────────────────────────────────────────────────────────────────
 
-// @desc    Logout user / clear cookie
+// @desc    Logout — clear JWT cookie
 // @route   POST /api/auth/logout
 // @access  Private
 const logoutUser = asyncHandler(async (req, res) => {
@@ -165,55 +208,64 @@ const logoutUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     expires: new Date(0)
   });
-  res.status(200).json({ message: 'Logged out successfully' });
+  res.status(200).json({ success: true, message: 'Logged out successfully' });
 });
 
-// @desc    Get user profile
+// @desc    Get current user's profile
 // @route   GET /api/auth/profile
 // @access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
-  if (user) {
-    res.json({
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  res.json({
+    success: true,
+    user: {
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
+      profileImage: user.profileImage,
       addresses: user.addresses
-    });
-  } else {
-    res.status(404);
-    throw new Error('User not found');
-  }
+    }
+  });
 });
 
-// @desc    Update user profile
+// @desc    Update current user's profile
 // @route   PUT /api/auth/profile
 // @access  Private
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
 
-  if (user) {
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-
-    if (req.body.password) {
-      user.password = req.body.password;
-    }
-
-    const updatedUser = await user.save();
-
-    res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      role: updatedUser.role
-    });
-  } else {
+  if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
+
+  user.name  = req.body.name  || user.name;
+  user.email = req.body.email || user.email;
+
+  // Only update password if explicitly provided
+  if (req.body.password) {
+    user.password = req.body.password;
+  }
+
+  const updatedUser = await user.save();
+
+  res.json({
+    success: true,
+    user: {
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      profileImage: updatedUser.profileImage
+    }
+  });
 });
 
 module.exports = {
