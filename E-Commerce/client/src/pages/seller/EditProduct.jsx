@@ -22,6 +22,7 @@ const EditProduct = () => {
   const fileInputRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
@@ -64,10 +65,74 @@ const EditProduct = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
     setImages(files);
     setImagePreviews(files.map(file => URL.createObjectURL(file)));
+
+    if (files.length > 0) {
+      setIsAnalyzing(true);
+      const toastId = toast.loading('AI is analyzing product colors...');
+      try {
+        const formData = new FormData();
+        files.forEach(file => formData.append('images', file));
+
+        const { data } = await axios.post('/api/vision/detect-colors', formData, {
+          withCredentials: true,
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+
+        if (data.variants && data.variants.length > 0) {
+          let lowConfidenceCount = 0;
+          
+          setVariants(prevVariants => {
+            let updatedVariants = [...prevVariants];
+            
+            data.variants.forEach(aiVariant => {
+              if (aiVariant.confidence < 80) {
+                lowConfidenceCount++;
+                return;
+              }
+
+              const variantFiles = files.filter(f => aiVariant.images.includes(f.name));
+              const variantPreviews = variantFiles.map(f => URL.createObjectURL(f));
+
+              const existingIndex = updatedVariants.findIndex(
+                v => v.color.toLowerCase() === aiVariant.colorName.toLowerCase()
+              );
+
+              if (existingIndex >= 0) {
+                updatedVariants[existingIndex].images = [...(updatedVariants[existingIndex].images || []), ...variantFiles];
+                updatedVariants[existingIndex].imagePreviews = [...(updatedVariants[existingIndex].imagePreviews || []), ...variantPreviews];
+              } else {
+                updatedVariants.push({
+                  color: aiVariant.colorName,
+                  colorCode: aiVariant.colorHex,
+                  size: '',
+                  stock: 0,
+                  images: variantFiles,
+                  imagePreviews: variantPreviews,
+                  existingImages: []
+                });
+              }
+            });
+            return updatedVariants;
+          });
+
+          toast.success('Variants automatically generated!', { id: toastId });
+          if (lowConfidenceCount > 0) {
+            toast.error('Unable to detect the product color confidently. Please select the color manually.', { duration: 5000 });
+          }
+        } else {
+          toast.dismiss(toastId);
+        }
+      } catch (error) {
+        toast.error('Failed to analyze images automatically.', { id: toastId });
+        console.error(error);
+      } finally {
+        setIsAnalyzing(false);
+      }
+    }
   };
 
   const addVariant = () => {
@@ -248,11 +313,17 @@ const EditProduct = () => {
             <div>
               <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Main Product Images</label>
               <div 
-                onClick={() => fileInputRef.current.click()}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors cursor-pointer"
+                onClick={() => !isAnalyzing && fileInputRef.current.click()}
+                className={`border-2 border-dashed border-gray-300 rounded-lg p-6 text-center transition-colors ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'}`}
               >
-                <Upload size={24} className="mx-auto text-gray-400 mb-2" />
-                <p className="text-sm font-bold text-gray-600">Click to update main images</p>
+                {isAnalyzing ? (
+                  <div className="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                ) : (
+                  <Upload size={24} className="mx-auto text-gray-400 mb-2" />
+                )}
+                <p className="text-sm font-bold text-gray-600">
+                  {isAnalyzing ? 'Analyzing colors...' : 'Click to update main images'}
+                </p>
               </div>
               <input 
                 type="file" 
