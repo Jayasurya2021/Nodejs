@@ -19,7 +19,7 @@ const ProductCard = ({ product }) => {
   const handleAction = (e, action) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!user) {
+    if (!user || Object.keys(user).length === 0) {
       dispatch({ type: 'ui/openLoginModal' });
       return;
     }

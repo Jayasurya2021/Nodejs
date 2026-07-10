@@ -25,7 +25,7 @@ const Header = () => {
 
   // Role-based navigation
   const getNavLinks = () => {
-    if (!user) {
+    if (!user || Object.keys(user).length === 0) {
       return [
         { title: 'Home', path: '/' },
         { title: 'Products', path: '/shop' },
@@ -105,14 +105,14 @@ const Header = () => {
                 <FiSearch className="w-5 h-5" />
               </button>
               
-              <Link to={user ? (user.role === 'admin' ? '/admin/dashboard' : user.role === 'seller' ? '/seller/dashboard' : '/profile') : '/login'} className="hover:scale-110 transition-transform">
+              <Link to={(user && Object.keys(user).length > 0) ? (user.role === 'admin' ? '/admin/dashboard' : user.role === 'seller' ? '/seller/dashboard' : '/profile') : '/login'} className="hover:scale-110 transition-transform">
                 <FiUser className="w-5 h-5" />
               </Link>
               
-              {(!user || user.role === 'buyer') && (
+              {(!user || Object.keys(user).length === 0 || user.role === 'buyer') && (
                 <button 
                   onClick={() => {
-                    if (!user) {
+                    if (!user || Object.keys(user).length === 0) {
                       dispatch({ type: 'ui/openLoginModal' });
                     } else {
                       window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/cart' }));
@@ -193,7 +193,7 @@ const Header = () => {
               </nav>
 
               <div className="mt-auto pt-6 border-t border-border">
-                {user ? (
+                {user && Object.keys(user).length > 0 ? (
                   <button 
                     onClick={() => {
                       setIsMobileMenuOpen(false);

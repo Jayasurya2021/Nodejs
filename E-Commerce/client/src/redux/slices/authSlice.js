@@ -5,9 +5,16 @@ import axios from 'axios';
 let user = JSON.parse(localStorage.getItem('user'));
 
 // Fix for corrupted localStorage from previous bug
-if (user && user.user && user.success !== undefined) {
-  user = user.user;
-  localStorage.setItem('user', JSON.stringify(user));
+if (user) {
+  if (user.user && user.success !== undefined) {
+    user = user.user;
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+  // If it's an empty object, treat it as null
+  if (Object.keys(user).length === 0) {
+    user = null;
+    localStorage.removeItem('user');
+  }
 }
 
 const initialState = {

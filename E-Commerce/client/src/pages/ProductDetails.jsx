@@ -94,7 +94,7 @@ const ProductDetails = () => {
   };
 
   const handleAddToCart = () => {
-    if (!user) return dispatch({ type: 'ui/openLoginModal' });
+    if (!user || Object.keys(user).length === 0) return dispatch({ type: 'ui/openLoginModal' });
     
     const stockAvailable = selectedVariant ? selectedVariant.stock : product.stock;
     if (stockAvailable === 0) { 
@@ -117,7 +117,7 @@ const ProductDetails = () => {
   };
 
   const toggleWishlist = async () => {
-    if (!user) {
+    if (!user || Object.keys(user).length === 0) {
       dispatch({ type: 'ui/openLoginModal' });
       return;
     }
@@ -139,7 +139,7 @@ const ProductDetails = () => {
 
   const submitReviewHandler = async (e) => {
     e.preventDefault();
-    if (!user) {
+    if (!user || Object.keys(user).length === 0) {
       toast.error('Please login to submit a review');
       navigate('/login?redirect=/product/' + id);
       return;
