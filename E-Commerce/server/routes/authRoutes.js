@@ -6,7 +6,8 @@ const {
   logoutUser,
   getUserProfile,
   updateUserProfile,
-  googleSignIn
+  googleSignIn,
+  selectRole
 } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -15,5 +16,6 @@ router.post('/login', loginUser);
 router.post('/logout', logoutUser);
 router.post('/google', googleSignIn);
 router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
+router.patch('/select-role', protect, selectRole);
 
 module.exports = router;

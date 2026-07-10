@@ -155,6 +155,8 @@ const googleSignIn = asyncHandler(async (req, res) => {
     throw new Error('Could not retrieve email from Google. Please grant email access.');
   }
 
+  let requireRole = false;
+
   // Find existing user or create a new Google-only account
   let user = await User.findOne({ email });
 
@@ -164,13 +166,18 @@ const googleSignIn = asyncHandler(async (req, res) => {
     if (!user.googleId)                { user.googleId = sub;        dirty = true; }
     if (user.profileImage !== picture) { user.profileImage = picture; dirty = true; }
     if (dirty) await user.save();
+    
+    // If an existing user somehow has 'pending' role, we should redirect them to complete profile
+    if (user.role === 'pending') {
+      requireRole = true;
+    }
   } else {
-    let userRole = 'buyer';
-    if (role === 'seller') {
-      userRole = 'seller';
+    // New Google user — password field intentionally omitted
+    let userRole = role || 'pending'; // Default new google users to pending so they can choose
+    if (userRole === 'pending') {
+      requireRole = true;
     }
 
-    // New Google user — password field intentionally omitted
     user = await User.create({
       name,
       email,
@@ -188,6 +195,7 @@ const googleSignIn = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Google Sign-In successful',
+    requireRole,
     user: {
       _id: user._id,
       name: user.name,
@@ -268,11 +276,53 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Select role for new Google users
+// @route   PATCH /api/auth/select-role
+// @access  Private (Requires valid JWT but maybe pending role)
+const selectRole = asyncHandler(async (req, res) => {
+  const { role } = req.body;
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  if (role !== 'buyer' && role !== 'seller') {
+    res.status(400);
+    throw new Error('Invalid role selected');
+  }
+
+  // Only allow updating role if it's currently pending (or if we want to allow switching, but usually just for pending)
+  if (user.role !== 'pending' && user.role !== 'buyer' && user.role !== 'seller') {
+    res.status(400);
+    throw new Error('Role cannot be changed');
+  }
+
+  user.role = role;
+  const updatedUser = await user.save();
+
+  // Re-issue token just in case
+  generateToken(res, updatedUser._id);
+
+  res.json({
+    success: true,
+    user: {
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      profileImage: updatedUser.profileImage
+    }
+  });
+});
+
 module.exports = {
   loginUser,
   registerUser,
   logoutUser,
   getUserProfile,
   updateUserProfile,
-  googleSignIn
+  googleSignIn,
+  selectRole
 };

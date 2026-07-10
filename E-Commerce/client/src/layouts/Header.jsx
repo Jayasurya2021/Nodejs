@@ -39,24 +39,28 @@ const Header = () => {
       case 'seller':
         return [
           { title: 'Dashboard', path: '/seller/dashboard' },
-          { title: 'Add Product', path: '/seller/product/new' },
-          { title: 'My Products', path: '/seller/products' },
+          { title: 'Products', path: '/seller/products' },
           { title: 'Orders', path: '/seller/orders' },
+          { title: 'Profile', path: '/profile' }
         ];
       case 'admin':
         return [
           { title: 'Dashboard', path: '/admin/dashboard' },
-          { title: 'Users', path: '/admin/users' },
           { title: 'Products', path: '/admin/products' },
+          { title: 'Users', path: '/admin/users' },
           { title: 'Orders', path: '/admin/orders' },
+        ];
+      case 'pending':
+        return [
+          { title: 'Complete Profile', path: '/complete-profile' }
         ];
       case 'buyer':
       default:
         return [
           { title: 'Home', path: '/' },
-          { title: 'Products', path: '/shop' },
-          { title: 'Categories', path: '/categories' },
+          { title: 'Shop', path: '/shop' },
           { title: 'Wishlist', path: '/wishlist' },
+          { title: 'Cart', path: '/cart' },
           { title: 'Orders', path: '/orders' },
           { title: 'Profile', path: '/profile' },
         ];

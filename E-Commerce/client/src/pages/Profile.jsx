@@ -64,10 +64,9 @@ const Profile = () => {
           </div>
           
           <div className="flex flex-col space-y-2">
-            <button className="text-left py-3 px-4 bg-black text-white text-sm font-semibold tracking-widest uppercase">My Orders</button>
-            <button className="text-left py-3 px-4 hover:bg-gray-50 text-gray-700 text-sm font-semibold tracking-widest uppercase transition-colors">Wishlist</button>
-            <button className="text-left py-3 px-4 hover:bg-gray-50 text-gray-700 text-sm font-semibold tracking-widest uppercase transition-colors">Addresses</button>
-            <button className="text-left py-3 px-4 hover:bg-gray-50 text-gray-700 text-sm font-semibold tracking-widest uppercase transition-colors">Account Settings</button>
+            <button onClick={() => navigate('/profile')} className="text-left py-3 px-4 bg-black text-white text-sm font-semibold tracking-widest uppercase">My Orders</button>
+            <button onClick={() => navigate('/wishlist')} className="text-left py-3 px-4 hover:bg-gray-50 text-gray-700 text-sm font-semibold tracking-widest uppercase transition-colors">Wishlist</button>
+            <button onClick={() => navigate('/addresses')} className="text-left py-3 px-4 hover:bg-gray-50 text-gray-700 text-sm font-semibold tracking-widest uppercase transition-colors">Addresses</button>
           </div>
         </div>
 

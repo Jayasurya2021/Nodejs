@@ -21,6 +21,7 @@ axios.interceptors.response.use(
     if (status === 401) {
       // Unauthorized
       localStorage.removeItem('user'); // Clear user if session expired
+      window.dispatchEvent(new CustomEvent('app-logout'));
       window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/login' }));
     } else if (status === 403) {
       // Forbidden

@@ -30,8 +30,16 @@ const Signup = () => {
   const redirect = new URLSearchParams(search).get('redirect') || '/';
 
   useEffect(() => {
-    if (isError) toast.error(message);
-    if (isSuccess || user) navigate(redirect);
+    if (isError) {
+      toast.error(message);
+    }
+    if (isSuccess || user) {
+      if (user && user.role === 'seller') {
+        navigate('/seller/dashboard');
+      } else {
+        navigate(redirect);
+      }
+    }
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch, redirect]);
 

@@ -20,9 +20,14 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // If roles are specified and user role is not included, redirect to home
+  // If user is pending and trying to access a non-pending route, redirect to complete-profile
+  if (user.role === 'pending' && !allowedRoles.includes('pending')) {
+    return <Navigate to="/complete-profile" replace />;
+  }
+
+  // If roles are specified and user role is not included, redirect to forbidden
   if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/forbidden" replace />;
   }
 
   return <Outlet />;

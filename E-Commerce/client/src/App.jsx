@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { forceLogout } from './redux/slices/authSlice';
 import { Toaster } from 'react-hot-toast';
 import Layout from './layouts/Layout';
 import Home from './pages/Home';
@@ -10,6 +12,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Checkout from './pages/Checkout';
 import Profile from './pages/Profile';
+import CompleteProfile from './pages/CompleteProfile';
 import OrderDetails from './pages/OrderDetails';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -33,9 +36,10 @@ import EditProduct from './pages/seller/EditProduct';
 import LoginModal from './components/LoginModal';
 import { Categories, Brands, Contact, FAQ, Reviews, SellerList, Offers, Blogs, PrivacyPolicy, Terms, ShippingPolicy } from './pages/StaticPages';
 
-const GlobalNavigateListener = () => {
+const GlobalEventListener = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleNavigate = (e) => {
@@ -43,9 +47,18 @@ const GlobalNavigateListener = () => {
         navigate(e.detail);
       }
     };
+    const handleLogout = () => {
+      dispatch(forceLogout());
+    };
+    
     window.addEventListener('app-navigate', handleNavigate);
-    return () => window.removeEventListener('app-navigate', handleNavigate);
-  }, [navigate, location.pathname]);
+    window.addEventListener('app-logout', handleLogout);
+    
+    return () => {
+      window.removeEventListener('app-navigate', handleNavigate);
+      window.removeEventListener('app-logout', handleLogout);
+    };
+  }, [navigate, location.pathname, dispatch]);
 
   return null;
 };
@@ -53,7 +66,7 @@ const GlobalNavigateListener = () => {
 function App() {
   return (
     <Router>
-      <GlobalNavigateListener />
+      <GlobalEventListener />
       <Toaster position="top-center" reverseOrder={false} />
       <LoginModal />
       <Routes>
@@ -67,7 +80,7 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="faq" element={<FAQ />} />
           <Route path="reviews" element={<Reviews />} />
-          <Route path="sellers" element={<SellerList />} />
+          <Route path="sellers" element={<SellerList />} /> 
           <Route path="offers" element={<Offers />} />
           <Route path="blogs" element={<Blogs />} />
           <Route path="privacy-policy" element={<PrivacyPolicy />} />
@@ -82,6 +95,11 @@ function App() {
           <Route element={<GuestRoute />}>
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<Signup />} />
+          </Route>
+
+          {/* Pending Profile Route */}
+          <Route element={<ProtectedRoute allowedRoles={['pending']} />}>
+            <Route path="complete-profile" element={<CompleteProfile />} />
           </Route>
 
           {/* Buyer Protected Routes (For logged in buyers, also allowed for other roles depending on logic, but typically buyer/admin) */}

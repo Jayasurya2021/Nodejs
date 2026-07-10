@@ -78,6 +78,33 @@ export const googleLogin = createAsyncThunk(
   async ({ token, role }, thunkAPI) => {
     try {
       const response = await axios.post(API_URL + 'google', { token, role });
+      
+      // If user requires role selection, we still save the pending user so they are authenticated
+      // for the /complete-profile page
+      if (response.data?.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      
+      return {
+        user: response.data.user,
+        requireRole: response.data.requireRole || false
+      };
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Select Role for new Google Users
+export const selectRole = createAsyncThunk(
+  'auth/selectRole',
+  async ({ role }, thunkAPI) => {
+    try {
+      const response = await axios.patch(API_URL + 'select-role', { role });
       if (response.data?.user) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
@@ -102,6 +129,10 @@ export const authSlice = createSlice({
       state.isError = false;
       state.message = '';
     },
+    forceLogout: (state) => {
+      state.user = null;
+      localStorage.removeItem('user');
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -143,16 +174,32 @@ export const authSlice = createSlice({
       .addCase(googleLogin.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.user = action.payload;
+        state.user = action.payload.user;
+        // If the backend says requireRole, we can optionally use it in the component, 
+        // but typically checking user.role === 'pending' is sufficient.
       })
       .addCase(googleLogin.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
         state.user = null;
+      })
+      // Select Role
+      .addCase(selectRole.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(selectRole.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.user = action.payload;
+      })
+      .addCase(selectRole.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
       });
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset, forceLogout } = authSlice.actions;
 export default authSlice.reducer;
