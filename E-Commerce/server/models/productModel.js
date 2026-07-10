@@ -1,10 +1,25 @@
 const mongoose = require('mongoose');
 
+const sizeSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  stock: { type: Number, default: 0, required: true }
+});
+
+const fabricSchema = new mongoose.Schema({
+  material: { type: String },
+  gsm: { type: String },
+  fit: { type: String },
+  fabricType: { type: String },
+  pattern: { type: String },
+  sleeveType: { type: String },
+  additionalInfo: { type: String }
+});
+
 const variantSchema = new mongoose.Schema({
-  size: { type: String },
   color: { type: String },
   colorCode: { type: String },
-  stock: { type: Number, default: 0 },
+  sizes: [sizeSchema],
+  fabricQuality: fabricSchema,
   sku: { type: String },
   additionalPrice: { type: Number, default: 0 },
   images: [
