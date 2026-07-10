@@ -256,9 +256,9 @@ const Login = () => {
                 <input type="checkbox" id="remember-me" name="remember-me" className="w-4 h-4 accent-black rounded" />
                 <span className="text-sm text-gray-500">Remember me</span>
               </label>
-              <a href="#" className="text-sm text-black font-medium hover:text-gray-500 transition-colors">
-                Forgot password?
-              </a>
+              <Link to="/forgot-password" className="text-sm text-black font-medium hover:text-gray-500 transition-colors">
+                Forgot your password?
+              </Link>
             </motion.div>
 
             {/* Submit Button */}
@@ -333,9 +333,9 @@ const Login = () => {
             className="mt-8 text-xs text-gray-400 text-center"
           >
             By signing in, you agree to our{' '}
-            <a href="#" className="underline hover:text-black transition-colors">Terms of Service</a>{' '}
+            <Link to="/terms" className="underline hover:text-black transition-colors">Terms of Service</Link>{' '}
             and{' '}
-            <a href="#" className="underline hover:text-black transition-colors">Privacy Policy</a>
+            <Link to="/privacy-policy" className="underline hover:text-black transition-colors">Privacy Policy</Link>
           </motion.p>
         </motion.div>
       </div>

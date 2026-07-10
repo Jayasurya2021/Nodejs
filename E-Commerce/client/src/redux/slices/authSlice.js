@@ -2,7 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 // Get user from localStorage
-const user = JSON.parse(localStorage.getItem('user'));
+let user = JSON.parse(localStorage.getItem('user'));
+
+// Fix for corrupted localStorage from previous bug
+if (user && user.user && user.success !== undefined) {
+  user = user.user;
+  localStorage.setItem('user', JSON.stringify(user));
+}
 
 const initialState = {
   user: user ? user : null,
@@ -20,10 +26,10 @@ export const register = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const response = await axios.post(API_URL + 'register', userData);
-      if (response.data) {
-        localStorage.setItem('user', JSON.stringify(response.data));
+      if (response.data?.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
       }
-      return response.data;
+      return response.data.user || response.data;
     } catch (error) {
       const message =
         (error.response &&
@@ -40,10 +46,10 @@ export const register = createAsyncThunk(
 export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
   try {
     const response = await axios.post(API_URL + 'login', user);
-    if (response.data) {
-      localStorage.setItem('user', JSON.stringify(response.data));
+    if (response.data?.user) {
+      localStorage.setItem('user', JSON.stringify(response.data.user));
     }
-    return response.data;
+    return response.data.user || response.data;
   } catch (error) {
     const message =
       (error.response && error.response.data && error.response.data.message) ||

@@ -27,10 +27,11 @@ const Header = () => {
   const getNavLinks = () => {
     if (!user) {
       return [
-        { title: 'New Arrivals', path: '/shop?isNewArrival=true' },
-        { title: 'Shop', path: '/shop' },
-        { title: 'Collections', path: '/collections' },
-        { title: 'About', path: '/about' },
+        { title: 'Home', path: '/' },
+        { title: 'Products', path: '/shop' },
+        { title: 'Categories', path: '/categories' },
+        { title: 'Login', path: '/login' },
+        { title: 'Register', path: '/signup' },
       ];
     }
     
@@ -38,9 +39,9 @@ const Header = () => {
       case 'seller':
         return [
           { title: 'Dashboard', path: '/seller/dashboard' },
-          { title: 'Products', path: '/seller/products' },
+          { title: 'Add Product', path: '/seller/product/new' },
+          { title: 'My Products', path: '/seller/products' },
           { title: 'Orders', path: '/seller/orders' },
-          { title: 'Analytics', path: '/seller/analytics' },
         ];
       case 'admin':
         return [
@@ -52,7 +53,9 @@ const Header = () => {
       case 'buyer':
       default:
         return [
-          { title: 'Shop', path: '/shop' },
+          { title: 'Home', path: '/' },
+          { title: 'Products', path: '/shop' },
+          { title: 'Categories', path: '/categories' },
           { title: 'Wishlist', path: '/wishlist' },
           { title: 'Orders', path: '/orders' },
           { title: 'Profile', path: '/profile' },
@@ -107,14 +110,23 @@ const Header = () => {
               </Link>
               
               {(!user || user.role === 'buyer') && (
-                <Link to="/cart" className="relative hover:scale-110 transition-transform">
+                <button 
+                  onClick={() => {
+                    if (!user) {
+                      dispatch({ type: 'ui/openLoginModal' });
+                    } else {
+                      window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/cart' }));
+                    }
+                  }}
+                  className="relative hover:scale-110 transition-transform"
+                >
                   <FiShoppingBag className="w-5 h-5" />
                   {cartItems.length > 0 && (
                     <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
                       {cartItems.length}
                     </span>
                   )}
-                </Link>
+                </button>
               )}
 
               {/* Mobile menu button */}

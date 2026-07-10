@@ -365,9 +365,9 @@ const Signup = () => {
             className="mt-6 text-xs text-gray-400 text-center"
           >
             By creating an account, you agree to our{' '}
-            <a href="#" className="underline hover:text-black transition-colors">Terms of Service</a>{' '}
+            <Link to="/terms" className="underline hover:text-black transition-colors">Terms of Service</Link>{' '}
             and{' '}
-            <a href="#" className="underline hover:text-black transition-colors">Privacy Policy</a>
+            <Link to="/privacy-policy" className="underline hover:text-black transition-colors">Privacy Policy</Link>
           </motion.p>
         </motion.div>
       </div>

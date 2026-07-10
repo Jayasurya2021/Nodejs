@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './layouts/Layout';
 import Home from './pages/Home';
@@ -19,9 +20,6 @@ import ProductEdit from './pages/admin/ProductEdit';
 import Forbidden from './pages/Forbidden';
 import GuestRoute from './components/routes/GuestRoute';
 import ProtectedRoute from './components/routes/ProtectedRoute';
-import BuyerRoute from './components/routes/BuyerRoute';
-import SellerRoute from './components/routes/SellerRoute';
-import AdminRoute from './components/routes/AdminRoute';
 import SellerDashboard from './pages/seller/SellerDashboard';
 import NotFound from './pages/errors/NotFound';
 import ServerError from './pages/errors/ServerError';
@@ -32,56 +30,88 @@ import Addresses from './pages/Addresses';
 import ManageProducts from './pages/seller/ManageProducts';
 import CreateProduct from './pages/seller/CreateProduct';
 import EditProduct from './pages/seller/EditProduct';
+import LoginModal from './components/LoginModal';
+import { Categories, Brands, Contact, FAQ, Reviews, SellerList, Offers, Blogs, PrivacyPolicy, Terms, ShippingPolicy } from './pages/StaticPages';
+
+const GlobalNavigateListener = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleNavigate = (e) => {
+      if (location.pathname !== e.detail) {
+        navigate(e.detail);
+      }
+    };
+    window.addEventListener('app-navigate', handleNavigate);
+    return () => window.removeEventListener('app-navigate', handleNavigate);
+  }, [navigate, location.pathname]);
+
+  return null;
+};
 
 function App() {
   return (
     <Router>
+      <GlobalNavigateListener />
       <Toaster position="top-center" reverseOrder={false} />
+      <LoginModal />
       <Routes>
         <Route path="/" element={<Layout />}>
+          {/* Public / Guest Routes (Accessible to everyone) */}
           <Route index element={<Home />} />
           <Route path="shop" element={<Shop />} />
           <Route path="product/:id" element={<ProductDetails />} />
-          {/* Guest Routes */}
-          <Route element={<GuestRoute />}>
-            <Route path="login" element={<Login />} />
-            <Route path="signup" element={<Signup />} />
-          </Route>
+          <Route path="categories" element={<Categories />} />
+          <Route path="brands" element={<Brands />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="faq" element={<FAQ />} />
+          <Route path="reviews" element={<Reviews />} />
+          <Route path="sellers" element={<SellerList />} />
+          <Route path="offers" element={<Offers />} />
+          <Route path="blogs" element={<Blogs />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<Terms />} />
+          <Route path="shipping-policy" element={<ShippingPolicy />} />
           
           <Route path="forbidden" element={<Forbidden />} />
           <Route path="server-error" element={<ServerError />} />
           <Route path="network-error" element={<NetworkError />} />
 
-          {/* Protected Routes Wrapper */}
-          <Route element={<ProtectedRoute />}>
-            {/* Buyer Routes */}
-            <Route element={<BuyerRoute />}>
-              <Route path="cart" element={<Cart />} />
-              <Route path="checkout" element={<Checkout />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="orders" element={<Orders />} />
-              <Route path="wishlist" element={<Wishlist />} />
-              <Route path="addresses" element={<Addresses />} />
-              <Route path="order/:id" element={<OrderDetails />} />
-            </Route>
-            
-            {/* Seller Routes */}
-            <Route element={<SellerRoute />}>
-              <Route path="seller/dashboard" element={<SellerDashboard />} />
-              <Route path="seller/products" element={<ManageProducts />} />
-              <Route path="seller/product/new" element={<CreateProduct />} />
-              <Route path="seller/product/:id/edit" element={<EditProduct />} />
-            </Route>
+          {/* Guest-only Routes (Redirect logged in users away) */}
+          <Route element={<GuestRoute />}>
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<Signup />} />
+          </Route>
 
-            {/* Admin Routes */}
-            <Route element={<AdminRoute />}>
-              <Route path="admin/dashboard" element={<AdminDashboard />} />
-              <Route path="admin/approvals" element={<ApprovalQueue />} />
-              <Route path="admin/users" element={<UsersList />} />
-              <Route path="admin/orders" element={<OrdersList />} />
-              <Route path="admin/products" element={<ManageProducts />} /> {/* Can reuse seller ManageProducts for now or create dedicated one */}
-              <Route path="admin/product/:id/edit" element={<ProductEdit />} />
-            </Route>
+          {/* Buyer Protected Routes (For logged in buyers, also allowed for other roles depending on logic, but typically buyer/admin) */}
+          <Route element={<ProtectedRoute allowedRoles={['buyer', 'admin']} />}>
+            <Route path="cart" element={<Cart />} />
+            <Route path="checkout" element={<Checkout />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="wishlist" element={<Wishlist />} />
+            <Route path="addresses" element={<Addresses />} />
+            <Route path="order/:id" element={<OrderDetails />} />
+          </Route>
+          
+          {/* Seller Protected Routes */}
+          <Route element={<ProtectedRoute allowedRoles={['seller']} />}>
+            <Route path="seller/dashboard" element={<SellerDashboard />} />
+            <Route path="seller/products" element={<ManageProducts />} />
+            <Route path="seller/product/new" element={<CreateProduct />} />
+            <Route path="seller/product/:id/edit" element={<EditProduct />} />
+            <Route path="seller/orders" element={<OrdersList />} />
+          </Route>
+
+          {/* Admin Protected Routes */}
+          <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+            <Route path="admin/dashboard" element={<AdminDashboard />} />
+            <Route path="admin/approvals" element={<ApprovalQueue />} />
+            <Route path="admin/users" element={<UsersList />} />
+            <Route path="admin/orders" element={<OrdersList />} />
+            <Route path="admin/products" element={<ManageProducts />} />
+            <Route path="admin/product/:id/edit" element={<ProductEdit />} />
           </Route>
 
           {/* Fallback 404 Route */}

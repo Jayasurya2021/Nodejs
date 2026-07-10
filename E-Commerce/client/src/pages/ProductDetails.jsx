@@ -94,6 +94,8 @@ const ProductDetails = () => {
   };
 
   const handleAddToCart = () => {
+    if (!user) return dispatch({ type: 'ui/openLoginModal' });
+    
     const stockAvailable = selectedVariant ? selectedVariant.stock : product.stock;
     if (stockAvailable === 0) { 
       toast.error('Out of stock'); 
@@ -111,7 +113,7 @@ const ProductDetails = () => {
       variant: selectedVariant 
     }));
     toast.success('Added to bag! 🛍️');
-    navigate('/cart');
+    window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/cart' }));
   };
 
   const submitReviewHandler = async (e) => {

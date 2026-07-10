@@ -15,7 +15,7 @@ const connectDB = require('./config/db');
 // ─── Load Environment Variables ──────────────────────────────────────────────
 // dotenvx (via nodemon config) injects from ../.env; this is a fallback for
 // running node server.js directly.
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: '.env' });
 
 // ─── Database ────────────────────────────────────────────────────────────────
 connectDB();

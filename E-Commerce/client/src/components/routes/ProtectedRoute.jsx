@@ -1,7 +1,10 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { openLoginModal } from '../../redux/slices/uiSlice';
 
-const ProtectedRoute = () => {
+const ProtectedRoute = ({ allowedRoles = [] }) => {
+  const dispatch = useDispatch();
   const { user, isLoading } = useSelector((state) => state.auth);
 
   if (isLoading) {
@@ -12,8 +15,14 @@ const ProtectedRoute = () => {
     );
   }
 
+  // If not logged in, redirect to login
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // If roles are specified and user role is not included, redirect to home
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;

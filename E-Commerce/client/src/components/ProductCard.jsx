@@ -2,13 +2,34 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiHeart, FiShoppingBag, FiEye } from 'react-icons/fi';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../redux/slices/cartSlice';
+import toast from 'react-hot-toast';
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
   // Use the first two images for hover effect if available
   const mainImage = product.images[0]?.url || 'https://via.placeholder.com/600x800';
   const hoverImage = product.images[1]?.url || mainImage;
+
+  const handleAction = (e, action) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      dispatch({ type: 'ui/openLoginModal' });
+      return;
+    }
+    
+    if (action === 'wishlist') {
+      toast.success('Wishlist functionality coming soon!');
+    } else if (action === 'cart') {
+      dispatch(addToCart({ ...product, qty: 1 }));
+      toast.success('Added to bag! 🛍️');
+    }
+  };
 
   return (
     <motion.div 
@@ -41,13 +62,19 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Wishlist Button */}
-        <button className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300 hover:text-red-500">
+        <button 
+          onClick={(e) => handleAction(e, 'wishlist')}
+          className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300 hover:text-red-500"
+        >
           <FiHeart size={16} />
         </button>
 
         {/* Quick Actions (Desktop Hover) */}
         <div className="absolute bottom-4 left-0 w-full px-4 flex justify-between items-center opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-          <button className="flex-1 bg-white text-black text-xs font-bold uppercase tracking-widest py-3 flex items-center justify-center gap-2 hover:bg-black hover:text-white transition-colors border border-transparent hover:border-white">
+          <button 
+            onClick={(e) => handleAction(e, 'cart')}
+            className="flex-1 bg-white text-black text-xs font-bold uppercase tracking-widest py-3 flex items-center justify-center gap-2 hover:bg-black hover:text-white transition-colors border border-transparent hover:border-white"
+          >
             <FiShoppingBag size={14} /> Add to Bag
           </button>
         </div>
