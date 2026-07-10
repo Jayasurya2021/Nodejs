@@ -116,6 +116,27 @@ const ProductDetails = () => {
     window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/cart' }));
   };
 
+  const toggleWishlist = async () => {
+    if (!user) {
+      dispatch({ type: 'ui/openLoginModal' });
+      return;
+    }
+    
+    try {
+      if (isWishlisted) {
+        await axios.delete(`/api/users/wishlist/${id}`, { withCredentials: true });
+        setIsWishlisted(false);
+        toast.success('Removed from wishlist');
+      } else {
+        await axios.post(`/api/users/wishlist/${id}`, {}, { withCredentials: true });
+        setIsWishlisted(true);
+        toast.success('Added to wishlist! ❤️');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update wishlist');
+    }
+  };
+
   const submitReviewHandler = async (e) => {
     e.preventDefault();
     if (!user) {
@@ -262,7 +283,7 @@ const ProductDetails = () => {
             <p className="text-sm text-gray-400 uppercase tracking-widest font-semibold">{product.brand}</p>
             <div className="flex gap-2">
               <button
-                onClick={() => setIsWishlisted(!isWishlisted)}
+                onClick={toggleWishlist}
                 className={`w-9 h-9 border flex items-center justify-center transition-all duration-300 ${isWishlisted ? 'border-red-400 text-red-500 bg-red-50' : 'border-gray-200 hover:border-black'}`}
               >
                 <FiHeart size={16} className={isWishlisted ? 'fill-red-400' : ''} />

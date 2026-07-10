@@ -20,7 +20,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const config = { headers: { Authorization: `Bearer ${user.token}` }, withCredentials: true };
+        const config = { withCredentials: true };
         const { data } = await axios.get('/api/admin/analytics', config); // Assuming endpoint exists, if not, fallback to default
         setStats({
           totalUsers: data.totalUsers || 120,

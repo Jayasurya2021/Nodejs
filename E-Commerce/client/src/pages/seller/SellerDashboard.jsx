@@ -15,8 +15,7 @@ const SellerDashboard = () => {
     const fetchStats = async () => {
       try {
         const { data } = await axios.get('/api/seller/analytics', {
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
+          });
         setStats(data);
       } catch (error) {
         toast.error('Failed to load seller analytics');

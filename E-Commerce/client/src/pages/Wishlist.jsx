@@ -13,7 +13,7 @@ const Wishlist = () => {
 
   const fetchWishlist = async () => {
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` }, withCredentials: true };
+      const config = { withCredentials: true };
       const { data } = await axios.get('/api/users/wishlist', config); // Assuming this endpoint exists, or fallback
       setWishlist(data.wishlist || []);
     } catch (error) {
@@ -31,7 +31,7 @@ const Wishlist = () => {
 
   const removeFromWishlist = async (productId) => {
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` }, withCredentials: true };
+      const config = { withCredentials: true };
       await axios.delete(`/api/users/wishlist/${productId}`, config); // Ensure backend supports this
       setWishlist((prev) => prev.filter(item => item._id !== productId));
       toast.success('Removed from wishlist');

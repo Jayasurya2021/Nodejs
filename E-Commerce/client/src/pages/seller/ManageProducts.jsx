@@ -12,7 +12,7 @@ const ManageProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` }, withCredentials: true };
+      const config = { withCredentials: true };
       const { data } = await axios.get('/api/seller/products', config);
       setProducts(data);
     } catch (error) {
@@ -29,7 +29,7 @@ const ManageProducts = () => {
   const deleteProductHandler = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        const config = { headers: { Authorization: `Bearer ${user.token}` }, withCredentials: true };
+        const config = { withCredentials: true };
         await axios.delete(`/api/products/${id}`, config);
         toast.success('Product deleted');
         setProducts(products.filter(p => p._id !== id));

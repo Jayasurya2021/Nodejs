@@ -13,7 +13,7 @@ const ApprovalQueue = () => {
 
   const fetchPendingProducts = async () => {
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` }, withCredentials: true };
+      const config = { withCredentials: true };
       const { data } = await axios.get('/api/admin/products?status=pending', config); // Assuming backend can filter by status
       // If backend doesn't filter, we just filter here
       const pending = data.products ? data.products.filter(p => p.status === 'pending') : data.filter(p => p.status === 'pending');
@@ -32,7 +32,7 @@ const ApprovalQueue = () => {
   const updateStatusHandler = async (id, status) => {
     if (window.confirm(`Are you sure you want to mark this product as ${status}?`)) {
       try {
-        const config = { headers: { Authorization: `Bearer ${user.token}` }, withCredentials: true };
+        const config = { withCredentials: true };
         await axios.put(`/api/admin/products/${id}/status`, { status }, config);
         toast.success(`Product ${status}`);
         setProducts(products.filter(p => p._id !== id));

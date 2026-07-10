@@ -79,7 +79,7 @@ const ProductEdit = () => {
 
     setUploading(true);
     try {
-      const config = { headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${user.token}` }, withCredentials: true };
+      const config = { headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true };
       const { data } = await axios.post('/api/upload', formData, config);
       setImages((prev) => [...prev, ...data.images]);
       toast.success('Images Uploaded');
@@ -94,7 +94,7 @@ const ProductEdit = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      const config = { headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${user.token}` }, withCredentials: true };
+      const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true };
       await axios.put(`/api/products/${id}`, {
         ...formData,
         images,

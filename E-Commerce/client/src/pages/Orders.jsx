@@ -14,7 +14,7 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const config = { headers: { Authorization: `Bearer ${user.token}` }, withCredentials: true };
+        const config = { withCredentials: true };
         const { data } = await axios.get('/api/orders/myorders', config);
         setOrders(data);
       } catch (error) {

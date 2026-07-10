@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -15,6 +15,9 @@ const CreateProduct = () => {
     brand: '',
     stock: 0,
   });
+  const [images, setImages] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const fileInputRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
@@ -23,12 +26,28 @@ const CreateProduct = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setImages(files);
+    setImagePreviews(files.map(file => URL.createObjectURL(file)));
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const config = { headers: { Authorization: `Bearer ${user.token}` }, withCredentials: true };
-      await axios.post('/api/products', formData, config);
+      let uploadedImages = [];
+      if (images.length > 0) {
+        const uploadData = new FormData();
+        images.forEach(img => uploadData.append('images', img));
+        const { data } = await axios.post('/api/upload', uploadData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
+        uploadedImages = data.images;
+      }
+
+      const productPayload = { ...formData, images: uploadedImages };
+      
+      const config = { withCredentials: true };
+      await axios.post('/api/products', productPayload, config);
       toast.success('Product created successfully! Pending admin approval.');
       navigate('/seller/products');
     } catch (error) {
@@ -136,11 +155,29 @@ const CreateProduct = () => {
             
             <div>
               <label className="block text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">Product Images</label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer">
+              <div 
+                onClick={() => fileInputRef.current.click()}
+                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer"
+              >
                 <Upload size={32} className="mx-auto text-gray-400 mb-3" />
                 <p className="text-sm font-bold text-gray-600">Click to upload images</p>
                 <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP up to 5MB</p>
               </div>
+              <input 
+                type="file" 
+                multiple 
+                accept="image/*" 
+                className="hidden" 
+                ref={fileInputRef} 
+                onChange={handleImageChange} 
+              />
+              {imagePreviews.length > 0 && (
+                <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
+                  {imagePreviews.map((preview, index) => (
+                    <img key={index} src={preview} alt={`Preview ${index}`} className="w-20 h-20 object-cover rounded border border-gray-200" />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

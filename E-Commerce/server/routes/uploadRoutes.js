@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
-const { protect, admin } = require('../middleware/authMiddleware');
+const { protect, isSellerOrAdmin } = require('../middleware/authMiddleware');
 
 // Configure Cloudinary
 cloudinary.config({
@@ -23,7 +23,7 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-router.post('/', protect, admin, upload.array('images', 10), (req, res) => {
+router.post('/', protect, isSellerOrAdmin, upload.array('images', 10), (req, res) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).send('No files were uploaded.');
   }

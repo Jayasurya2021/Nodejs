@@ -58,7 +58,19 @@ const updateProductStatus = asyncHandler(async (req, res) => {
   res.json({ message: `Product ${status} successfully`, product });
 });
 
+// @desc    Get all products (Admin)
+// @route   GET /api/admin/products
+// @access  Private/Admin
+const getAdminProducts = asyncHandler(async (req, res) => {
+  const { status } = req.query;
+  const filter = status ? { status } : {};
+  
+  const products = await Product.find(filter).populate('seller', 'name email').sort('-createdAt');
+  res.json(products);
+});
+
 module.exports = {
   getGlobalAnalytics,
-  updateProductStatus
+  updateProductStatus,
+  getAdminProducts
 };

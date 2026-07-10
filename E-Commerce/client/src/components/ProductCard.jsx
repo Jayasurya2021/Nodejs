@@ -5,6 +5,7 @@ import { FiHeart, FiShoppingBag, FiEye } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../redux/slices/cartSlice';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -24,7 +25,9 @@ const ProductCard = ({ product }) => {
     }
     
     if (action === 'wishlist') {
-      toast.success('Wishlist functionality coming soon!');
+      axios.post(`/api/users/wishlist/${product._id}`, {}, { withCredentials: true })
+        .then(() => toast.success('Added to wishlist! ❤️'))
+        .catch((err) => toast.error(err.response?.data?.message || 'Failed to add to wishlist'));
     } else if (action === 'cart') {
       dispatch(addToCart({ ...product, qty: 1 }));
       toast.success('Added to bag! 🛍️');

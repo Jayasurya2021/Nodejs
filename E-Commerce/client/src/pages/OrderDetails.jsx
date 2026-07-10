@@ -13,22 +13,42 @@ const OrderDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchOrder = async () => {
-      try {
-        const { data } = await axios.get(`/api/orders/${id}`, {
-          withCredentials: true
-        });
-        setOrder(data);
-        setIsLoading(false);
-      } catch (err) {
-        setError(err.response?.data?.message || err.message);
-        setIsLoading(false);
-      }
-    };
+  const fetchOrder = async () => {
+    try {
+      const { data } = await axios.get(`/api/orders/${id}`, {
+        withCredentials: true
+      });
+      setOrder(data);
+      setIsLoading(false);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchOrder();
   }, [id]);
+
+  const handlePay = async () => {
+    try {
+      await axios.put(`/api/orders/${id}/pay`, {}, { withCredentials: true });
+      toast.success('Order marked as paid!');
+      fetchOrder();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to process payment');
+    }
+  };
+
+  const handleDeliver = async () => {
+    try {
+      await axios.put(`/api/orders/${id}/deliver`, {}, { withCredentials: true });
+      toast.success('Order marked as delivered!');
+      fetchOrder();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to mark as delivered');
+    }
+  };
 
   if (isLoading) return <div className="text-center py-20 animate-pulse">Loading order details...</div>;
   if (error) return <div className="text-center py-20 text-red-500">{error}</div>;
@@ -151,10 +171,19 @@ const OrderDetails = () => {
 
             {!order.isPaid && order.paymentMethod !== 'COD' && (
               <button 
-                className="w-full py-4 bg-black text-white text-sm uppercase tracking-widest font-bold hover:bg-gray-800 transition-colors"
-                onClick={() => toast.success('Razorpay flow would initiate here')}
+                className="w-full py-4 bg-black text-white text-sm uppercase tracking-widest font-bold hover:bg-gray-800 transition-colors mb-2"
+                onClick={handlePay}
               >
-                Pay Now
+                Mark as Paid
+              </button>
+            )}
+
+            {user?.role === 'admin' && order.isPaid && !order.isDelivered && (
+              <button 
+                className="w-full py-4 bg-gray-200 text-black text-sm uppercase tracking-widest font-bold hover:bg-gray-300 transition-colors"
+                onClick={handleDeliver}
+              >
+                Mark as Delivered
               </button>
             )}
           </div>

@@ -58,6 +58,7 @@ app.use('/api/reviews', require('./routes/reviewRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 app.use('/api/seller', require('./routes/sellerRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/users', require('./routes/userRoutes'));
 
 // ─── Error Handling (MUST be last) ───────────────────────────────────────────
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
