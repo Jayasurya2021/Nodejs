@@ -67,8 +67,14 @@ const ProductDetails = () => {
   useEffect(() => {
     if (product?.variants?.length > 0) {
       setSelectedVariant(product.variants[0]);
+      setActiveImageIndex(0);
     }
   }, [product]);
+
+  // Reset active image index when variant changes
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [selectedVariant]);
 
   useEffect(() => {
     fetchReviews();
@@ -204,6 +210,10 @@ const ProductDetails = () => {
   const currentStock = selectedVariant ? selectedVariant.stock : product.stock;
   const ratingSummary = product.ratingSummary || { averageRating: 0, totalReviews: 0, ratings: { 5:0, 4:0, 3:0, 2:0, 1:0 } };
 
+  const displayImages = (selectedVariant?.images && selectedVariant.images.length > 0) 
+    ? selectedVariant.images 
+    : (product.images || []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -236,14 +246,14 @@ const ProductDetails = () => {
                 animate={{ opacity: 1, scale: isZoomed ? 1.5 : 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.4 }}
-                src={product.images?.[activeImageIndex]?.url || product.thumbnail?.url || 'https://via.placeholder.com/600x800'}
+                src={displayImages[activeImageIndex]?.url || product.thumbnail?.url || 'https://via.placeholder.com/600x800'}
                 alt={product.title}
                 className={`w-full h-full object-cover transition-transform duration-500 origin-center ${isZoomed ? 'hover:scale-150 cursor-zoom-out' : ''}`}
               />
             </AnimatePresence>
             
             {/* Image navigation arrows */}
-            {product.images?.length > 1 && !isZoomed && (
+            {displayImages.length > 1 && !isZoomed && (
               <>
                 <button
                   onClick={(e) => { e.stopPropagation(); setActiveImageIndex((prev) => Math.max(0, prev - 1)); }}
@@ -253,8 +263,8 @@ const ProductDetails = () => {
                   <FiChevronRight className="rotate-180" size={18} />
                 </button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); setActiveImageIndex((prev) => Math.min(product.images.length - 1, prev + 1)); }}
-                  disabled={activeImageIndex === product.images.length - 1}
+                  onClick={(e) => { e.stopPropagation(); setActiveImageIndex((prev) => Math.min(displayImages.length - 1, prev + 1)); }}
+                  disabled={activeImageIndex === displayImages.length - 1}
                   className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-0"
                 >
                   <FiChevronRight size={18} />
@@ -262,9 +272,9 @@ const ProductDetails = () => {
               </>
             )}
           </div>
-          {product.images?.length > 1 && (
+          {displayImages.length > 1 && (
             <div className="flex gap-3 overflow-x-auto no-scrollbar py-1">
-              {product.images.map((image, index) => (
+              {displayImages.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setActiveImageIndex(index)}

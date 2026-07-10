@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiShoppingBag, FiUser, FiSearch, FiMenu, FiX } from 'react-icons/fi';
+import { FiShoppingBag, FiUser, FiSearch, FiMenu, FiX, FiHeart } from 'react-icons/fi';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
 import SearchInput from '../components/Search/SearchInput';
@@ -49,6 +49,7 @@ const Header = () => {
           { title: 'Products', path: '/admin/products' },
           { title: 'Users', path: '/admin/users' },
           { title: 'Orders', path: '/admin/orders' },
+          { title: 'Profile', path: '/profile' }
         ];
       case 'pending':
         return [
@@ -59,8 +60,6 @@ const Header = () => {
         return [
           { title: 'Home', path: '/' },
           { title: 'Shop', path: '/shop' },
-          { title: 'Wishlist', path: '/wishlist' },
-          { title: 'Cart', path: '/cart' },
           { title: 'Orders', path: '/orders' },
           { title: 'Profile', path: '/profile' },
         ];
@@ -82,7 +81,7 @@ const Header = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link to="/" className="flex-shrink-0 flex items-center">
+            <Link to={user?.role === 'seller' ? '/seller/dashboard' : user?.role === 'admin' ? '/admin/dashboard' : '/'} className="flex-shrink-0 flex items-center">
               <span className="font-bold text-2xl tracking-widest uppercase">LUXE.</span>
             </Link>
 
@@ -109,28 +108,43 @@ const Header = () => {
                 <FiSearch className="w-5 h-5" />
               </button>
               
-              <Link to={(user && Object.keys(user).length > 0) ? (user.role === 'admin' ? '/admin/dashboard' : user.role === 'seller' ? '/seller/dashboard' : '/profile') : '/login'} className="hover:scale-110 transition-transform">
+              <Link to={(user && Object.keys(user).length > 0) ? (user.role === 'pending' ? '/complete-profile' : '/profile') : '/login'} className="hover:scale-110 transition-transform">
                 <FiUser className="w-5 h-5" />
               </Link>
               
               {(!user || Object.keys(user).length === 0 || user.role === 'buyer') && (
-                <button 
-                  onClick={() => {
-                    if (!user || Object.keys(user).length === 0) {
-                      dispatch({ type: 'ui/openLoginModal' });
-                    } else {
-                      window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/cart' }));
-                    }
-                  }}
-                  className="relative hover:scale-110 transition-transform"
-                >
-                  <FiShoppingBag className="w-5 h-5" />
-                  {cartItems.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
-                      {cartItems.length}
-                    </span>
-                  )}
-                </button>
+                <>
+                  <button 
+                    onClick={() => {
+                      if (!user || Object.keys(user).length === 0) {
+                        dispatch({ type: 'ui/openLoginModal' });
+                      } else {
+                        window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/wishlist' }));
+                      }
+                    }}
+                    className="relative hover:scale-110 transition-transform"
+                  >
+                    <FiHeart className="w-5 h-5" />
+                  </button>
+
+                  <button 
+                    onClick={() => {
+                      if (!user || Object.keys(user).length === 0) {
+                        dispatch({ type: 'ui/openLoginModal' });
+                      } else {
+                        window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/cart' }));
+                      }
+                    }}
+                    className="relative hover:scale-110 transition-transform"
+                  >
+                    <FiShoppingBag className="w-5 h-5" />
+                    {cartItems.length > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full">
+                        {cartItems.length}
+                      </span>
+                    )}
+                  </button>
+                </>
               )}
 
               {/* Mobile menu button */}

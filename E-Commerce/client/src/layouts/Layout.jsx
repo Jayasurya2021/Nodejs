@@ -7,7 +7,7 @@ const NO_FOOTER_PAGES = ['/cart', '/login', '/signup', '/checkout'];
 
 const Layout = () => {
   const { pathname } = useLocation();
-  const showFooter = !NO_FOOTER_PAGES.includes(pathname);
+  const showFooter = pathname === '/';
 
   return (
     <div className="flex flex-col min-h-screen">

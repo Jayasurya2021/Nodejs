@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProducts } from '../redux/slices/productSlice';
 import ProductCard from '../components/ProductCard';
@@ -120,9 +120,17 @@ const BRANDS = ["ZARA", "H&M", "MASSIMO DUTTI", "COS", "UNIQLO", "MANGO", "RESER
 const Home = () => {
   const dispatch = useDispatch();
   const { products, isLoading } = useSelector((state) => state.products);
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const [reviewPage, setReviewPage] = useState(0);
   const [activeCategory, setActiveCategory] = useState(0);
   const reviewsRef = useRef(null);
+
+  useEffect(() => {
+    if (user?.role === 'seller') {
+      navigate('/seller/dashboard');
+    }
+  }, [user, navigate]);
 
   const REVIEWS_PER_PAGE = 3;
   const totalReviewPages = Math.ceil(REVIEWS.length / REVIEWS_PER_PAGE);

@@ -15,7 +15,8 @@ const SellerDashboard = () => {
     const fetchStats = async () => {
       try {
         const { data } = await axios.get('/api/seller/analytics', {
-          });
+          withCredentials: true
+        });
         setStats(data);
       } catch (error) {
         toast.error('Failed to load seller analytics');
@@ -23,7 +24,7 @@ const SellerDashboard = () => {
         setIsLoading(false);
       }
     };
-    if (user && user.token) {
+    if (user) {
       fetchStats();
     }
   }, [user]);

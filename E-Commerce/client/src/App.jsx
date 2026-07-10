@@ -102,11 +102,15 @@ function App() {
             <Route path="complete-profile" element={<CompleteProfile />} />
           </Route>
 
+          {/* Shared Authenticated Routes (Accessible to all roles except pending) */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="profile" element={<Profile />} />
+          </Route>
+
           {/* Buyer Protected Routes (For logged in buyers, also allowed for other roles depending on logic, but typically buyer/admin) */}
           <Route element={<ProtectedRoute allowedRoles={['buyer', 'admin']} />}>
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
-            <Route path="profile" element={<Profile />} />
             <Route path="orders" element={<Orders />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="addresses" element={<Addresses />} />

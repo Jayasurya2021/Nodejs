@@ -6,7 +6,13 @@ const variantSchema = new mongoose.Schema({
   colorCode: { type: String },
   stock: { type: Number, default: 0 },
   sku: { type: String },
-  additionalPrice: { type: Number, default: 0 }
+  additionalPrice: { type: Number, default: 0 },
+  images: [
+    {
+      url: { type: String, required: true },
+      public_id: { type: String }
+    }
+  ]
 });
 
 const specificationSchema = new mongoose.Schema({
