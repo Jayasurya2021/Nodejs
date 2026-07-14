@@ -18,8 +18,8 @@ const getProducts = asyncHandler(async (req, res) => {
     : {};
 
   const filter = {};
-  if (req.query.category) filter.category = req.query.category;
-  if (req.query.brand) filter.brand = req.query.brand;
+  if (req.query.category) filter.category = { $regex: req.query.category, $options: 'i' };
+  if (req.query.brand) filter.brand = { $regex: req.query.brand, $options: 'i' };
   if (req.query.isNewArrival) filter.isNewArrival = req.query.isNewArrival === 'true';
   if (req.query.status) filter.status = req.query.status;
   else filter.status = 'approved'; // Default to approved products for public view
@@ -148,7 +148,7 @@ const createProduct = asyncHandler(async (req, res) => {
     searchKeywords,
     seller: req.user._id,
     createdBy: req.user._id,
-    status: req.user.role === 'admin' ? 'approved' : 'pending'
+    status: 'approved' // Automatically approve products so they show up immediately
   });
 
   const createdProduct = await product.save();
