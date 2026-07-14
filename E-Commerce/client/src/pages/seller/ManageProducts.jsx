@@ -89,10 +89,10 @@ const ManageProducts = () => {
                       <span className="font-bold truncate max-w-[200px] block">{product.title}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-semibold">${product.price?.toFixed(2)}</td>
+                  <td className="px-6 py-4 font-semibold">${(product.variants?.[0]?.price || 0).toFixed(2)}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-[10px] font-bold tracking-widest uppercase ${product.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                      {product.stock > 0 ? product.stock : 'Out of Stock'}
+                    <span className={`px-2 py-1 text-[10px] font-bold tracking-widest uppercase ${(product.variants?.[0]?.stock || 0) > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      {(product.variants?.[0]?.stock || 0) > 0 ? product.variants[0].stock : 'Out of Stock'}
                     </span>
                   </td>
                   <td className="px-6 py-4">

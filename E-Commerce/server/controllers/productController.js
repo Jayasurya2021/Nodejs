@@ -26,19 +26,19 @@ const getProducts = asyncHandler(async (req, res) => {
   
   // Price filter
   if (req.query.minPrice || req.query.maxPrice) {
-    filter.price = {};
-    if (req.query.minPrice) filter.price.$gte = Number(req.query.minPrice);
-    if (req.query.maxPrice) filter.price.$lte = Number(req.query.maxPrice);
+    filter['variants.price'] = {};
+    if (req.query.minPrice) filter['variants.price'].$gte = Number(req.query.minPrice);
+    if (req.query.maxPrice) filter['variants.price'].$lte = Number(req.query.maxPrice);
   }
 
   // Sort
   let sortObj = {};
   switch (req.query.sort) {
     case 'lowest':
-      sortObj = { price: 1 };
+      sortObj = { 'variants.price': 1 };
       break;
     case 'highest':
-      sortObj = { price: -1 };
+      sortObj = { 'variants.price': -1 };
       break;
     case 'newest':
       sortObj = { createdAt: -1 };
@@ -120,10 +120,8 @@ const createProduct = asyncHandler(async (req, res) => {
     slug: 'sample-product-slug-' + Date.now(),
     shortDescription: 'Sample short description',
     description: 'Sample detailed description',
-    price: 0,
     brand: 'Sample Brand',
     category: 'Sample Category',
-    stock: 0,
     seller: req.user._id,
     createdBy: req.user._id,
     images: [{ url: 'https://via.placeholder.com/600x800?text=Premium+Fashion' }],
@@ -148,8 +146,8 @@ const updateProduct = asyncHandler(async (req, res) => {
 
     // Update simple fields
     const fieldsToUpdate = [
-      'title', 'slug', 'shortDescription', 'description', 'price', 
-      'offerPrice', 'discount', 'stock', 'brand', 'category', 'subCategory', 
+      'title', 'slug', 'shortDescription', 'description', 
+      'brand', 'category', 'subCategory', 
       'images', 'thumbnail', 'variants', 'specifications', 'features', 
       'tags', 'status', 'isNewArrival', 'isTrending'
     ];

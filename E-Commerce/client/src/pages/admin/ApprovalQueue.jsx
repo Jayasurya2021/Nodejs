@@ -87,7 +87,7 @@ const ApprovalQueue = () => {
                     </span>
                   </div>
                   <p className="text-gray-500 text-sm mb-2">{product.category} • {product.brand}</p>
-                  <p className="font-bold">${product.price?.toFixed(2)} <span className="text-gray-400 font-normal text-xs ml-2">Stock: {product.stock}</span></p>
+                  <p className="font-bold">${(product.variants?.[0]?.price || 0).toFixed(2)} <span className="text-gray-400 font-normal text-xs ml-2">Stock: {product.variants?.[0]?.stock || 0}</span></p>
                   <p className="text-xs text-gray-400 mt-2">Seller ID: {product.seller}</p>
                 </div>
               </div>

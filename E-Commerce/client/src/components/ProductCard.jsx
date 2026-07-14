@@ -97,11 +97,11 @@ const ProductCard = ({ product }) => {
         
         <div className="flex items-center gap-3">
           <span className={`text-sm font-medium ${product.discount > 0 ? 'text-red-600' : 'text-black'}`}>
-            ${(product.price * (1 - product.discount / 100)).toFixed(2)}
+            ${((product.variants?.[0]?.price || 0) * (1 - product.discount / 100)).toFixed(2)}
           </span>
           {product.discount > 0 && (
             <span className="text-sm text-gray-400 line-through">
-              ${product.price.toFixed(2)}
+              ${(product.variants?.[0]?.price || 0).toFixed(2)}
             </span>
           )}
         </div>

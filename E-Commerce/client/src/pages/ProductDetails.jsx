@@ -102,15 +102,15 @@ const ProductDetails = () => {
   const handleAddToCart = () => {
     if (!user || Object.keys(user).length === 0) return dispatch({ type: 'ui/openLoginModal' });
     
-    const stockAvailable = selectedVariant ? selectedVariant.stock : product.stock;
+    const stockAvailable = selectedVariant ? selectedVariant.stock : (product.variants?.[0]?.stock || 0);
     if (stockAvailable === 0) { 
       toast.error('Out of stock'); 
       return; 
     }
     
     const priceToAdd = selectedVariant 
-      ? product.price + (selectedVariant.additionalPrice || 0)
-      : product.price;
+      ? selectedVariant.price
+      : (product.variants?.[0]?.price || 0);
 
     dispatch(addToCart({ 
       ...product, 
@@ -176,8 +176,8 @@ const ProductDetails = () => {
   // Group variants by size and color for better UI
   const { sizes, colors } = useMemo(() => {
     if (!product?.variants) return { sizes: [], colors: [] };
-    const s = [...new Set(product.variants.map(v => v.size).filter(Boolean))];
-    const c = [...new Map(product.variants.filter(v => v.color).map(v => [v.color, { name: v.color, code: v.colorCode }])).values()];
+    const s = [...new Set(product.variants.flatMap(v => v.sizes?.map(sizeObj => sizeObj.name) || []).filter(Boolean))];
+    const c = [...new Map(product.variants.filter(v => v.colorName).map(v => [v.colorName, { name: v.colorName, code: v.colorHex }])).values()];
     return { sizes: s, colors: c };
   }, [product]);
 
@@ -200,14 +200,14 @@ const ProductDetails = () => {
   if (isError) return <div className="text-center py-20 text-red-500">{message}</div>;
 
   const currentPrice = selectedVariant 
-    ? product.price + (selectedVariant.additionalPrice || 0) 
-    : product.price;
+    ? selectedVariant.price
+    : (product.variants?.[0]?.price || 0);
   
   const discountPrice = product.discount > 0 
     ? currentPrice * (1 - product.discount / 100) 
     : currentPrice;
 
-  const currentStock = selectedVariant ? selectedVariant.stock : product.stock;
+  const currentStock = selectedVariant ? selectedVariant.stock : (product.variants?.[0]?.stock || 0);
   const ratingSummary = product.ratingSummary || { averageRating: 0, totalReviews: 0, ratings: { 5:0, 4:0, 3:0, 2:0, 1:0 } };
 
   const displayImages = (selectedVariant?.images && selectedVariant.images.length > 0) 
@@ -337,17 +337,17 @@ const ProductDetails = () => {
             <div className="mb-7">
               <div className="flex justify-between items-center mb-3">
                 <span className="text-xs font-bold uppercase tracking-widest">Color</span>
-                <span className="text-xs text-gray-500 font-medium">{selectedVariant?.color}</span>
+                <span className="text-xs text-gray-500 font-medium">{selectedVariant?.colorName}</span>
               </div>
               <div className="flex gap-3">
                 {colors.map((color, index) => (
                   <button
                     key={index}
                     onClick={() => {
-                      const variant = product.variants.find(v => v.color === color.name && v.size === selectedVariant?.size);
+                      const variant = product.variants.find(v => v.colorName === color.name && v.sizes?.some(s => s.name === selectedVariant?.size?.name));
                       if(variant) setSelectedVariant(variant);
                     }}
-                    className={`w-9 h-9 rounded-full border-4 transition-all duration-200 ${selectedVariant?.color === color.name ? 'border-black scale-110 shadow-lg' : 'border-gray-200 hover:border-gray-400'}`}
+                    className={`w-9 h-9 rounded-full border-4 transition-all duration-200 ${selectedVariant?.colorName === color.name ? 'border-black scale-110 shadow-lg' : 'border-gray-200 hover:border-gray-400'}`}
                     style={{ backgroundColor: color.code || color.name.toLowerCase() }}
                     title={color.name}
                   />
@@ -367,18 +367,18 @@ const ProductDetails = () => {
               </div>
               <div className="flex flex-wrap gap-2">
                 {sizes.map((size) => {
-                  const isAvailable = product.variants.some(v => v.size === size && v.color === selectedVariant?.color && v.stock > 0);
+                  const isAvailable = product.variants.some(v => v.sizes?.some(s => s.name === size && s.stock > 0) && v.colorName === selectedVariant?.colorName);
                   
                   return (
                   <button
                     key={size}
                     disabled={!isAvailable}
                     onClick={() => {
-                      const variant = product.variants.find(v => v.size === size && v.color === selectedVariant?.color);
+                      const variant = product.variants.find(v => v.sizes?.some(s => s.name === size) && v.colorName === selectedVariant?.colorName);
                       if(variant) setSelectedVariant(variant);
                     }}
                     className={`w-14 h-11 flex items-center justify-center border text-sm font-semibold transition-all duration-200 ${
-                      selectedVariant?.size === size
+                      selectedVariant?.sizes?.some(s => s.name === size)
                         ? 'bg-black text-white border-black shadow-lg scale-105'
                         : isAvailable 
                           ? 'bg-white text-black border-gray-200 hover:border-black' 

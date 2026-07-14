@@ -16,12 +16,13 @@ const fabricSchema = new mongoose.Schema({
 });
 
 const variantSchema = new mongoose.Schema({
-  color: { type: String },
-  colorCode: { type: String },
+  colorName: { type: String },
+  colorHex: { type: String },
+  price: { type: Number, required: true, default: 0 },
+  stock: { type: Number, required: true, default: 0 },
   sizes: [sizeSchema],
   fabricQuality: fabricSchema,
   sku: { type: String },
-  additionalPrice: { type: Number, default: 0 },
   images: [
     {
       url: { type: String, required: true },
@@ -55,23 +56,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please add a description']
   },
-  price: {
-    type: Number,
-    required: [true, 'Please add a price'],
-    default: 0
-  },
-  offerPrice: {
-    type: Number
-  },
-  discount: {
-    type: Number, // Percentage 0-100
-    default: 0
-  },
-  stock: {
-    type: Number,
-    required: true,
-    default: 0
-  },
+
   brand: {
     type: String,
     required: true,
