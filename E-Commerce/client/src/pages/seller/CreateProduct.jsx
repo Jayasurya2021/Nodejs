@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { Box, Upload, ArrowLeft, Save, Plus, X, Image as ImageIcon, Trash2, Tag, Layers, Droplet } from 'lucide-react';
+import { Box, ArrowLeft, Save, Plus, Check, Trash2, Tag, Layers, Droplet } from 'lucide-react';
 import toast from 'react-hot-toast';
-import ColorThief from 'colorthief';
+import { getColorSync } from 'colorthief';
 
 // Basic color palette for AI color matching
 const basicColors = [
@@ -55,30 +55,26 @@ const getClosestColorName = (hex) => {
 
 const CreateProduct = () => {
   const navigate = useNavigate();
-  const fileInputRef = useRef(null);
   
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '', description: '', category: '', brand: ''
   });
-  const [mainImages, setMainImages] = useState([]);
-  const [mainImagePreviews, setMainImagePreviews] = useState([]);
   
-  const [variants, setVariants] = useState([]);
+  const [variants, setVariants] = useState([{
+    colorName: '',
+    colorHex: '#EEEEEE',
+    price: 0,
+    stock: 0,
+    sku: '',
+    sizes: [],
+    fabricQuality: { material: '', gsm: '', fit: '', fabricType: '', pattern: '', sleeveType: '' },
+    images: [],
+    imagePreviews: [],
+    selectedImageIndex: 0
+  }]);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const handleMainImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setMainImages(prev => [...prev, ...files]);
-    const previews = files.map(file => URL.createObjectURL(file));
-    setMainImagePreviews(prev => [...prev, ...previews]);
-  };
-
-  const removeMainImage = (index) => {
-    setMainImages(prev => prev.filter((_, i) => i !== index));
-    setMainImagePreviews(prev => prev.filter((_, i) => i !== index));
-  };
 
   // Variant Management
   const addVariant = () => {
@@ -91,7 +87,8 @@ const CreateProduct = () => {
       sizes: [],
       fabricQuality: { material: '', gsm: '', fit: '', fabricType: '', pattern: '', sleeveType: '' },
       images: [],
-      imagePreviews: []
+      imagePreviews: [],
+      selectedImageIndex: 0
     }]);
   };
 
@@ -131,7 +128,32 @@ const CreateProduct = () => {
     setVariants(newVariants);
   };
 
-  const handleVariantImageChange = async (vIndex, e) => {
+  const extractColorFromImage = (imgUrl, vIndex) => {
+    if (!imgUrl) return;
+    const img = new Image();
+    img.src = imgUrl;
+    img.onload = () => {
+      try {
+        const color = getColorSync(img);
+        const hex = color.hex();
+        const name = getClosestColorName(hex);
+        
+        updateVariant(vIndex, 'colorHex', hex);
+        updateVariant(vIndex, 'colorName', name);
+      } catch (err) {
+        console.error("ColorThief failed", err);
+      }
+    };
+  };
+
+  const selectVariantImage = (vIndex, iIndex) => {
+    const newVariants = [...variants];
+    newVariants[vIndex].selectedImageIndex = iIndex;
+    setVariants(newVariants);
+    extractColorFromImage(newVariants[vIndex].imagePreviews[iIndex], vIndex);
+  };
+
+  const handleVariantImageChange = (vIndex, e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
 
@@ -141,33 +163,35 @@ const CreateProduct = () => {
     const previews = files.map(file => URL.createObjectURL(file));
     newVariants[vIndex].imagePreviews = [...newVariants[vIndex].imagePreviews, ...previews];
     
-    // Auto color detection using ColorThief on the first uploaded image of the variant
-    if (newVariants[vIndex].colorHex === '#EEEEEE' || newVariants[vIndex].colorName === '') {
-      const img = new Image();
-      img.src = previews[0];
-      img.onload = () => {
-        try {
-          const colorThief = new ColorThief();
-          const rgb = colorThief.getColor(img);
-          const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
-          const name = getClosestColorName(hex);
-          
-          updateVariant(vIndex, 'colorHex', hex);
-          updateVariant(vIndex, 'colorName', name);
-          toast.success(`Color detected: ${name}`);
-        } catch (err) {
-          console.error("ColorThief failed", err);
-        }
-      };
-    }
+    const newlyAddedIndex = newVariants[vIndex].imagePreviews.length - previews.length;
     
-    setVariants(newVariants);
+    // Auto-select the first newly uploaded image if none is currently selected properly (i.e. empty hex)
+    if (newVariants[vIndex].colorHex === '#EEEEEE' || newVariants[vIndex].colorName === '') {
+      newVariants[vIndex].selectedImageIndex = newlyAddedIndex;
+      setVariants(newVariants);
+      extractColorFromImage(previews[0], vIndex);
+    } else {
+      setVariants(newVariants);
+    }
   };
 
   const removeVariantImage = (vIndex, iIndex) => {
     const newVariants = [...variants];
     newVariants[vIndex].images.splice(iIndex, 1);
     newVariants[vIndex].imagePreviews.splice(iIndex, 1);
+    
+    if (newVariants[vIndex].selectedImageIndex === iIndex) {
+      newVariants[vIndex].selectedImageIndex = 0;
+      if (newVariants[vIndex].imagePreviews.length === 0) {
+        newVariants[vIndex].colorHex = '#EEEEEE';
+        newVariants[vIndex].colorName = '';
+      } else {
+        extractColorFromImage(newVariants[vIndex].imagePreviews[0], vIndex);
+      }
+    } else if (newVariants[vIndex].selectedImageIndex > iIndex) {
+      newVariants[vIndex].selectedImageIndex -= 1;
+    }
+    
     setVariants(newVariants);
   };
 
@@ -179,16 +203,6 @@ const CreateProduct = () => {
     
     setIsLoading(true);
     try {
-      // 1. Upload main product images
-      let uploadedMainImages = [];
-      if (mainImages.length > 0) {
-        const uploadData = new FormData();
-        mainImages.forEach(img => uploadData.append('images', img));
-        const { data } = await axios.post('/api/upload', uploadData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
-        uploadedMainImages = data.images;
-      }
-
-      // 2. Upload variant images & construct payload
       const processedVariants = [];
       for (const variant of variants) {
         let variantUploadedImages = [];
@@ -211,10 +225,13 @@ const CreateProduct = () => {
         });
       }
 
+      // 1. Link main product images to the first variant's images
+      const rootImages = processedVariants[0]?.images || [];
+
       const productPayload = { 
         ...formData, 
-        images: uploadedMainImages,
-        thumbnail: uploadedMainImages[0] || null,
+        images: rootImages,
+        thumbnail: rootImages[0] || null,
         variants: processedVariants 
       };
       
@@ -314,38 +331,6 @@ const CreateProduct = () => {
                 placeholder="Describe your product..."
               />
             </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Main Product Images (Default display)</label>
-              <div className="flex gap-4 flex-wrap">
-                {mainImagePreviews.map((preview, idx) => (
-                  <div key={idx} className="relative group w-24 h-24 rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-                    <img src={preview} alt="preview" className="w-full h-full object-cover" />
-                    <button 
-                      type="button" 
-                      onClick={() => removeMainImage(idx)}
-                      className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                ))}
-                <div 
-                  onClick={() => fileInputRef.current.click()}
-                  className="w-24 h-24 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 hover:border-black hover:text-black hover:bg-gray-50 transition-all cursor-pointer"
-                >
-                  <Plus size={24} />
-                </div>
-                <input 
-                  type="file" 
-                  multiple 
-                  accept="image/*" 
-                  className="hidden" 
-                  ref={fileInputRef} 
-                  onChange={handleMainImageChange} 
-                />
-              </div>
-            </div>
           </div>
 
           {/* Section 2: Variants */}
@@ -363,130 +348,159 @@ const CreateProduct = () => {
               </button>
             </div>
 
-            {variants.length === 0 ? (
-              <div className="bg-white border border-dashed border-gray-300 rounded-2xl p-12 text-center">
-                <Layers size={48} className="mx-auto text-gray-300 mb-4" />
-                <h3 className="text-lg font-bold text-gray-900 mb-1">No variants added</h3>
-                <p className="text-gray-500 text-sm mb-6">You must add at least one variant (color, price, stock) for this product.</p>
-                <button type="button" onClick={addVariant} className="bg-black text-white px-6 py-2 rounded-lg text-sm font-bold shadow-md hover:shadow-lg transition-all">Add First Variant</button>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                {variants.map((variant, vIndex) => (
-                  <div key={vIndex} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden relative">
-                    
-                    {/* Variant Header */}
-                    <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+            <div className="space-y-6">
+              {variants.map((variant, vIndex) => (
+                <div key={vIndex} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden relative">
+                  
+                  {/* Variant Header */}
+                  <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {variant.imagePreviews[variant.selectedImageIndex] ? (
+                        <img src={variant.imagePreviews[variant.selectedImageIndex]} alt="Color Preview" className="w-8 h-8 rounded-full object-cover border border-gray-200 shadow-inner" />
+                      ) : (
                         <div className="w-8 h-8 rounded-full shadow-inner border border-gray-200" style={{ backgroundColor: variant.colorHex }} />
-                        <span className="font-bold text-gray-900">{variant.colorName || 'New Variant'}</span>
-                      </div>
+                      )}
+                      <span className="font-bold text-gray-900">{variant.colorName || (vIndex === 0 ? 'Default Variant' : 'New Variant')}</span>
+                    </div>
+                    {vIndex > 0 && (
                       <button type="button" onClick={() => removeVariant(vIndex)} className="text-gray-400 hover:text-red-500 transition-colors p-2 hover:bg-white rounded-lg">
                         <Trash2 size={16} />
                       </button>
-                    </div>
+                    )}
+                  </div>
 
-                    <div className="p-6">
-                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                      
+                      {/* Left Column: Images & Color AI */}
+                      <div className="lg:col-span-4 border-r border-gray-100 pr-0 lg:pr-8">
                         
-                        {/* Left Column: Images & Color AI */}
-                        <div className="lg:col-span-4 border-r border-gray-100 pr-0 lg:pr-8">
-                          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-4 flex items-center gap-2">
-                            <ImageIcon size={14} /> Images & Color
+                        <div className="mb-8">
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3 flex items-center justify-between">
+                            Variant Images
+                            <span className="text-gray-400 font-normal">{variant.imagePreviews.length}</span>
                           </h4>
                           
-                          <div className="mb-6">
-                            <div className="flex gap-2 flex-wrap mb-3">
-                              {variant.imagePreviews.map((preview, iIndex) => (
-                                <div key={iIndex} className="relative group w-16 h-16 rounded-lg border border-gray-200 overflow-hidden">
-                                  <img src={preview} alt="variant" className="w-full h-full object-cover" />
-                                  <button type="button" onClick={() => removeVariantImage(vIndex, iIndex)} className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <X size={14} />
-                                  </button>
-                                </div>
-                              ))}
-                              <label className="w-16 h-16 rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 hover:border-black hover:text-black cursor-pointer transition-all">
-                                <Plus size={20} />
-                                <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleVariantImageChange(vIndex, e)} />
-                              </label>
-                            </div>
-                            <p className="text-[11px] text-gray-400">Upload images to auto-detect color.</p>
-                          </div>
-
-                          <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                            <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-2">Detected Color</label>
-                            <div className="flex items-center gap-3 mb-3">
-                              <div className="relative">
-                                <input type="color" value={variant.colorHex} onChange={(e) => updateVariant(vIndex, 'colorHex', e.target.value)} className="w-10 h-10 rounded cursor-pointer opacity-0 absolute inset-0 z-10" />
-                                <div className="w-10 h-10 rounded border border-gray-200 shadow-sm" style={{ backgroundColor: variant.colorHex }}></div>
+                          <div className="flex gap-2 flex-wrap mb-2">
+                            {variant.imagePreviews.map((preview, iIndex) => (
+                              <div 
+                                key={iIndex} 
+                                onClick={() => selectVariantImage(vIndex, iIndex)}
+                                className={`relative group w-20 h-20 rounded-xl overflow-hidden cursor-pointer transition-all duration-200 ${
+                                  variant.selectedImageIndex === iIndex 
+                                    ? 'ring-2 ring-blue-500 scale-105 shadow-md z-10' 
+                                    : 'border border-gray-200 opacity-80 hover:opacity-100 hover:border-gray-400'
+                                }`}
+                              >
+                                <img src={preview} alt="variant" className="w-full h-full object-cover" />
+                                {variant.selectedImageIndex === iIndex && (
+                                  <div className="absolute top-1 right-1 bg-blue-500 text-white rounded-full p-0.5 shadow">
+                                    <Check size={12} strokeWidth={3} />
+                                  </div>
+                                )}
+                                <button 
+                                  type="button" 
+                                  onClick={(e) => { e.stopPropagation(); removeVariantImage(vIndex, iIndex); }} 
+                                  className="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
                               </div>
+                            ))}
+                            <label className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-400 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 cursor-pointer transition-all">
+                              <Plus size={24} />
+                              <input type="file" multiple accept="image/*" className="hidden" onChange={(e) => handleVariantImageChange(vIndex, e)} />
+                            </label>
+                          </div>
+                          {variant.imagePreviews.length > 0 && (
+                            <p className="text-[11px] text-gray-400">Click any image to set it as the primary color for this variant.</p>
+                          )}
+                        </div>
+
+                        {/* Selected Color Circular Preview */}
+                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-4">Selected Color</label>
+                          <div className="flex items-center gap-4">
+                            <div className="relative w-16 h-16 rounded-full shadow-inner border border-gray-200 overflow-hidden bg-white flex-shrink-0 flex items-center justify-center">
+                              {variant.imagePreviews[variant.selectedImageIndex] ? (
+                                <img src={variant.imagePreviews[variant.selectedImageIndex]} alt="Color Preview" className="w-full h-full object-cover" />
+                              ) : (
+                                <Droplet size={24} className="text-gray-300" />
+                              )}
+                            </div>
+                            <div className="flex-1">
                               <input 
                                 type="text" 
                                 value={variant.colorName} 
                                 onChange={(e) => updateVariant(vIndex, 'colorName', e.target.value)} 
                                 placeholder="Color Name"
-                                className="flex-1 bg-white border border-gray-200 rounded px-3 py-2 text-sm focus:outline-none focus:border-black"
+                                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:border-black mb-2"
                               />
+                              <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
+                                <div className="w-3 h-3 rounded-full border border-gray-300 shadow-sm" style={{ backgroundColor: variant.colorHex }}></div>
+                                {variant.colorHex}
+                              </div>
                             </div>
                           </div>
                         </div>
 
-                        {/* Right Column: Details */}
-                        <div className="lg:col-span-8">
-                          
-                          {/* Price & Stock */}
-                          <div className="grid grid-cols-3 gap-4 mb-8">
-                            <div>
-                              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price ($)</label>
-                              <input type="number" required value={variant.price} onChange={(e) => updateVariant(vIndex, 'price', e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all" />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Base Stock</label>
-                              <input type="number" required value={variant.stock} onChange={(e) => updateVariant(vIndex, 'stock', e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all" />
-                            </div>
-                            <div>
-                              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">SKU (Opt)</label>
-                              <input type="text" value={variant.sku} onChange={(e) => updateVariant(vIndex, 'sku', e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all" />
-                            </div>
-                          </div>
+                      </div>
 
-                          {/* Sizes */}
-                          <div className="mb-8">
-                            <div className="flex items-center justify-between mb-3">
-                              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500">Sizes & Inventory</h4>
-                              <button type="button" onClick={() => addSize(vIndex)} className="text-[11px] font-bold uppercase text-black hover:underline flex items-center gap-1"><Plus size={12}/> Add Size</button>
-                            </div>
-                            <div className="space-y-2">
-                              {variant.sizes.map((s, sIndex) => (
-                                <div key={sIndex} className="flex items-center gap-2">
-                                  <input type="text" placeholder="Size (e.g. S, M, L)" value={s.name} onChange={(e) => updateSize(vIndex, sIndex, 'name', e.target.value)} className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
-                                  <input type="number" placeholder="Stock" value={s.stock} onChange={(e) => updateSize(vIndex, sIndex, 'stock', e.target.value)} className="w-24 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
-                                  <button type="button" onClick={() => removeSize(vIndex, sIndex)} className="text-gray-400 hover:text-red-500 p-2"><X size={16} /></button>
-                                </div>
-                              ))}
-                              {variant.sizes.length === 0 && <p className="text-sm text-gray-400 italic">No specific sizes added. Using base stock.</p>}
-                            </div>
-                          </div>
-
-                          {/* Fabric Details */}
+                      {/* Right Column: Details */}
+                      <div className="lg:col-span-8">
+                        
+                        {/* Price & Stock */}
+                        <div className="grid grid-cols-3 gap-4 mb-8">
                           <div>
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Fabric Details</h4>
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                              <input type="text" placeholder="Material (e.g. Cotton)" value={variant.fabricQuality.material} onChange={(e) => updateFabric(vIndex, 'material', e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
-                              <input type="text" placeholder="GSM (e.g. 200)" value={variant.fabricQuality.gsm} onChange={(e) => updateFabric(vIndex, 'gsm', e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
-                              <input type="text" placeholder="Fit (e.g. Regular)" value={variant.fabricQuality.fit} onChange={(e) => updateFabric(vIndex, 'fit', e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
-                              <input type="text" placeholder="Pattern (e.g. Solid)" value={variant.fabricQuality.pattern} onChange={(e) => updateFabric(vIndex, 'pattern', e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
-                              <input type="text" placeholder="Sleeve (e.g. Half)" value={variant.fabricQuality.sleeveType} onChange={(e) => updateFabric(vIndex, 'sleeveType', e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
-                            </div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price ($)</label>
+                            <input type="number" required value={variant.price} onChange={(e) => updateVariant(vIndex, 'price', e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all" />
                           </div>
-
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Base Stock</label>
+                            <input type="number" required value={variant.stock} onChange={(e) => updateVariant(vIndex, 'stock', e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">SKU (Opt)</label>
+                            <input type="text" value={variant.sku} onChange={(e) => updateVariant(vIndex, 'sku', e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all" />
+                          </div>
                         </div>
+
+                        {/* Sizes */}
+                        <div className="mb-8">
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500">Sizes & Inventory</h4>
+                            <button type="button" onClick={() => addSize(vIndex)} className="text-[11px] font-bold uppercase text-black hover:underline flex items-center gap-1"><Plus size={12}/> Add Size</button>
+                          </div>
+                          <div className="space-y-2">
+                            {variant.sizes.map((s, sIndex) => (
+                              <div key={sIndex} className="flex items-center gap-2">
+                                <input type="text" placeholder="Size (e.g. S, M, L)" value={s.name} onChange={(e) => updateSize(vIndex, sIndex, 'name', e.target.value)} className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                                <input type="number" placeholder="Stock" value={s.stock} onChange={(e) => updateSize(vIndex, sIndex, 'stock', e.target.value)} className="w-24 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                                <button type="button" onClick={() => removeSize(vIndex, sIndex)} className="text-gray-400 hover:text-red-500 p-2"><X size={16} /></button>
+                              </div>
+                            ))}
+                            {variant.sizes.length === 0 && <p className="text-sm text-gray-400 italic">No specific sizes added. Using base stock.</p>}
+                          </div>
+                        </div>
+
+                        {/* Fabric Details */}
+                        <div>
+                          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Fabric Details</h4>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            <input type="text" placeholder="Material (e.g. Cotton)" value={variant.fabricQuality.material} onChange={(e) => updateFabric(vIndex, 'material', e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                            <input type="text" placeholder="GSM (e.g. 200)" value={variant.fabricQuality.gsm} onChange={(e) => updateFabric(vIndex, 'gsm', e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                            <input type="text" placeholder="Fit (e.g. Regular)" value={variant.fabricQuality.fit} onChange={(e) => updateFabric(vIndex, 'fit', e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                            <input type="text" placeholder="Pattern (e.g. Solid)" value={variant.fabricQuality.pattern} onChange={(e) => updateFabric(vIndex, 'pattern', e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                            <input type="text" placeholder="Sleeve (e.g. Half)" value={variant.fabricQuality.sleeveType} onChange={(e) => updateFabric(vIndex, 'sleeveType', e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                          </div>
+                        </div>
+
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
           </div>
           
         </form>
