@@ -549,9 +549,17 @@ const ProductEdit = () => {
                                 placeholder="Color Name"
                                 className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:border-black mb-2"
                               />
-                              <div className="flex items-center gap-2 text-xs font-mono text-gray-500">
-                                <div className="w-3 h-3 rounded-full border border-gray-300 shadow-sm" style={{ backgroundColor: variant.colorHex }}></div>
-                                {variant.colorHex}
+                              <div className="flex items-center gap-3 text-xs font-mono text-gray-500">
+                                <div className="relative group cursor-pointer" title="Click to manually pick color">
+                                  <input 
+                                    type="color" 
+                                    value={variant.colorHex} 
+                                    onChange={(e) => updateVariant(vIndex, 'colorHex', e.target.value)} 
+                                    className="w-6 h-6 rounded-full cursor-pointer opacity-0 absolute inset-0 z-10" 
+                                  />
+                                  <div className="w-6 h-6 rounded-full border border-gray-300 shadow-sm group-hover:ring-2 ring-gray-200 transition-all" style={{ backgroundColor: variant.colorHex }}></div>
+                                </div>
+                                <span>{variant.colorHex} <span className="text-[10px] text-gray-400 ml-1">(Click color to edit manually)</span></span>
                               </div>
                             </div>
                           </div>
