@@ -5,55 +5,9 @@ import { getProductById } from '../../redux/slices/productSlice';
 import axios from 'axios';
 import { Box, ArrowLeft, Save, Plus, X, Check, Trash2, Tag, Layers, Cpu, Droplet, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getColorSync } from 'colorthief';
 
-// Basic color palette for AI color matching
-const basicColors = [
-  { name: 'Midnight Black', hex: '#000000' },
-  { name: 'Pure White', hex: '#FFFFFF' },
-  { name: 'Crimson Red', hex: '#DC143C' },
-  { name: 'Forest Green', hex: '#228B22' },
-  { name: 'Royal Blue', hex: '#4169E1' },
-  { name: 'Mustard Yellow', hex: '#FFDB58' },
-  { name: 'Sky Blue', hex: '#87CEEB' },
-  { name: 'Charcoal Gray', hex: '#36454F' },
-  { name: 'Navy Blue', hex: '#000080' },
-  { name: 'Burnt Orange', hex: '#CC5500' },
-  { name: 'Soft Pink', hex: '#FFB6C1' },
-  { name: 'Earthy Brown', hex: '#8B4513' },
-  { name: 'Cream Beige', hex: '#F5F5DC' }
-];
-
-const rgbToHex = (r, g, b) => '#' + [r, g, b].map(x => {
-  const hex = x.toString(16);
-  return hex.length === 1 ? '0' + hex : hex;
-}).join('').toUpperCase();
-
-const getClosestColorName = (hex) => {
-  const hexToRgb = (h) => {
-    let r = 0, g = 0, b = 0;
-    if (h.length === 7) {
-      r = "0x" + h[1] + h[2];
-      g = "0x" + h[3] + h[4];
-      b = "0x" + h[5] + h[6];
-    }
-    return [parseInt(r, 16), parseInt(g, 16), parseInt(b, 16)];
-  };
-
-  const [r1, g1, b1] = hexToRgb(hex) || [0,0,0];
-  let minDistance = Infinity;
-  let closest = 'Custom Color';
-
-  for (let c of basicColors) {
-    const [r2, g2, b2] = hexToRgb(c.hex);
-    const dist = Math.sqrt(Math.pow(r2 - r1, 2) + Math.pow(g2 - g1, 2) + Math.pow(b2 - b1, 2));
-    if (dist < minDistance) {
-      minDistance = dist;
-      closest = c.name;
-    }
-  }
-  return closest;
-};
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 
 const ProductEdit = () => {
   const { id } = useParams();
@@ -74,9 +28,10 @@ const ProductEdit = () => {
     isOpen: false,
     imageUrl: '',
     vIndex: null,
-    globalIndex: null,
-    pickedHex: '',
-    pickedName: ''
+    iIndex: null,
+    crop: { unit: '%', width: 50, aspect: 1 },
+    completedCrop: null,
+    imageRef: null
   });
 
   useEffect(() => {
@@ -98,7 +53,8 @@ const ProductEdit = () => {
       
       const mappedVariants = (product.variants || []).map(v => ({
         colorName: v.colorName || '',
-        colorHex: v.colorHex || '#EEEEEE',
+        swatchPreview: v.swatchImage?.url || '',
+        swatchFile: null,
         price: v.price || 0,
         stock: v.stock || 0,
         sku: v.sku || '',
@@ -112,7 +68,7 @@ const ProductEdit = () => {
 
       if (mappedVariants.length === 0) {
         mappedVariants.push({
-          colorName: '', colorHex: '#EEEEEE', price: 0, stock: 0, sku: '', sizes: [],
+          colorName: '', swatchPreview: '', swatchFile: null, price: 0, stock: 0, sku: '', sizes: [],
           fabricQuality: { material: '', gsm: '', fit: '', fabricType: '', pattern: '', sleeveType: '' },
           existingImages: [], newImages: [], imagePreviews: [], selectedImageIndex: 0
         });
@@ -137,48 +93,39 @@ const ProductEdit = () => {
     return variant.imagePreviews[globalIndex - variant.existingImages.length];
   };
 
-  const extractColorFromImage = (imgUrl, vIndex) => {
-    if (!imgUrl) return;
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.src = imgUrl;
-    img.onload = () => {
-      try {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        const width = img.naturalWidth;
-        const height = img.naturalHeight;
-        const cropWidth = width * 0.5;
-        const cropHeight = height * 0.5;
-        const startX = width * 0.25;
-        const startY = height * 0.25;
+  const getCroppedImg = async (image, crop) => {
+    const canvas = document.createElement('canvas');
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+    canvas.width = crop.width;
+    canvas.height = crop.height;
+    const ctx = canvas.getContext('2d');
 
-        canvas.width = cropWidth;
-        canvas.height = cropHeight;
-        ctx.drawImage(img, startX, startY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-        
-        const croppedImg = new Image();
-        croppedImg.src = canvas.toDataURL();
-        croppedImg.onload = () => {
-          const color = getColorSync(croppedImg);
-          const hex = color.hex();
-          const name = getClosestColorName(hex);
-          
-          updateVariant(vIndex, 'colorHex', hex);
-          updateVariant(vIndex, 'colorName', name);
-        };
-      } catch (err) {
-        console.error("Auto color extraction failed", err);
-      }
-    };
+    ctx.drawImage(
+      image,
+      crop.x * scaleX,
+      crop.y * scaleY,
+      crop.width * scaleX,
+      crop.height * scaleY,
+      0,
+      0,
+      crop.width,
+      crop.height
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        if(blob) blob.name = 'swatch.jpeg';
+        resolve(blob);
+      }, 'image/jpeg');
+    });
   };
-
   // Variant Management
   const addVariant = () => {
     setVariants([...variants, {
       colorName: '',
-      colorHex: '#EEEEEE',
+      swatchPreview: '',
+      swatchFile: null,
       price: 0,
       stock: 0,
       sku: '',
@@ -231,7 +178,6 @@ const ProductEdit = () => {
     const newVariants = [...variants];
     newVariants[vIndex].selectedImageIndex = globalIndex;
     setVariants(newVariants);
-    extractColorFromImage(getImageUrl(newVariants[vIndex], globalIndex), vIndex);
   };
 
   const handleVariantImageChange = (vIndex, e) => {
@@ -246,10 +192,9 @@ const ProductEdit = () => {
     
     const newlyAddedIndex = newVariants[vIndex].existingImages.length + newVariants[vIndex].imagePreviews.length - previews.length;
     
-    if (newVariants[vIndex].colorHex === '#EEEEEE' || newVariants[vIndex].colorName === '') {
+    if (newVariants[vIndex].colorName === '') {
       newVariants[vIndex].selectedImageIndex = newlyAddedIndex;
       setVariants(newVariants);
-      extractColorFromImage(previews[0], vIndex);
     } else {
       setVariants(newVariants);
     }
@@ -272,10 +217,7 @@ const ProductEdit = () => {
       newVariants[vIndex].selectedImageIndex = 0;
       const firstImg = getImageUrl(newVariants[vIndex], 0);
       if (!firstImg) {
-        newVariants[vIndex].colorHex = '#EEEEEE';
         newVariants[vIndex].colorName = '';
-      } else {
-        extractColorFromImage(firstImg, vIndex);
       }
     } else if (newVariants[vIndex].selectedImageIndex > globalIndex) {
       newVariants[vIndex].selectedImageIndex -= 1;
@@ -291,16 +233,30 @@ const ProductEdit = () => {
       imageUrl,
       vIndex,
       globalIndex,
-      pickedHex: variants[vIndex].colorHex !== '#EEEEEE' ? variants[vIndex].colorHex : '#000000',
-      pickedName: variants[vIndex].colorName !== '' ? variants[vIndex].colorName : 'Pick a color'
+      crop: { unit: '%', width: 50, aspect: 1 },
+      completedCrop: null,
+      imageRef: null
     });
   };
 
   const closePreviewModal = () => {
-    setModal({ isOpen: false, imageUrl: '', vIndex: null, globalIndex: null, pickedHex: '', pickedName: '' });
+    setModal({ isOpen: false, imageUrl: '', vIndex: null, globalIndex: null, crop: { unit: '%', width: 50, aspect: 1 }, completedCrop: null, imageRef: null });
   };
 
+  // Removed handleImageClickToPickColor as user only wants manual color picking
 
+  const applyModalCrop = async () => {
+    if (modal.imageRef && modal.completedCrop?.width && modal.completedCrop?.height) {
+      const croppedBlob = await getCroppedImg(modal.imageRef, modal.completedCrop);
+      const croppedUrl = URL.createObjectURL(croppedBlob);
+      
+      const newVariants = [...variants];
+      newVariants[modal.vIndex].swatchFile = new File([croppedBlob], "swatch.jpg", { type: "image/jpeg" });
+      newVariants[modal.vIndex].swatchPreview = croppedUrl;
+      setVariants(newVariants);
+      closePreviewModal();
+    }
+  };
 
   const deleteModalImage = () => {
     removeVariantImage(modal.vIndex, modal.globalIndex);
@@ -319,6 +275,15 @@ const ProductEdit = () => {
       const processedVariants = [];
       for (const variant of variants) {
         let variantUploadedImages = [...variant.existingImages];
+        let variantUploadedSwatch = null;
+
+        if (variant.swatchFile) {
+          const sData = new FormData();
+          sData.append('images', variant.swatchFile);
+          const { data: sRes } = await axios.post('/api/upload', sData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
+          variantUploadedSwatch = sRes.images[0];
+        }
+
         if (variant.newImages.length > 0) {
           const vData = new FormData();
           variant.newImages.forEach(img => vData.append('images', img));
@@ -328,7 +293,7 @@ const ProductEdit = () => {
         
         processedVariants.push({
           colorName: variant.colorName,
-          colorHex: variant.colorHex,
+          swatchImage: variantUploadedSwatch || (variant.swatchPreview?.startsWith('http') ? { url: variant.swatchPreview } : undefined),
           price: Number(variant.price),
           stock: Number(variant.stock),
           sku: variant.sku,
@@ -362,6 +327,65 @@ const ProductEdit = () => {
 
   return (
     <div className="min-h-screen bg-[#F7F7F7] py-10 px-4 sm:px-6 lg:px-8 font-sans relative">
+
+      {/* Interactive Pixel Picker Modal */}
+      {modal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl overflow-hidden max-w-4xl w-full flex flex-col md:flex-row shadow-2xl relative">
+            
+            {/* Left: Image Viewer */}
+            <div className="md:w-2/3 bg-gray-100 flex items-center justify-center relative p-6 min-h-[400px]">
+              <div className="absolute top-4 left-6 z-10 flex flex-col gap-1">
+                <span className="text-xs font-black uppercase tracking-widest text-black bg-white px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2">
+                  <Eye size={14} /> Image Preview
+                </span>
+                <span className="text-[10px] text-gray-500 bg-white/80 backdrop-blur px-3 py-1 rounded-full shadow-sm">
+                  Preview the image and pick its color manually on the right.
+                </span>
+              </div>
+              <img 
+                src={modal.imageUrl} 
+                alt="Preview" 
+                className="max-h-[60vh] max-w-full object-contain drop-shadow-xl" 
+              />
+            </div>
+            
+            {/* Right: Tools & Actions */}
+            <div className="md:w-1/3 p-8 flex flex-col justify-center bg-white relative">
+              <button onClick={closePreviewModal} className="absolute top-4 right-4 text-gray-400 hover:text-black bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+              
+              <h3 className="text-xl font-black text-gray-900 mb-6">Extracted Color</h3>
+              
+              <div className="flex items-center gap-4 mb-8 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <div className="relative">
+                  <input 
+                    type="color" 
+                    value={modal.pickedHex} 
+                    onChange={(e) => setModal(prev => ({ ...prev, pickedHex: e.target.value, pickedName: 'Custom Pick' }))}
+                    className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
+                  />
+                  <div className="w-16 h-16 rounded-full shadow-inner border border-gray-200" style={{ backgroundColor: modal.pickedHex }}></div>
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900 text-lg">{modal.pickedName}</p>
+                  <p className="text-gray-500 font-mono text-sm uppercase">{modal.pickedHex}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <button onClick={applyModalColor} className="w-full bg-black text-white rounded-xl py-3.5 font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
+                  <Check size={18} /> Apply Color & Select
+                </button>
+                <button onClick={deleteModalImage} className="w-full bg-white text-red-500 border border-red-100 rounded-xl py-3.5 font-bold shadow-sm hover:bg-red-50 hover:border-red-200 transition-all flex justify-center items-center gap-2">
+                  <Trash2 size={18} /> Delete Image
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="max-w-5xl mx-auto">
         
@@ -534,7 +558,15 @@ const ProductEdit = () => {
                                   )}
                                   
                                   {/* Interactive Hover Overlay */}
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-20">
+                                    <button 
+                                      type="button" 
+                                      title="Open Interactive Pixel Picker"
+                                      onClick={(e) => { e.stopPropagation(); openPreviewModal(vIndex, globalIndex, img.url); }} 
+                                      className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-md"
+                                    >
+                                      <Eye size={14} />
+                                    </button>
                                     <button 
                                       type="button" 
                                       title="Delete Image"
@@ -569,7 +601,15 @@ const ProductEdit = () => {
                                   )}
                                   
                                   {/* Interactive Hover Overlay */}
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-20">
+                                    <button 
+                                      type="button" 
+                                      title="Open Interactive Pixel Picker"
+                                      onClick={(e) => { e.stopPropagation(); openPreviewModal(vIndex, globalIndex, preview); }} 
+                                      className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-md"
+                                    >
+                                      <Eye size={14} />
+                                    </button>
                                     <button 
                                       type="button" 
                                       title="Delete Image"
@@ -589,35 +629,49 @@ const ProductEdit = () => {
                             </label>
                           </div>
                           {(variant.existingImages.length > 0 || variant.imagePreviews.length > 0) && (
-                            <p className="text-[11px] text-gray-400">Click an image to set it as default. Hover to delete.</p>
+                            <p className="text-[11px] text-gray-400">Hover over an image to preview it or delete it.</p>
                           )}
                         </div>
 
-                        {/* Selected Color Circular Preview */}
-                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
-                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-4">Selected Color</label>
-                          <div className="flex items-center gap-4">
+                        {/* Fabric/Color Swatch */}
+                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 mt-4">
+                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-4">Fabric / Color Swatch</label>
+                          <div className="flex items-center gap-6">
                             <div className="relative w-16 h-16 rounded-full shadow-inner border border-gray-200 overflow-hidden bg-white flex-shrink-0 flex items-center justify-center">
-                              {getImageUrl(variant, variant.selectedImageIndex) ? (
-                                <img src={getImageUrl(variant, variant.selectedImageIndex)} alt="Color Preview" className="w-full h-full object-cover" />
+                              {variant.swatchPreview ? (
+                                <img src={variant.swatchPreview} alt="Swatch Preview" className="w-full h-full object-cover" />
                               ) : (
                                 <Droplet size={24} className="text-gray-300" />
                               )}
                             </div>
-                              <input
-                                type="color"
-                                value={variant.colorHex}
-                                readOnly
-                                disabled
-                                className="absolute inset-0 opacity-0 cursor-not-allowed w-full h-full"
-                              />
-                              <div className="absolute inset-0 pointer-events-none rounded-full shadow-[inset_0_2px_4px_rgba(0,0,0,0.1)]"></div>
-                            </div>
-                            <div className="flex flex-col flex-1 max-w-[200px]">
-                              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Detected Color</span>
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold">{variant.colorName || 'None'}</span>
-                                <span className="text-xs text-gray-400 font-mono">({variant.colorHex})</span>
+                            <div className="flex flex-col gap-3 flex-1">
+                              <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Manual Swatch Upload</label>
+                                <input 
+                                  type="file" 
+                                  accept="image/*"
+                                  onChange={(e) => {
+                                    if(e.target.files && e.target.files[0]) {
+                                      const file = e.target.files[0];
+                                      const newVariants = [...variants];
+                                      newVariants[vIndex].swatchFile = file;
+                                      newVariants[vIndex].swatchPreview = URL.createObjectURL(file);
+                                      setVariants(newVariants);
+                                    }
+                                  }}
+                                  className="text-xs w-full bg-white border border-gray-200 rounded-lg px-2 py-1 focus:outline-none"
+                                />
+                                <p className="text-[10px] text-gray-400 mt-1">Or use the <Eye size={10} className="inline"/> icon on an image to crop a swatch.</p>
+                              </div>
+                              <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Color/Fabric Name (Optional)</label>
+                                <input 
+                                  type="text" 
+                                  value={variant.colorName} 
+                                  onChange={(e) => updateVariant(vIndex, 'colorName', e.target.value)} 
+                                  placeholder="e.g. Midnight Black"
+                                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:border-black"
+                                />
                               </div>
                             </div>
                           </div>

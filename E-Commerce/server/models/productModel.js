@@ -17,7 +17,10 @@ const fabricSchema = new mongoose.Schema({
 
 const variantSchema = new mongoose.Schema({
   colorName: { type: String },
-  colorHex: { type: String },
+  swatchImage: {
+    url: { type: String },
+    public_id: { type: String }
+  },
   price: { type: Number, required: true, default: 0 },
   stock: { type: Number, required: true, default: 0 },
   sizes: [sizeSchema],

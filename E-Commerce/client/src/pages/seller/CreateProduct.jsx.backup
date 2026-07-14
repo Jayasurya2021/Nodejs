@@ -17,8 +17,7 @@ const CreateProduct = () => {
   
   const [variants, setVariants] = useState([{
     colorName: '',
-    swatchFile: null,
-    swatchPreview: '',
+    colorHex: '#EEEEEE',
     price: 0,
     stock: 0,
     sku: '',
@@ -35,9 +34,8 @@ const CreateProduct = () => {
     imageUrl: '',
     vIndex: null,
     iIndex: null,
-    crop: { unit: '%', width: 50, aspect: 1 },
-    completedCrop: null,
-    imageRef: null
+    pickedHex: '',
+    pickedName: ''
   });
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -46,8 +44,7 @@ const CreateProduct = () => {
   const addVariant = () => {
     setVariants([...variants, {
       colorName: '',
-      swatchFile: null,
-      swatchPreview: '',
+      colorHex: '#EEEEEE',
       price: 0,
       stock: 0,
       sku: '',
@@ -103,34 +100,6 @@ const CreateProduct = () => {
     setVariants(newVariants);
   };
 
-  const getCroppedImg = async (image, crop) => {
-    const canvas = document.createElement('canvas');
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
-    canvas.width = crop.width;
-    canvas.height = crop.height;
-    const ctx = canvas.getContext('2d');
-
-    ctx.drawImage(
-      image,
-      crop.x * scaleX,
-      crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
-      0,
-      0,
-      crop.width,
-      crop.height
-    );
-
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        if(blob) blob.name = 'swatch.jpeg';
-        resolve(blob);
-      }, 'image/jpeg');
-    });
-  };
-
   const handleVariantImageChange = (vIndex, e) => {
     const files = Array.from(e.target.files);
     if (files.length === 0) return;
@@ -143,7 +112,7 @@ const CreateProduct = () => {
     
     const newlyAddedIndex = newVariants[vIndex].imagePreviews.length - previews.length;
     
-    if (newVariants[vIndex].colorName === '') {
+    if (newVariants[vIndex].colorHex === '#EEEEEE' || newVariants[vIndex].colorName === '') {
       newVariants[vIndex].selectedImageIndex = newlyAddedIndex;
       setVariants(newVariants);
     } else {
@@ -159,6 +128,7 @@ const CreateProduct = () => {
     if (newVariants[vIndex].selectedImageIndex === iIndex) {
       newVariants[vIndex].selectedImageIndex = 0;
       if (newVariants[vIndex].imagePreviews.length === 0) {
+        newVariants[vIndex].colorHex = '#EEEEEE';
         newVariants[vIndex].colorName = '';
       }
     } else if (newVariants[vIndex].selectedImageIndex > iIndex) {
@@ -175,29 +145,26 @@ const CreateProduct = () => {
       imageUrl,
       vIndex,
       iIndex,
-      crop: { unit: '%', width: 50, aspect: 1 },
-      completedCrop: null,
-      imageRef: null
+      pickedHex: variants[vIndex].colorHex !== '#EEEEEE' ? variants[vIndex].colorHex : '#000000',
+      pickedName: variants[vIndex].colorName !== '' ? variants[vIndex].colorName : 'Pick a color'
     });
   };
 
   const closePreviewModal = () => {
-    setModal({ isOpen: false, imageUrl: '', vIndex: null, iIndex: null, crop: { unit: '%', width: 50, aspect: 1 }, completedCrop: null, imageRef: null });
+    setModal({ isOpen: false, imageUrl: '', vIndex: null, iIndex: null, pickedHex: '', pickedName: '' });
   };
 
   // Removed handleImageClickToPickColor as user only wants manual color picking
 
-  const applyModalCrop = async () => {
-    if (modal.imageRef && modal.completedCrop?.width && modal.completedCrop?.height) {
-      const croppedBlob = await getCroppedImg(modal.imageRef, modal.completedCrop);
-      const croppedUrl = URL.createObjectURL(croppedBlob);
-      
-      const newVariants = [...variants];
-      newVariants[modal.vIndex].swatchFile = new File([croppedBlob], "swatch.jpg", { type: "image/jpeg" });
-      newVariants[modal.vIndex].swatchPreview = croppedUrl;
-      setVariants(newVariants);
-      closePreviewModal();
-    }
+  const applyModalColor = () => {
+    updateVariant(modal.vIndex, 'colorHex', modal.pickedHex);
+    updateVariant(modal.vIndex, 'colorName', modal.pickedName);
+    
+    const newVariants = [...variants];
+    newVariants[modal.vIndex].selectedImageIndex = modal.iIndex;
+    setVariants(newVariants);
+    
+    closePreviewModal();
   };
 
   const deleteModalImage = () => {
@@ -216,15 +183,6 @@ const CreateProduct = () => {
       const processedVariants = [];
       for (const variant of variants) {
         let variantUploadedImages = [];
-        let variantUploadedSwatch = null;
-
-        if (variant.swatchFile) {
-          const sData = new FormData();
-          sData.append('images', variant.swatchFile);
-          const { data: sRes } = await axios.post('/api/upload', sData, { withCredentials: true, headers: { 'Content-Type': 'multipart/form-data' } });
-          variantUploadedSwatch = sRes.images[0];
-        }
-
         if (variant.images.length > 0) {
           const vData = new FormData();
           variant.images.forEach(img => vData.append('images', img));
@@ -234,7 +192,7 @@ const CreateProduct = () => {
         
         processedVariants.push({
           colorName: variant.colorName,
-          swatchImage: variantUploadedSwatch,
+          colorHex: variant.colorHex,
           price: Number(variant.price),
           stock: Number(variant.stock),
           sku: variant.sku,
@@ -275,26 +233,17 @@ const CreateProduct = () => {
             <div className="md:w-2/3 bg-gray-100 flex items-center justify-center relative p-6 min-h-[400px]">
               <div className="absolute top-4 left-6 z-10 flex flex-col gap-1">
                 <span className="text-xs font-black uppercase tracking-widest text-black bg-white px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2">
-                  <Eye size={14} /> Crop Swatch
+                  <Eye size={14} /> Image Preview
                 </span>
                 <span className="text-[10px] text-gray-500 bg-white/80 backdrop-blur px-3 py-1 rounded-full shadow-sm">
-                  Drag to crop the fabric/color swatch.
+                  Preview the image and pick its color manually on the right.
                 </span>
               </div>
-              <ReactCrop
-                crop={modal.crop}
-                onChange={(c) => setModal(prev => ({ ...prev, crop: c }))}
-                onComplete={(c) => setModal(prev => ({ ...prev, completedCrop: c }))}
-                aspect={1}
-              >
-                <img 
-                  src={modal.imageUrl} 
-                  alt="Crop" 
-                  crossOrigin="anonymous"
-                  onLoad={(e) => setModal(prev => ({ ...prev, imageRef: e.currentTarget }))}
-                  className="max-h-[60vh] max-w-full object-contain drop-shadow-xl"
-                />
-              </ReactCrop>
+              <img 
+                src={modal.imageUrl} 
+                alt="Preview" 
+                className="max-h-[60vh] max-w-full object-contain drop-shadow-xl" 
+              />
             </div>
             
             {/* Right: Tools & Actions */}
@@ -303,11 +252,27 @@ const CreateProduct = () => {
                 <X size={20} />
               </button>
               
-              <h3 className="text-xl font-black text-gray-900 mb-6">Crop Actions</h3>
+              <h3 className="text-xl font-black text-gray-900 mb-6">Extracted Color</h3>
+              
+              <div className="flex items-center gap-4 mb-8 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <div className="relative">
+                  <input 
+                    type="color" 
+                    value={modal.pickedHex} 
+                    onChange={(e) => setModal(prev => ({ ...prev, pickedHex: e.target.value, pickedName: 'Custom Pick' }))}
+                    className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
+                  />
+                  <div className="w-16 h-16 rounded-full shadow-inner border border-gray-200" style={{ backgroundColor: modal.pickedHex }}></div>
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900 text-lg">{modal.pickedName}</p>
+                  <p className="text-gray-500 font-mono text-sm uppercase">{modal.pickedHex}</p>
+                </div>
+              </div>
               
               <div className="space-y-3">
-                <button onClick={applyModalCrop} className="w-full bg-black text-white rounded-xl py-3.5 font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
-                  <Check size={18} /> Save as Swatch
+                <button onClick={applyModalColor} className="w-full bg-black text-white rounded-xl py-3.5 font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
+                  <Check size={18} /> Apply Color & Select
                 </button>
                 <button onClick={deleteModalImage} className="w-full bg-white text-red-500 border border-red-100 rounded-xl py-3.5 font-bold shadow-sm hover:bg-red-50 hover:border-red-200 transition-all flex justify-center items-center gap-2">
                   <Trash2 size={18} /> Delete Image
@@ -501,45 +466,36 @@ const CreateProduct = () => {
                           )}
                         </div>
 
-                        {/* Fabric/Color Swatch */}
-                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 mt-4">
-                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-4">Fabric / Color Swatch</label>
-                          <div className="flex items-center gap-6">
+                        {/* Selected Color Circular Preview */}
+                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                          <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-4">Selected Color</label>
+                          <div className="flex items-center gap-4">
                             <div className="relative w-16 h-16 rounded-full shadow-inner border border-gray-200 overflow-hidden bg-white flex-shrink-0 flex items-center justify-center">
-                              {variant.swatchPreview ? (
-                                <img src={variant.swatchPreview} alt="Swatch Preview" className="w-full h-full object-cover" />
+                              {variant.imagePreviews[variant.selectedImageIndex] ? (
+                                <img src={variant.imagePreviews[variant.selectedImageIndex]} alt="Color Preview" className="w-full h-full object-cover" />
                               ) : (
                                 <Droplet size={24} className="text-gray-300" />
                               )}
                             </div>
-                            <div className="flex flex-col gap-3 flex-1">
-                              <div>
-                                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Manual Swatch Upload</label>
-                                <input 
-                                  type="file" 
-                                  accept="image/*"
-                                  onChange={(e) => {
-                                    if(e.target.files && e.target.files[0]) {
-                                      const file = e.target.files[0];
-                                      const newVariants = [...variants];
-                                      newVariants[vIndex].swatchFile = file;
-                                      newVariants[vIndex].swatchPreview = URL.createObjectURL(file);
-                                      setVariants(newVariants);
-                                    }
-                                  }}
-                                  className="text-xs w-full bg-white border border-gray-200 rounded-lg px-2 py-1 focus:outline-none"
-                                />
-                                <p className="text-[10px] text-gray-400 mt-1">Or use the <Eye size={10} className="inline"/> icon on an image to crop a swatch.</p>
-                              </div>
-                              <div>
-                                <label className="block text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-1">Color/Fabric Name (Optional)</label>
-                                <input 
-                                  type="text" 
-                                  value={variant.colorName} 
-                                  onChange={(e) => updateVariant(vIndex, 'colorName', e.target.value)} 
-                                  placeholder="e.g. Midnight Black"
-                                  className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:border-black"
-                                />
+                            <div className="flex-1">
+                              <input 
+                                type="text" 
+                                value={variant.colorName} 
+                                onChange={(e) => updateVariant(vIndex, 'colorName', e.target.value)} 
+                                placeholder="Color Name"
+                                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-semibold focus:outline-none focus:border-black mb-2"
+                              />
+                              <div className="flex items-center gap-3 text-xs font-mono text-gray-500">
+                                <div className="relative group cursor-pointer" title="Click to manually pick color">
+                                  <input 
+                                    type="color" 
+                                    value={variant.colorHex} 
+                                    onChange={(e) => updateVariant(vIndex, 'colorHex', e.target.value)} 
+                                    className="w-6 h-6 rounded-full cursor-pointer opacity-0 absolute inset-0 z-10" 
+                                  />
+                                  <div className="w-6 h-6 rounded-full border border-gray-300 shadow-sm group-hover:ring-2 ring-gray-200 transition-all" style={{ backgroundColor: variant.colorHex }}></div>
+                                </div>
+                                <span>{variant.colorHex} <span className="text-[10px] text-gray-400 ml-1">(Click color to edit)</span></span>
                               </div>
                             </div>
                           </div>
