@@ -53,12 +53,12 @@ const Cart = () => {
                 <div key={`${item._id}-${item.size}-${item.color}`} className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center border-b border-border pb-6">
                   {/* Product Details */}
                   <div className="col-span-1 md:col-span-3 flex gap-4">
-                    <img src={item.images?.[0]?.url || item.image || 'https://via.placeholder.com/150'} alt={item.name} className="w-24 h-32 object-cover" />
+                    <img src={item.selectedVariant?.images?.[0]?.url || item.selectedVariant?.swatchImage?.url || item.images?.[0]?.url || item.thumbnail?.url || 'https://via.placeholder.com/150'} alt={item.title || 'Product'} className="w-24 h-32 object-cover" />
                     <div className="flex flex-col justify-center">
-                      <Link to={`/product/${item._id}`} className="font-semibold hover:text-gray-500 transition-colors mb-1">{item.name}</Link>
+                      <Link to={`/product/${item._id}`} className="font-semibold hover:text-gray-500 transition-colors mb-1">{item.title}</Link>
                       <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">{item.brand}</p>
-                      {item.size && <p className="text-xs text-gray-500 uppercase">Size: {item.size}</p>}
-                      {item.color && <p className="text-xs text-gray-500 uppercase">Color: {item.color}</p>}
+                      {item.selectedSize && <p className="text-xs text-gray-500 uppercase">Size: {item.selectedSize}</p>}
+                      {item.selectedVariant?.colorName && <p className="text-xs text-gray-500 uppercase">Color: {item.selectedVariant.colorName}</p>}
                     </div>
                   </div>
 
@@ -78,7 +78,7 @@ const Cart = () => {
                       </button>
                       <div className="flex-1 text-center text-sm font-medium">{item.qty}</div>
                       <button 
-                        onClick={() => addToCartHandler(item, Math.min(item.variant?.stock || 0, item.qty + 1))}
+                        onClick={() => addToCartHandler(item, Math.min(item.selectedVariant?.stock || item.stock || 0, item.qty + 1))}
                         className="w-8 h-8 flex items-center justify-center hover:bg-gray-100"
                       >
                         <FiPlus size={12} />

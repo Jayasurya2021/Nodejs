@@ -44,11 +44,13 @@ export const cartSlice = createSlice({
     addToCart: (state, action) => {
       const item = action.payload;
 
-      const existItem = state.cartItems.find((x) => x._id === item._id && x.size === item.size && x.color === item.color);
+      const existItem = state.cartItems.find(
+        (x) => x._id === item._id && x.selectedSize === item.selectedSize && x.selectedVariant?.colorName === item.selectedVariant?.colorName
+      );
 
       if (existItem) {
         state.cartItems = state.cartItems.map((x) =>
-          x._id === existItem._id && x.size === existItem.size && x.color === existItem.color ? item : x
+          x._id === existItem._id && x.selectedSize === existItem.selectedSize && x.selectedVariant?.colorName === existItem.selectedVariant?.colorName ? item : x
         );
       } else {
         state.cartItems = [...state.cartItems, item];

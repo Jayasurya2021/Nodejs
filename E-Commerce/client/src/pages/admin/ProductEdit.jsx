@@ -456,10 +456,17 @@ const ProductEdit = () => {
               </div>
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Category</label>
-                <input 
-                  type="text" name="category" required value={formData.category} onChange={handleChange}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all"
-                />
+                <select 
+                  name="category" required value={formData.category} onChange={handleChange}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all appearance-none cursor-pointer"
+                >
+                  <option value="" disabled>Select a category</option>
+                  <option value="Shirts">Shirts</option>
+                  <option value="Jeans">Jeans</option>
+                  <option value="Jackets">Jackets</option>
+                  <option value="Accessories">Accessories</option>
+                  <option value="Sneakers">Sneakers</option>
+                </select>
               </div>
             </div>
 
