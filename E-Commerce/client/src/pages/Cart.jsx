@@ -78,7 +78,7 @@ const Cart = () => {
                       </button>
                       <div className="flex-1 text-center text-sm font-medium">{item.qty}</div>
                       <button 
-                        onClick={() => addToCartHandler(item, Math.min(item.countInStock, item.qty + 1))}
+                        onClick={() => addToCartHandler(item, Math.min(item.variant?.stock || 0, item.qty + 1))}
                         className="w-8 h-8 flex items-center justify-center hover:bg-gray-100"
                       >
                         <FiPlus size={12} />

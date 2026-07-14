@@ -32,7 +32,14 @@ const ProductCard = ({ product }) => {
     } else if (action === 'cart') {
       const basePrice = product.variants?.[0]?.price || 0;
       const priceToAdd = product.discount > 0 ? basePrice * (1 - (product.discount || 0) / 100) : basePrice;
-      dispatch(addToCart({ ...product, qty: 1, price: priceToAdd, variant: product.variants?.[0] }));
+      dispatch(addToCart({ 
+        ...product, 
+        qty: 1, 
+        price: priceToAdd, 
+        variant: product.variants?.[0],
+        size: product.variants?.[0]?.sizes?.[0]?.name || '',
+        color: product.variants?.[0]?.colorName || ''
+      }));
       toast.success('Added to bag! 🛍️');
     }
   };

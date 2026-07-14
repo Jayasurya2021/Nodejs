@@ -17,6 +17,7 @@ const ProductDetails = () => {
 
   const [qty, setQty] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [selectedSize, setSelectedSize] = useState('');
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -44,6 +45,9 @@ const ProductDetails = () => {
     if (product?.variants?.length > 0) {
       setSelectedVariant(product.variants[0]);
       setActiveImageIndex(0);
+      if (product.variants[0].sizes?.length > 0) {
+        setSelectedSize(product.variants[0].sizes[0].name);
+      }
     }
   }, [product]);
 
@@ -90,7 +94,9 @@ const ProductDetails = () => {
       ...product, 
       price: priceToAdd,
       qty, 
-      variant: selectedVariant 
+      variant: selectedVariant,
+      size: selectedSize,
+      color: selectedVariant?.colorName
     }));
     toast.success('Added to bag! 🛍️');
     window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/cart' }));
@@ -360,9 +366,10 @@ const ProductDetails = () => {
                     onClick={() => {
                       const variant = product.variants.find(v => v.sizes?.some(s => s.name === size) && v.colorName === selectedVariant?.colorName);
                       if(variant) setSelectedVariant(variant);
+                      setSelectedSize(size);
                     }}
                     className={`w-14 h-11 flex items-center justify-center border text-sm font-semibold transition-all duration-200 ${
-                      selectedVariant?.sizes?.some(s => s.name === size)
+                      selectedSize === size
                         ? 'bg-black text-white border-black shadow-lg scale-105'
                         : isAvailable 
                           ? 'bg-white text-black border-gray-200 hover:border-black' 

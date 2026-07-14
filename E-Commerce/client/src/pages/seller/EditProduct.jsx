@@ -35,10 +35,12 @@ const EditProduct = () => {
   });
 
   useEffect(() => {
+    dispatch(getProductById(id));
+  }, [dispatch, id]);
+
+  useEffect(() => {
     if (isError) toast.error(message);
-    if (!product || product._id !== id) {
-      dispatch(getProductById(id));
-    } else {
+    if (product && product._id === id) {
       setFormData({
         title: product.title || '',
         slug: product.slug || '',
@@ -52,6 +54,7 @@ const EditProduct = () => {
       });
       
       const mappedVariants = (product.variants || []).map(v => ({
+        _id: v._id,
         colorName: v.colorName || '',
         swatchPreview: v.swatchImage?.url || '',
         swatchFile: null,
@@ -75,7 +78,7 @@ const EditProduct = () => {
       }
       setVariants(mappedVariants);
     }
-  }, [product, dispatch, id, isError, message]);
+  }, [product, id, isError, message]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -304,6 +307,7 @@ const EditProduct = () => {
         }
         
         processedVariants.push({
+          _id: variant._id,
           colorName: variant.colorName,
           swatchImage: variantUploadedSwatch || (variant.swatchPreview?.startsWith('http') ? { url: variant.swatchPreview } : undefined),
           price: Number(variant.price),
