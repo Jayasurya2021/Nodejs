@@ -10,7 +10,7 @@ import GoogleLoginButton from '../components/GoogleLoginButton';
 const BENEFITS = [
   "Exclusive member discounts up to 40%",
   "Early access to new collections",
-  "Free shipping on all orders over $100",
+  "Free shipping on all orders over ₹100",
   "Personal style recommendations",
 ];
 

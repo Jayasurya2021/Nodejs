@@ -46,7 +46,7 @@ const AdminDashboard = () => {
   }, [user]);
 
   const cards = [
-    { title: 'Total Revenue', value: `$${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-100', link: '/admin/reports' },
+    { title: 'Total Revenue', value: `₹${stats.totalRevenue.toLocaleString()}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-100', link: '/admin/reports' },
     { title: 'Total Orders', value: stats.totalOrders, icon: ShoppingBag, color: 'text-blue-600', bg: 'bg-blue-100', link: '/admin/orders' },
     { title: 'Total Users', value: stats.totalUsers, icon: Users, color: 'text-purple-600', bg: 'bg-purple-100', link: '/admin/users' },
     { title: 'Active Products', value: stats.totalProducts, icon: Box, color: 'text-indigo-600', bg: 'bg-indigo-100', link: '/admin/products' },

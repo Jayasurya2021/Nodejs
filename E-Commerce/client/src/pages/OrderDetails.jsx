@@ -132,9 +132,9 @@ const OrderDetails = () => {
                     </div>
                   </div>
                   <div className="flex flex-col justify-center items-end">
-                    <span className="text-sm font-medium mb-1">${item.price.toFixed(2)}</span>
+                    <span className="text-sm font-medium mb-1">₹{item.price.toFixed(2)}</span>
                     <span className="text-xs text-gray-500 uppercase">Qty: {item.qty}</span>
-                    <span className="text-sm font-bold mt-2">${(item.price * item.qty).toFixed(2)}</span>
+                    <span className="text-sm font-bold mt-2">₹{(item.price * item.qty).toFixed(2)}</span>
                   </div>
                 </div>
               ))}
@@ -150,22 +150,22 @@ const OrderDetails = () => {
             <div className="space-y-4 text-sm mb-6">
               <div className="flex justify-between">
                 <span className="text-gray-500">Subtotal</span>
-                <span className="font-medium">${order.itemsPrice.toFixed(2)}</span>
+                <span className="font-medium">₹{order.itemsPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Shipping</span>
-                <span className="font-medium">${order.shippingPrice.toFixed(2)}</span>
+                <span className="font-medium">₹{order.shippingPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Tax</span>
-                <span className="font-medium">${order.taxPrice.toFixed(2)}</span>
+                <span className="font-medium">₹{order.taxPrice.toFixed(2)}</span>
               </div>
             </div>
 
             <div className="border-t border-gray-200 pt-4 mb-8">
               <div className="flex justify-between items-end">
                 <span className="font-bold tracking-widest uppercase text-base">Total</span>
-                <span className="text-2xl font-bold">${order.totalPrice.toFixed(2)}</span>
+                <span className="text-2xl font-bold">₹{order.totalPrice.toFixed(2)}</span>
               </div>
             </div>
 

@@ -79,7 +79,7 @@ const StarRating = ({ rating, size = 16 }) => (
 
 // ─── Feature Badges ─────────────────────────────────────────────────────
 const FEATURES = [
-  { icon: FiTruck, title: "Free Shipping", desc: "On orders over $100", color: "bg-blue-50", iconColor: "text-blue-600" },
+  { icon: FiTruck, title: "Free Shipping", desc: "On orders over ₹100", color: "bg-blue-50", iconColor: "text-blue-600" },
   { icon: FiRefreshCw, title: "Easy Returns", desc: "30-day hassle-free returns", color: "bg-green-50", iconColor: "text-green-600" },
   { icon: FiShield, title: "Secure Payment", desc: "SSL encrypted checkout", color: "bg-purple-50", iconColor: "text-purple-600" },
   { icon: FiHeadphones, title: "24/7 Support", desc: "Expert style assistance", color: "bg-amber-50", iconColor: "text-amber-600" },
@@ -516,7 +516,7 @@ const Home = () => {
               { icon: FiShield, text: "256-bit SSL Encryption" },
               { icon: FiCheck, text: "PCI-DSS Compliant" },
               { icon: FiRefreshCw, text: "Instant Refunds" },
-              { icon: FiTruck, text: "Free Shipping >$100" },
+              { icon: FiTruck, text: "Free Shipping >₹100" },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 text-gray-400">
                 <item.icon size={16} className="text-yellow-400 flex-shrink-0" />

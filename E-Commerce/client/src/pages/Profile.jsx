@@ -100,7 +100,7 @@ const Profile = () => {
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Total</p>
-                      <p className="font-semibold">${order.totalPrice.toFixed(2)}</p>
+                      <p className="font-semibold">₹{order.totalPrice.toFixed(2)}</p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Status</p>

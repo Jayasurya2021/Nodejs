@@ -433,7 +433,7 @@ const Checkout = () => {
                         <p className="text-sm font-bold">{item.name}</p>
                         <p className="text-xs text-gray-500">Qty: {item.qty} {item.size ? `| Size: ${item.size}` : ''}</p>
                       </div>
-                      <p className="font-bold text-sm">${(item.price * item.qty).toFixed(2)}</p>
+                      <p className="font-bold text-sm">₹{(item.price * item.qty).toFixed(2)}</p>
                     </div>
                   ))}
                 </div>
@@ -482,7 +482,7 @@ const Checkout = () => {
                   <div className="flex-1 flex flex-col justify-center">
                     <span className="text-xs font-bold truncate">{item.name}</span>
                     {item.size && <span className="text-[10px] text-gray-500 uppercase">Size: {item.size}</span>}
-                    <span className="text-xs font-semibold mt-0.5">${(item.price * item.qty).toFixed(2)}</span>
+                    <span className="text-xs font-semibold mt-0.5">₹{(item.price * item.qty).toFixed(2)}</span>
                   </div>
                 </div>
               ))}
@@ -491,24 +491,24 @@ const Checkout = () => {
             <div className="space-y-3 text-sm mb-4 border-t border-gray-200 pt-4">
               <div className="flex justify-between">
                 <span className="text-gray-500">Subtotal</span>
-                <span className="font-semibold">${itemsPrice}</span>
+                <span className="font-semibold">₹{itemsPrice}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Shipping</span>
                 <span className={`font-semibold ${shippingPrice === 0 ? 'text-green-600' : ''}`}>
-                  {shippingPrice === 0 ? 'FREE' : `$${shippingPrice}`}
+                  {shippingPrice === 0 ? 'FREE' : `₹${shippingPrice}`}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">GST / Tax</span>
-                <span className="font-semibold">${taxPrice}</span>
+                <span className="font-semibold">₹{taxPrice}</span>
               </div>
             </div>
 
             <div className="border-t border-gray-200 pt-4 mb-6">
               <div className="flex justify-between items-center">
                 <span className="font-black tracking-widest uppercase">Total</span>
-                <span className="text-2xl font-black">${totalPrice}</span>
+                <span className="text-2xl font-black">₹{totalPrice}</span>
               </div>
             </div>
 

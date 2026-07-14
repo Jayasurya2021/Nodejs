@@ -3,9 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProductById } from '../../redux/slices/productSlice';
 import axios from 'axios';
-import { Box, ArrowLeft, Save, Plus, X, Check, Trash2, Tag, Layers, Cpu, Droplet } from 'lucide-react';
+import { Box, ArrowLeft, Save, Plus, X, Check, Trash2, Tag, Layers, Cpu, Droplet, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { getColorSync } from 'colorthief';
 
 // Basic color palette for AI color matching
 const basicColors = [
@@ -69,6 +68,16 @@ const ProductEdit = () => {
   
   const [variants, setVariants] = useState([]);
 
+  // Modal State
+  const [modal, setModal] = useState({
+    isOpen: false,
+    imageUrl: '',
+    vIndex: null,
+    globalIndex: null,
+    pickedHex: '',
+    pickedName: ''
+  });
+
   useEffect(() => {
     if (isError) toast.error(message);
     if (!product || product._id !== id) {
@@ -127,24 +136,7 @@ const ProductEdit = () => {
     return variant.imagePreviews[globalIndex - variant.existingImages.length];
   };
 
-  const extractColorFromImage = (imgUrl, vIndex) => {
-    if (!imgUrl) return;
-    // Cloudinary images might have CORS issues when drawing to canvas unless crossOrigin is anonymous
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.src = imgUrl;
-    img.onload = () => {
-      try {
-        const color = getColorSync(img);
-        const hex = color.hex();
-        const name = getClosestColorName(hex);
-        updateVariant(vIndex, 'colorHex', hex);
-        updateVariant(vIndex, 'colorName', name);
-      } catch (err) {
-        console.error("ColorThief failed", err);
-      }
-    };
-  };
+  // Removed extractColorFromImage as per user request to not auto-pick colors
 
   // Variant Management
   const addVariant = () => {
@@ -203,7 +195,6 @@ const ProductEdit = () => {
     const newVariants = [...variants];
     newVariants[vIndex].selectedImageIndex = globalIndex;
     setVariants(newVariants);
-    extractColorFromImage(getImageUrl(newVariants[vIndex], globalIndex), vIndex);
   };
 
   const handleVariantImageChange = (vIndex, e) => {
@@ -221,7 +212,6 @@ const ProductEdit = () => {
     if (newVariants[vIndex].colorHex === '#EEEEEE' || newVariants[vIndex].colorName === '') {
       newVariants[vIndex].selectedImageIndex = newlyAddedIndex;
       setVariants(newVariants);
-      extractColorFromImage(previews[0], vIndex);
     } else {
       setVariants(newVariants);
     }
@@ -246,8 +236,6 @@ const ProductEdit = () => {
       if (!firstImg) {
         newVariants[vIndex].colorHex = '#EEEEEE';
         newVariants[vIndex].colorName = '';
-      } else {
-        extractColorFromImage(firstImg, vIndex);
       }
     } else if (newVariants[vIndex].selectedImageIndex > globalIndex) {
       newVariants[vIndex].selectedImageIndex -= 1;
@@ -255,6 +243,66 @@ const ProductEdit = () => {
     
     setVariants(newVariants);
   };
+
+  // Modal logic
+  const openPreviewModal = (vIndex, globalIndex, imageUrl) => {
+    setModal({
+      isOpen: true,
+      imageUrl,
+      vIndex,
+      globalIndex,
+      pickedHex: variants[vIndex].colorHex !== '#EEEEEE' ? variants[vIndex].colorHex : '#000000',
+      pickedName: variants[vIndex].colorName !== '' ? variants[vIndex].colorName : 'Pick a color'
+    });
+  };
+
+  const closePreviewModal = () => {
+    setModal({ isOpen: false, imageUrl: '', vIndex: null, globalIndex: null, pickedHex: '', pickedName: '' });
+  };
+
+  const handleImageClickToPickColor = (e) => {
+    const imgElement = e.target;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    const rect = imgElement.getBoundingClientRect();
+    const scaleX = imgElement.naturalWidth / rect.width;
+    const scaleY = imgElement.naturalHeight / rect.height;
+    
+    const x = Math.floor((e.clientX - rect.left) * scaleX);
+    const y = Math.floor((e.clientY - rect.top) * scaleY);
+    
+    canvas.width = imgElement.naturalWidth;
+    canvas.height = imgElement.naturalHeight;
+    ctx.drawImage(imgElement, 0, 0);
+    
+    try {
+      const pixelData = ctx.getImageData(x, y, 1, 1).data;
+      const hex = rgbToHex(pixelData[0], pixelData[1], pixelData[2]);
+      const name = getClosestColorName(hex);
+      setModal(prev => ({ ...prev, pickedHex: hex, pickedName: name }));
+    } catch (err) {
+      console.error("Canvas pixel extraction failed, might be tainted", err);
+      toast.error("Could not extract pixel color from this image.");
+    }
+  };
+
+  const applyModalColor = () => {
+    updateVariant(modal.vIndex, 'colorHex', modal.pickedHex);
+    updateVariant(modal.vIndex, 'colorName', modal.pickedName);
+    
+    const newVariants = [...variants];
+    newVariants[modal.vIndex].selectedImageIndex = modal.globalIndex;
+    setVariants(newVariants);
+    
+    closePreviewModal();
+  };
+
+  const deleteModalImage = () => {
+    removeVariantImage(modal.vIndex, modal.globalIndex);
+    closePreviewModal();
+  };
+
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -309,7 +357,69 @@ const ProductEdit = () => {
   if (isProductLoading) return <div className="p-10 text-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] py-10 px-4 sm:px-6 lg:px-8 font-sans">
+    <div className="min-h-screen bg-[#F7F7F7] py-10 px-4 sm:px-6 lg:px-8 font-sans relative">
+
+      {/* Interactive Pixel Picker Modal */}
+      {modal.isOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl overflow-hidden max-w-4xl w-full flex flex-col md:flex-row shadow-2xl relative">
+            
+            {/* Left: Image Viewer */}
+            <div className="md:w-2/3 bg-gray-100 flex items-center justify-center relative p-6 min-h-[400px]">
+              <div className="absolute top-4 left-6 z-10 flex flex-col gap-1">
+                <span className="text-xs font-black uppercase tracking-widest text-black bg-white px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2">
+                  <Eye size={14} /> Interactive Pixel Picker
+                </span>
+                <span className="text-[10px] text-gray-500 bg-white/80 backdrop-blur px-3 py-1 rounded-full shadow-sm">
+                  Click anywhere on the image to extract that exact color.
+                </span>
+              </div>
+              <img 
+                src={modal.imageUrl} 
+                alt="Pick Color" 
+                crossOrigin="anonymous"
+                onClick={handleImageClickToPickColor}
+                className="max-h-[60vh] max-w-full object-contain cursor-crosshair drop-shadow-xl hover:scale-[1.02] transition-transform" 
+              />
+            </div>
+            
+            {/* Right: Tools & Actions */}
+            <div className="md:w-1/3 p-8 flex flex-col justify-center bg-white relative">
+              <button onClick={closePreviewModal} className="absolute top-4 right-4 text-gray-400 hover:text-black bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+              
+              <h3 className="text-xl font-black text-gray-900 mb-6">Extracted Color</h3>
+              
+              <div className="flex items-center gap-4 mb-8 bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                <div className="relative">
+                  <input 
+                    type="color" 
+                    value={modal.pickedHex} 
+                    onChange={(e) => setModal(prev => ({ ...prev, pickedHex: e.target.value, pickedName: 'Custom Pick' }))}
+                    className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
+                  />
+                  <div className="w-16 h-16 rounded-full shadow-inner border border-gray-200" style={{ backgroundColor: modal.pickedHex }}></div>
+                </div>
+                <div>
+                  <p className="font-bold text-gray-900 text-lg">{modal.pickedName}</p>
+                  <p className="text-gray-500 font-mono text-sm uppercase">{modal.pickedHex}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <button onClick={applyModalColor} className="w-full bg-black text-white rounded-xl py-3.5 font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
+                  <Check size={18} /> Apply Color & Select
+                </button>
+                <button onClick={deleteModalImage} className="w-full bg-white text-red-500 border border-red-100 rounded-xl py-3.5 font-bold shadow-sm hover:bg-red-50 hover:border-red-200 transition-all flex justify-center items-center gap-2">
+                  <Trash2 size={18} /> Delete Image
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-5xl mx-auto">
         
         {/* Header */}
@@ -479,13 +589,26 @@ const ProductEdit = () => {
                                       <Check size={12} strokeWidth={3} />
                                     </div>
                                   )}
-                                  <button 
-                                    type="button" 
-                                    onClick={(e) => { e.stopPropagation(); removeVariantImage(vIndex, globalIndex); }} 
-                                    className="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
+                                  
+                                  {/* Interactive Hover Overlay */}
+                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-20">
+                                    <button 
+                                      type="button" 
+                                      title="Open Interactive Pixel Picker"
+                                      onClick={(e) => { e.stopPropagation(); openPreviewModal(vIndex, globalIndex, img.url); }} 
+                                      className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-md"
+                                    >
+                                      <Eye size={14} />
+                                    </button>
+                                    <button 
+                                      type="button" 
+                                      title="Delete Image"
+                                      onClick={(e) => { e.stopPropagation(); removeVariantImage(vIndex, globalIndex); }} 
+                                      className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-md"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                  </div>
                                 </div>
                               );
                             })}
@@ -509,13 +632,26 @@ const ProductEdit = () => {
                                       <Check size={12} strokeWidth={3} />
                                     </div>
                                   )}
-                                  <button 
-                                    type="button" 
-                                    onClick={(e) => { e.stopPropagation(); removeVariantImage(vIndex, globalIndex); }} 
-                                    className="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                  >
-                                    <Trash2 size={16} />
-                                  </button>
+                                  
+                                  {/* Interactive Hover Overlay */}
+                                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-20">
+                                    <button 
+                                      type="button" 
+                                      title="Open Interactive Pixel Picker"
+                                      onClick={(e) => { e.stopPropagation(); openPreviewModal(vIndex, globalIndex, preview); }} 
+                                      className="w-8 h-8 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-md"
+                                    >
+                                      <Eye size={14} />
+                                    </button>
+                                    <button 
+                                      type="button" 
+                                      title="Delete Image"
+                                      onClick={(e) => { e.stopPropagation(); removeVariantImage(vIndex, globalIndex); }} 
+                                      className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-md"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                  </div>
                                 </div>
                               );
                             })}
@@ -526,7 +662,7 @@ const ProductEdit = () => {
                             </label>
                           </div>
                           {(variant.existingImages.length > 0 || variant.imagePreviews.length > 0) && (
-                            <p className="text-[11px] text-gray-400">Click any image to set it as the primary color for this variant.</p>
+                            <p className="text-[11px] text-gray-400">Hover over an image to pick a specific pixel color or delete it.</p>
                           )}
                         </div>
 
@@ -559,7 +695,7 @@ const ProductEdit = () => {
                                   />
                                   <div className="w-6 h-6 rounded-full border border-gray-300 shadow-sm group-hover:ring-2 ring-gray-200 transition-all" style={{ backgroundColor: variant.colorHex }}></div>
                                 </div>
-                                <span>{variant.colorHex} <span className="text-[10px] text-gray-400 ml-1">(Click color to edit manually)</span></span>
+                                <span>{variant.colorHex} <span className="text-[10px] text-gray-400 ml-1">(Click color to edit)</span></span>
                               </div>
                             </div>
                           </div>
@@ -573,7 +709,7 @@ const ProductEdit = () => {
                         {/* Price & Stock */}
                         <div className="grid grid-cols-3 gap-4 mb-8">
                           <div>
-                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price ($)</label>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price (₹)</label>
                             <input type="number" required value={variant.price} onChange={(e) => updateVariant(vIndex, 'price', e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all" />
                           </div>
                           <div>

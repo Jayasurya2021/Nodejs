@@ -97,7 +97,7 @@ const Wishlist = () => {
                 <h3 className="font-bold text-sm truncate mb-1">{product.title}</h3>
                 <p className="text-gray-500 text-xs mb-3">{product.category}</p>
                 <div className="flex justify-between items-center">
-                  <span className="font-bold">${(product.variants?.[0]?.price || 0).toFixed(2)}</span>
+                  <span className="font-bold">₹{(product.variants?.[0]?.price || 0).toFixed(2)}</span>
                   <Link 
                     to={`/product/${product._id}`}
                     className="text-xs font-bold uppercase tracking-widest hover:text-gray-500 transition-colors"

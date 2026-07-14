@@ -177,7 +177,7 @@ const ProductDetails = () => {
   const { sizes, colors } = useMemo(() => {
     if (!product?.variants) return { sizes: [], colors: [] };
     const s = [...new Set(product.variants.flatMap(v => v.sizes?.map(sizeObj => sizeObj.name) || []).filter(Boolean))];
-    const c = [...new Map(product.variants.filter(v => v.colorName).map(v => [v.colorName, { name: v.colorName, code: v.colorHex }])).values()];
+    const c = [...new Map(product.variants.filter(v => v.colorName).map(v => [v.colorName, { name: v.colorName, code: v.colorHex, image: v.images?.[0]?.url }])).values()];
     return { sizes: s, colors: c };
   }, [product]);
 
@@ -320,11 +320,11 @@ const ProductDetails = () => {
           {/* Price */}
           <div className="flex items-center gap-4 mb-7 pb-7 border-b border-gray-100">
             <span className="text-3xl font-black">
-              ${discountPrice.toFixed(2)}
+              ₹{discountPrice.toFixed(2)}
             </span>
             {product.discount > 0 && (
               <>
-                <span className="text-lg text-gray-400 line-through">${currentPrice.toFixed(2)}</span>
+                <span className="text-lg text-gray-400 line-through">₹{currentPrice.toFixed(2)}</span>
                 <span className="text-xs bg-red-100 text-red-600 px-2 py-1 font-black tracking-widest uppercase">
                   -{product.discount}% OFF
                 </span>
@@ -348,7 +348,12 @@ const ProductDetails = () => {
                       if(variant) setSelectedVariant(variant);
                     }}
                     className={`w-9 h-9 rounded-full border-4 transition-all duration-200 ${selectedVariant?.colorName === color.name ? 'border-black scale-110 shadow-lg' : 'border-gray-200 hover:border-gray-400'}`}
-                    style={{ backgroundColor: color.code || color.name.toLowerCase() }}
+                    style={{ 
+                      backgroundColor: color.code || color.name.toLowerCase(),
+                      backgroundImage: color.image ? `url(${color.image})` : 'none',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
                     title={color.name}
                   />
                 ))}
@@ -439,7 +444,7 @@ const ProductDetails = () => {
           {/* Delivery Info */}
           <div className="bg-gray-50 p-4 space-y-3 mb-6 mt-4">
             {[
-              { icon: FiCheck, text: "Free delivery on orders over $100" },
+              { icon: FiCheck, text: "Free delivery on orders over ₹100" },
               { icon: FiCheck, text: "Easy 30-day returns & exchanges" },
               { icon: FiCheck, text: "Authenticity guaranteed" },
             ].map((item, i) => (

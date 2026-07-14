@@ -38,7 +38,7 @@ const SellerDashboard = () => {
   }
 
   const statCards = [
-    { title: 'Total Revenue', value: `$${stats?.totalRevenue?.toFixed(2) || '0.00'}`, icon: FiDollarSign, color: 'text-green-600', bg: 'bg-green-100' },
+    { title: 'Total Revenue', value: `₹${stats?.totalRevenue?.toFixed(2) || '0.00'}`, icon: FiDollarSign, color: 'text-green-600', bg: 'bg-green-100' },
     { title: 'Products Listed', value: stats?.totalProducts || 0, icon: FiBox, color: 'text-blue-600', bg: 'bg-blue-100' },
     { title: 'Items Sold', value: stats?.totalSales || 0, icon: FiTrendingUp, color: 'text-yellow-600', bg: 'bg-yellow-100' },
     { title: 'Orders Received', value: stats?.totalOrders || 0, icon: FiShoppingBag, color: 'text-purple-600', bg: 'bg-purple-100' },

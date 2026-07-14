@@ -76,7 +76,7 @@ const Orders = () => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Total Amount</p>
-                  <p className="text-sm font-bold">${order.totalPrice.toFixed(2)}</p>
+                  <p className="text-sm font-bold">₹{order.totalPrice.toFixed(2)}</p>
                 </div>
                 <div>
                   <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full ${

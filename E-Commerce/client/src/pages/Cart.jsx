@@ -64,7 +64,7 @@ const Cart = () => {
 
                   {/* Price */}
                   <div className="col-span-1 text-left md:text-center font-medium mt-2 md:mt-0">
-                    ${item.price.toFixed(2)}
+                    ₹{item.price.toFixed(2)}
                   </div>
 
                   {/* Quantity */}
@@ -88,7 +88,7 @@ const Cart = () => {
 
                   {/* Total & Remove */}
                   <div className="col-span-1 flex items-center justify-between md:justify-end mt-2 md:mt-0">
-                    <div className="font-semibold">${(item.price * item.qty).toFixed(2)}</div>
+                    <div className="font-semibold">₹{(item.price * item.qty).toFixed(2)}</div>
                     <button 
                       onClick={() => removeFromCartHandler(item)}
                       className="text-gray-400 hover:text-red-500 transition-colors ml-4"
@@ -109,22 +109,22 @@ const Cart = () => {
               <div className="space-y-4 text-sm mb-6">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Subtotal</span>
-                  <span className="font-medium">${itemsPrice}</span>
+                  <span className="font-medium">₹{itemsPrice}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Shipping</span>
-                  <span className="font-medium">{shippingPrice === 0 ? 'Free' : `$${shippingPrice}`}</span>
+                  <span className="font-medium">{shippingPrice === 0 ? 'Free' : `₹${shippingPrice}`}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Tax</span>
-                  <span className="font-medium">${taxPrice}</span>
+                  <span className="font-medium">₹{taxPrice}</span>
                 </div>
               </div>
 
               <div className="border-t border-gray-200 pt-4 mb-8">
                 <div className="flex justify-between items-end">
                   <span className="font-bold tracking-widest uppercase text-base">Total</span>
-                  <span className="text-2xl font-bold">${totalPrice}</span>
+                  <span className="text-2xl font-bold">₹{totalPrice}</span>
                 </div>
               </div>
 
