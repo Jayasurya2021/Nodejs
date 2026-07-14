@@ -246,7 +246,16 @@ const ProductEdit = () => {
   // Removed handleImageClickToPickColor as user only wants manual color picking
 
   const applyModalCrop = async () => {
-    if (modal.imageRef && modal.completedCrop?.width && modal.completedCrop?.height) {
+    if (!modal.imageRef) {
+      toast.error("Image reference not found. Please try reopening the modal.");
+      return;
+    }
+    if (!modal.completedCrop?.width || !modal.completedCrop?.height) {
+      toast.error("Please drag to select a crop area first.");
+      return;
+    }
+
+    try {
       const croppedBlob = await getCroppedImg(modal.imageRef, modal.completedCrop);
       const croppedUrl = URL.createObjectURL(croppedBlob);
       
@@ -255,6 +264,9 @@ const ProductEdit = () => {
       newVariants[modal.vIndex].swatchPreview = croppedUrl;
       setVariants(newVariants);
       closePreviewModal();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to crop image.");
     }
   };
 
@@ -337,17 +349,29 @@ const ProductEdit = () => {
             <div className="md:w-2/3 bg-gray-100 flex items-center justify-center relative p-6 min-h-[400px]">
               <div className="absolute top-4 left-6 z-10 flex flex-col gap-1">
                 <span className="text-xs font-black uppercase tracking-widest text-black bg-white px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2">
-                  <Eye size={14} /> Image Preview
+                  <Eye size={14} /> Crop Swatch
                 </span>
                 <span className="text-[10px] text-gray-500 bg-white/80 backdrop-blur px-3 py-1 rounded-full shadow-sm">
-                  Preview the image and pick its color manually on the right.
+                  Drag to crop the fabric/color swatch.
                 </span>
               </div>
-              <img 
-                src={modal.imageUrl} 
-                alt="Preview" 
-                className="max-h-[60vh] max-w-full object-contain drop-shadow-xl" 
-              />
+              <ReactCrop
+                crop={modal.crop}
+                onChange={(c) => setModal(prev => ({ ...prev, crop: c }))}
+                onComplete={(c) => setModal(prev => ({ ...prev, completedCrop: c }))}
+                aspect={1}
+              >
+                <img 
+                  src={modal.imageUrl} 
+                  alt="Crop" 
+                  crossOrigin="anonymous"
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    setModal(prev => ({ ...prev, imageRef: img }));
+                  }}
+                  className="max-h-[60vh] max-w-full object-contain drop-shadow-xl"
+                />
+              </ReactCrop>
             </div>
             
             {/* Right: Tools & Actions */}
@@ -356,27 +380,11 @@ const ProductEdit = () => {
                 <X size={20} />
               </button>
               
-              <h3 className="text-xl font-black text-gray-900 mb-6">Extracted Color</h3>
-              
-              <div className="flex items-center gap-4 mb-8 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                <div className="relative">
-                  <input 
-                    type="color" 
-                    value={modal.pickedHex} 
-                    onChange={(e) => setModal(prev => ({ ...prev, pickedHex: e.target.value, pickedName: 'Custom Pick' }))}
-                    className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
-                  />
-                  <div className="w-16 h-16 rounded-full shadow-inner border border-gray-200" style={{ backgroundColor: modal.pickedHex }}></div>
-                </div>
-                <div>
-                  <p className="font-bold text-gray-900 text-lg">{modal.pickedName}</p>
-                  <p className="text-gray-500 font-mono text-sm uppercase">{modal.pickedHex}</p>
-                </div>
-              </div>
+              <h3 className="text-xl font-black text-gray-900 mb-6">Crop Actions</h3>
               
               <div className="space-y-3">
-                <button onClick={applyModalColor} className="w-full bg-black text-white rounded-xl py-3.5 font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
-                  <Check size={18} /> Apply Color & Select
+                <button onClick={applyModalCrop} className="w-full bg-black text-white rounded-xl py-3.5 font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
+                  <Check size={18} /> Save as Swatch
                 </button>
                 <button onClick={deleteModalImage} className="w-full bg-white text-red-500 border border-red-100 rounded-xl py-3.5 font-bold shadow-sm hover:bg-red-50 hover:border-red-200 transition-all flex justify-center items-center gap-2">
                   <Trash2 size={18} /> Delete Image
@@ -510,10 +518,10 @@ const ProductEdit = () => {
                   {/* Variant Header */}
                   <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      {getImageUrl(variant, variant.selectedImageIndex) ? (
-                        <img src={getImageUrl(variant, variant.selectedImageIndex)} alt="Color Preview" className="w-8 h-8 rounded-full object-cover border border-gray-200 shadow-inner" />
+                      {variant.swatchPreview ? (
+                        <img src={variant.swatchPreview} alt="Color Preview" className="w-8 h-8 rounded-full object-cover border border-gray-200 shadow-inner" />
                       ) : (
-                        <div className="w-8 h-8 rounded-full shadow-inner border border-gray-200" style={{ backgroundColor: variant.colorHex }} />
+                        <div className="w-8 h-8 rounded-full shadow-inner border border-gray-200 bg-gray-200 flex items-center justify-center"><Droplet size={14} className="text-white"/></div>
                       )}
                       <span className="font-bold text-gray-900">{variant.colorName || (vIndex === 0 ? 'Default Variant' : 'New Variant')}</span>
                     </div>

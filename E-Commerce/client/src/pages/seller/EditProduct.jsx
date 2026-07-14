@@ -246,7 +246,16 @@ const EditProduct = () => {
   // Removed handleImageClickToPickColor as user only wants manual color picking
 
   const applyModalCrop = async () => {
-    if (modal.imageRef && modal.completedCrop?.width && modal.completedCrop?.height) {
+    if (!modal.imageRef) {
+      toast.error("Image reference not found. Please try reopening the modal.");
+      return;
+    }
+    if (!modal.completedCrop?.width || !modal.completedCrop?.height) {
+      toast.error("Please drag to select a crop area first.");
+      return;
+    }
+
+    try {
       const croppedBlob = await getCroppedImg(modal.imageRef, modal.completedCrop);
       const croppedUrl = URL.createObjectURL(croppedBlob);
       
@@ -255,6 +264,9 @@ const EditProduct = () => {
       newVariants[modal.vIndex].swatchPreview = croppedUrl;
       setVariants(newVariants);
       closePreviewModal();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to crop image.");
     }
   };
 
@@ -353,7 +365,10 @@ const EditProduct = () => {
                   src={modal.imageUrl} 
                   alt="Crop" 
                   crossOrigin="anonymous"
-                  onLoad={(e) => setModal(prev => ({ ...prev, imageRef: e.currentTarget }))}
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    setModal(prev => ({ ...prev, imageRef: img }));
+                  }}
                   className="max-h-[60vh] max-w-full object-contain drop-shadow-xl"
                 />
               </ReactCrop>
@@ -503,10 +518,10 @@ const EditProduct = () => {
                   {/* Variant Header */}
                   <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      {getImageUrl(variant, variant.selectedImageIndex) ? (
-                        <img src={getImageUrl(variant, variant.selectedImageIndex)} alt="Color Preview" className="w-8 h-8 rounded-full object-cover border border-gray-200 shadow-inner" />
+                      {variant.swatchPreview ? (
+                        <img src={variant.swatchPreview} alt="Color Preview" className="w-8 h-8 rounded-full object-cover border border-gray-200 shadow-inner" />
                       ) : (
-                        <div className="w-8 h-8 rounded-full shadow-inner border border-gray-200" style={{ backgroundColor: variant.colorHex }} />
+                        <div className="w-8 h-8 rounded-full shadow-inner border border-gray-200 bg-gray-200 flex items-center justify-center"><Droplet size={14} className="text-white"/></div>
                       )}
                       <span className="font-bold text-gray-900">{variant.colorName || (vIndex === 0 ? 'Default Variant' : 'New Variant')}</span>
                     </div>

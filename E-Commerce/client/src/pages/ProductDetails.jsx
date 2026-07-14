@@ -177,7 +177,13 @@ const ProductDetails = () => {
   const { sizes, colors } = useMemo(() => {
     if (!product?.variants) return { sizes: [], colors: [] };
     const s = [...new Set(product.variants.flatMap(v => v.sizes?.map(sizeObj => sizeObj.name) || []).filter(Boolean))];
-    const c = [...new Map(product.variants.filter(v => v.colorName).map(v => [v.colorName, { name: v.colorName, code: v.colorHex, image: v.images?.[0]?.url }])).values()];
+    const c = product.variants.map((v, i) => ({
+      id: v._id || i,
+      name: v.colorName || '',
+      swatch: v.swatchImage?.url || null,
+      image: v.images?.[0]?.url || null,
+      originalVariant: v
+    }));
     return { sizes: s, colors: c };
   }, [product]);
 
@@ -339,23 +345,22 @@ const ProductDetails = () => {
                 <span className="text-xs font-bold uppercase tracking-widest">Color</span>
                 <span className="text-xs text-gray-500 font-medium">{selectedVariant?.colorName}</span>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {colors.map((color, index) => (
                   <button
                     key={index}
-                    onClick={() => {
-                      const variant = product.variants.find(v => v.colorName === color.name && v.sizes?.some(s => s.name === selectedVariant?.size?.name));
-                      if(variant) setSelectedVariant(variant);
-                    }}
-                    className={`w-9 h-9 rounded-full border-4 transition-all duration-200 ${selectedVariant?.colorName === color.name ? 'border-black scale-110 shadow-lg' : 'border-gray-200 hover:border-gray-400'}`}
-                    style={{ 
-                      backgroundColor: color.code || color.name.toLowerCase(),
-                      backgroundImage: color.image ? `url(${color.image})` : 'none',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
-                    }}
-                    title={color.name}
-                  />
+                    onClick={() => setSelectedVariant(color.originalVariant)}
+                    className={`w-10 h-10 rounded-full border-2 overflow-hidden transition-all duration-200 flex items-center justify-center ${selectedVariant === color.originalVariant ? 'border-black scale-110 shadow-lg' : 'border-gray-200 hover:border-gray-400'}`}
+                    title={color.name || 'Variant'}
+                  >
+                    {color.swatch ? (
+                      <img src={color.swatch} alt={color.name || 'Swatch'} className="w-full h-full object-cover" />
+                    ) : color.image ? (
+                      <img src={color.image} alt={color.name || 'Variant'} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="w-full h-full bg-gray-200"></span>
+                    )}
+                  </button>
                 ))}
               </div>
             </div>
