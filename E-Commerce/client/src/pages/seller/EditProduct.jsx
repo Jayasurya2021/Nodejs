@@ -126,7 +126,7 @@ const EditProduct = () => {
       colorName: '',
       swatchPreview: '',
       swatchFile: null,
-      price: 0,
+      price: variants.length > 0 ? variants[0].price : 0,
       stock: 0,
       sku: '',
       sizes: [],

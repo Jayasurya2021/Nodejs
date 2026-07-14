@@ -64,7 +64,7 @@ const Cart = () => {
 
                   {/* Price */}
                   <div className="col-span-1 text-left md:text-center font-medium mt-2 md:mt-0">
-                    ₹{item.price.toFixed(2)}
+                    ₹{(item.price || 0).toFixed(2)}
                   </div>
 
                   {/* Quantity */}
@@ -88,8 +88,8 @@ const Cart = () => {
 
                   {/* Total & Remove */}
                   <div className="col-span-1 flex items-center justify-between md:justify-end mt-2 md:mt-0">
-                    <div className="font-semibold">₹{(item.price * item.qty).toFixed(2)}</div>
-                    <button 
+                    <div className="font-semibold">₹{((item.price || 0) * item.qty).toFixed(2)}</div>
+                  <button 
                       onClick={() => removeFromCartHandler(item)}
                       className="text-gray-400 hover:text-red-500 transition-colors ml-4"
                     >

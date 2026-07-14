@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../redux/slices/cartSlice';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import StarRating from './StarRating';
 
 const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -29,7 +30,9 @@ const ProductCard = ({ product }) => {
         .then(() => toast.success('Added to wishlist! ❤️'))
         .catch((err) => toast.error(err.response?.data?.message || 'Failed to add to wishlist'));
     } else if (action === 'cart') {
-      dispatch(addToCart({ ...product, qty: 1 }));
+      const basePrice = product.variants?.[0]?.price || 0;
+      const priceToAdd = product.discount > 0 ? basePrice * (1 - (product.discount || 0) / 100) : basePrice;
+      dispatch(addToCart({ ...product, qty: 1, price: priceToAdd, variant: product.variants?.[0] }));
       toast.success('Added to bag! 🛍️');
     }
   };
@@ -49,7 +52,7 @@ const ProductCard = ({ product }) => {
         <Link to={`/product/${product._id}`}>
           <img
             src={isHovered ? hoverImage : mainImage}
-            alt={product.name}
+            alt={product.title || 'Product Image'}
             className="w-full h-full object-cover transition-opacity duration-500 ease-in-out"
           />
         </Link>
@@ -88,16 +91,19 @@ const ProductCard = ({ product }) => {
         <div className="flex justify-between items-start mb-1">
           <h3 className="text-sm font-semibold tracking-wide truncate pr-4">
             <Link to={`/product/${product._id}`} className="hover:text-gray-500 transition-colors">
-              {product.name}
+              {product.title}
             </Link>
           </h3>
         </div>
         
-        <p className="text-xs text-gray-500 mb-2 uppercase tracking-widest">{product.brand}</p>
+        <div className="flex items-center gap-1 mb-2">
+          <StarRating rating={Math.round(product.ratingSummary?.averageRating || 0)} size={12} />
+          <span className="text-xs text-gray-400 ml-1">({product.ratingSummary?.totalReviews || 0})</span>
+        </div>
         
         <div className="flex items-center gap-3">
           <span className={`text-sm font-medium ${product.discount > 0 ? 'text-red-600' : 'text-black'}`}>
-            ₹{((product.variants?.[0]?.price || 0) * (1 - product.discount / 100)).toFixed(2)}
+            ₹{((product.variants?.[0]?.price || 0) * (1 - (product.discount || 0) / 100)).toFixed(2)}
           </span>
           {product.discount > 0 && (
             <span className="text-sm text-gray-400 line-through">

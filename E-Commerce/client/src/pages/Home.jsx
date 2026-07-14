@@ -64,18 +64,7 @@ const ratingDistribution = [5, 4, 3, 2, 1].map((star) => ({
   percentage: (REVIEWS.filter((r) => r.rating === star).length / REVIEWS.length) * 100,
 }));
 
-// ─── Star Component ─────────────────────────────────────────────────────
-const StarRating = ({ rating, size = 16 }) => (
-  <div className="flex gap-0.5">
-    {[1, 2, 3, 4, 5].map((star) => (
-      <FiStar
-        key={star}
-        size={size}
-        className={star <= rating ? 'text-amber-400 fill-amber-400' : 'text-gray-300 fill-gray-100'}
-      />
-    ))}
-  </div>
-);
+import StarRating from '../components/StarRating';
 
 // ─── Feature Badges ─────────────────────────────────────────────────────
 const FEATURES = [

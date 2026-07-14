@@ -8,31 +8,7 @@ import { FiHeart, FiMinus, FiPlus, FiChevronRight, FiStar, FiCheck, FiShare2, Fi
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';
-
-// ─── Star Component ─────────────────────────────────────────────────────
-const StarRating = ({ rating, size = 14, interactive = false, onRate }) => (
-  <div className="flex gap-0.5">
-    {[1, 2, 3, 4, 5].map((star) => (
-      <button
-        key={star}
-        type={interactive ? "button" : "submit"}
-        onClick={(e) => {
-          if (interactive) {
-            e.preventDefault();
-            if (onRate) onRate(star);
-          }
-        }}
-        disabled={!interactive}
-        className={interactive ? 'cursor-pointer hover:scale-110 transition-transform' : 'cursor-default'}
-      >
-        <FiStar
-          size={size}
-          className={star <= rating ? 'text-amber-400 fill-amber-400' : 'text-gray-300 fill-gray-100'}
-        />
-      </button>
-    ))}
-  </div>
-);
+import StarRating from '../components/StarRating';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -108,9 +84,7 @@ const ProductDetails = () => {
       return; 
     }
     
-    const priceToAdd = selectedVariant 
-      ? selectedVariant.price
-      : (product.variants?.[0]?.price || 0);
+    const priceToAdd = discountPrice;
 
     dispatch(addToCart({ 
       ...product, 
@@ -206,7 +180,7 @@ const ProductDetails = () => {
   if (isError) return <div className="text-center py-20 text-red-500">{message}</div>;
 
   const currentPrice = selectedVariant 
-    ? selectedVariant.price
+    ? (selectedVariant.price || 0)
     : (product.variants?.[0]?.price || 0);
   
   const discountPrice = product.discount > 0 
