@@ -55,7 +55,7 @@ const getClosestColorName = (hex) => {
   return closest;
 };
 
-const ProductEdit = () => {
+const EditProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -622,4 +622,4 @@ const ProductEdit = () => {
   );
 };
 
-export default ProductEdit;
+export default EditProduct;
