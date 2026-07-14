@@ -590,7 +590,16 @@ const CreateProduct = () => {
                           <div className="space-y-2">
                             {variant.sizes.map((s, sIndex) => (
                               <div key={sIndex} className="flex items-center gap-2">
-                                <input type="text" placeholder="Size (e.g. S, M, L)" value={s.name} onChange={(e) => updateSize(vIndex, sIndex, 'name', e.target.value)} className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                                <select value={s.name} onChange={(e) => updateSize(vIndex, sIndex, 'name', e.target.value)} className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black">
+                                  <option value="">Select Size</option>
+                                  <option value="XS">XS</option>
+                                  <option value="S">S</option>
+                                  <option value="M">M</option>
+                                  <option value="L">L</option>
+                                  <option value="XL">XL</option>
+                                  <option value="XXL">XXL</option>
+                                  <option value="3XL">3XL</option>
+                                </select>
                                 <input type="number" placeholder="Stock" value={s.stock} onChange={(e) => updateSize(vIndex, sIndex, 'stock', e.target.value)} className="w-24 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
                                 <button type="button" onClick={() => removeSize(vIndex, sIndex)} className="text-gray-400 hover:text-red-500 p-2"><X size={16} /></button>
                               </div>

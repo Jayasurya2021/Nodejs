@@ -114,17 +114,40 @@ const getRelatedProducts = asyncHandler(async (req, res) => {
 // @route   POST /api/products
 // @access  Private/Seller or Admin
 const createProduct = asyncHandler(async (req, res) => {
-  // Generate initial dummy product for seller/admin to edit
+  const { 
+    title, slug, shortDescription, description, 
+    brand, category, subCategory, 
+    images, thumbnail, variants, specifications, features, tags 
+  } = req.body;
+
+  // Generate initial AI keywords
+  let searchKeywords = [];
+  if (title || description || category || brand || tags || features) {
+    const keywords = await generateKeywords({
+      title, description, category, brand, tags, features
+    });
+    if (keywords && keywords.length > 0) {
+      searchKeywords = keywords;
+    }
+  }
+
   const product = new Product({
-    title: 'Sample Product Title',
-    slug: 'sample-product-slug-' + Date.now(),
-    shortDescription: 'Sample short description',
-    description: 'Sample detailed description',
-    brand: 'Sample Brand',
-    category: 'Sample Category',
+    title: title || 'Sample Product Title',
+    slug: slug || 'sample-product-slug-' + Date.now(),
+    shortDescription: shortDescription || 'Sample short description',
+    description: description || 'Sample detailed description',
+    brand: brand || 'Sample Brand',
+    category: category || 'Sample Category',
+    subCategory,
+    images: images && images.length > 0 ? images : [{ url: 'https://placehold.co/600x800?text=Premium+Fashion' }],
+    thumbnail,
+    variants,
+    specifications,
+    features,
+    tags,
+    searchKeywords,
     seller: req.user._id,
     createdBy: req.user._id,
-    images: [{ url: 'https://via.placeholder.com/600x800?text=Premium+Fashion' }],
     status: req.user.role === 'admin' ? 'approved' : 'pending'
   });
 

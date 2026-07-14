@@ -5,6 +5,7 @@
  */
 
 const express = require('express');
+const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -36,13 +37,15 @@ app.use(cors({
 }));
 
 // ─── Security & Logging ──────────────────────────────────────────────────────
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
 // ─── Static ──────────────────────────────────────────────────────────────────
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ─── Health Check ────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
