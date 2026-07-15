@@ -12,7 +12,7 @@ const CreateProduct = () => {
   
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '', description: '', category: '', brand: ''
+    title: '', description: '', category: '', subCategory: '', brand: '', tags: '', features: '', shortDescription: '', slug: ''
   });
   
   const [variants, setVariants] = useState([{
@@ -73,25 +73,38 @@ const CreateProduct = () => {
 
   const updateFabric = (vIndex, field, value) => {
     const newVariants = [...variants];
-    newVariants[vIndex].fabricQuality[field] = value;
+    newVariants[vIndex] = {
+      ...newVariants[vIndex],
+      fabricQuality: {
+        ...newVariants[vIndex].fabricQuality,
+        [field]: value
+      }
+    };
     setVariants(newVariants);
   };
 
   const addSize = (vIndex) => {
     const newVariants = [...variants];
-    newVariants[vIndex].sizes.push({ name: '', stock: 0 });
+    newVariants[vIndex] = {
+      ...newVariants[vIndex],
+      sizes: [...newVariants[vIndex].sizes, { name: '', stock: 0 }]
+    };
     setVariants(newVariants);
   };
 
   const removeSize = (vIndex, sIndex) => {
     const newVariants = [...variants];
-    newVariants[vIndex].sizes.splice(sIndex, 1);
+    const newSizes = [...newVariants[vIndex].sizes];
+    newSizes.splice(sIndex, 1);
+    newVariants[vIndex] = { ...newVariants[vIndex], sizes: newSizes };
     setVariants(newVariants);
   };
 
   const updateSize = (vIndex, sIndex, field, value) => {
     const newVariants = [...variants];
-    newVariants[vIndex].sizes[sIndex][field] = value;
+    const newSizes = [...newVariants[vIndex].sizes];
+    newSizes[sIndex] = { ...newSizes[sIndex], [field]: value };
+    newVariants[vIndex] = { ...newVariants[vIndex], sizes: newSizes };
     setVariants(newVariants);
   };
 
@@ -260,6 +273,8 @@ const CreateProduct = () => {
 
       const productPayload = { 
         ...formData, 
+        tags: formData.tags ? formData.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+        features: formData.features ? formData.features.split(',').map(f => f.trim()).filter(Boolean) : [],
         images: rootImages,
         thumbnail: rootImages[0] || null,
         variants: processedVariants 
@@ -392,19 +407,49 @@ const CreateProduct = () => {
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Category</label>
-                  <select 
-                    name="category" required value={formData.category} onChange={handleChange}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all appearance-none cursor-pointer"
-                  >
-                    <option value="" disabled>Select a category</option>
-                    <option value="Shirts">Shirts</option>
-                    <option value="Jeans">Jeans</option>
-                    <option value="Jackets">Jackets</option>
-                    <option value="Accessories">Accessories</option>
-                    <option value="Sneakers">Sneakers</option>
-                  </select>
+                  <input 
+                    type="text" list="categories" name="category" required value={formData.category} onChange={handleChange}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all"
+                    placeholder="e.g. Shirts, Jeans..."
+                  />
+                  <datalist id="categories">
+                    <option value="Shirts" />
+                    <option value="Jeans" />
+                    <option value="Jackets" />
+                    <option value="Accessories" />
+                    <option value="Sneakers" />
+                    <option value="Dresses" />
+                  </datalist>
                 </div>
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Sub-Category (Optional)</label>
+                <input 
+                  type="text" name="subCategory" value={formData.subCategory} onChange={handleChange}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all"
+                  placeholder="e.g. T-Shirts, Denim..."
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Tags (Comma separated)</label>
+                <input 
+                  type="text" name="tags" value={formData.tags} onChange={handleChange}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all"
+                  placeholder="e.g. summer, casual, cotton"
+                />
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Features (Comma separated)</label>
+              <input 
+                type="text" name="features" value={formData.features} onChange={handleChange}
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all"
+                placeholder="e.g. Breathable fabric, Machine washable"
+              />
             </div>
 
             <div className="mb-6">

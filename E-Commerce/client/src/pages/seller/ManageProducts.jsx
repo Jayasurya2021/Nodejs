@@ -74,6 +74,7 @@ const ManageProducts = () => {
             <thead className="bg-gray-50 border-b border-gray-200 uppercase tracking-widest text-xs font-bold text-gray-500">
               <tr>
                 <th className="px-6 py-4">Product</th>
+                <th className="px-6 py-4">Category</th>
                 <th className="px-6 py-4">Price</th>
                 <th className="px-6 py-4">Stock</th>
                 <th className="px-6 py-4">Status</th>
@@ -88,6 +89,9 @@ const ManageProducts = () => {
                       <img src={product.thumbnail?.url || product.images?.[0]?.url || 'https://via.placeholder.com/40'} alt={product.title} className="w-10 h-10 object-cover bg-gray-100 rounded" />
                       <span className="font-bold truncate max-w-[200px] block">{product.title}</span>
                     </div>
+                  </td>
+                  <td className="px-6 py-4 text-gray-500 font-medium">
+                    {product.category || '-'}
                   </td>
                   <td className="px-6 py-4 font-semibold">₹{(product.variants?.[0]?.price || 0).toFixed(2)}</td>
                   <td className="px-6 py-4">
