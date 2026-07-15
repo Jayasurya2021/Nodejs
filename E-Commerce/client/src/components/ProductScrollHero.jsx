@@ -287,7 +287,7 @@ const ProductScrollHero = ({ product, state, children }) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="relative flex items-center justify-center p-4 lg:p-6"
+            className="sticky top-24 flex items-center justify-center p-4 lg:p-6"
           >
           {/* We reduce the max-width to create the "20-30% reduction with whitespace" effect */}
           <motion.div 
