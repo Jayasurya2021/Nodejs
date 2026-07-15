@@ -30,10 +30,25 @@ const generateKeywords = async (productDetails) => {
       Return ONLY a JSON array of strings containing the keywords, completely unformatted. Do not include markdown formatting or the \`\`\`json block. Just the raw array e.g., ["keyword1", "keyword2"].
     `;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
-      contents: prompt,
-    });
+    let response;
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        response = await ai.models.generateContent({
+          model: 'gemini-3.5-flash',
+          contents: prompt,
+        });
+        break; // Success
+      } catch (err) {
+        if (err.status === 503 && retries > 1) {
+          retries--;
+          console.log(`Gemini API 503 error, retrying... (${retries} attempts left)`);
+          await new Promise(r => setTimeout(r, 2000));
+        } else {
+          throw err;
+        }
+      }
+    }
 
     const responseText = response.text;
     

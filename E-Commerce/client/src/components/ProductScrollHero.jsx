@@ -287,11 +287,11 @@ const ProductScrollHero = ({ product, state, children }) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="relative flex items-center justify-center p-8 lg:p-12"
+            className="relative flex items-center justify-center p-4 lg:p-6"
           >
           {/* We reduce the max-width to create the "20-30% reduction with whitespace" effect */}
           <motion.div 
-            className="w-full max-w-[85%] aspect-[3/4] relative group rounded-lg overflow-hidden shadow-2xl"
+            className="w-full max-w-[95%] aspect-[3/4] relative group rounded-lg overflow-hidden shadow-2xl"
             style={{ scale: imageScale, y: imageY }}
           >
             <AnimatePresence mode="wait">
