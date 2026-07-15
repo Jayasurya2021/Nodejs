@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProductById, clearProduct } from '../redux/slices/productSlice';
@@ -33,6 +33,9 @@ const ProductDetails = () => {
   const [newReview, setNewReview] = useState({ rating: 5, title: '', comment: '' });
   const [submittingReview, setSubmittingReview] = useState(false);
 
+  const topicBoxRef = useRef(null);
+  const [topicBoxHeight, setTopicBoxHeight] = useState(600);
+
   const { ref: galleryRef, inView: isGalleryInView } = useInView({
     threshold: 0,
     rootMargin: "-100px 0px 0px 0px"
@@ -40,6 +43,18 @@ const ProductDetails = () => {
 
   const { product, isLoading, isError, message } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!topicBoxRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      if (entries[0]) {
+        setTopicBoxHeight(entries[0].contentRect.height);
+      }
+    });
+    observer.observe(topicBoxRef.current);
+    return () => observer.disconnect();
+  }, [product, selectedVariant]);
+
 
   useEffect(() => {
     dispatch(getProductById(id));
@@ -206,40 +221,12 @@ const ProductDetails = () => {
     ? selectedVariant.images 
     : (product.images || []);
 
-  const renderStickySidebar = () => (
+  const renderTopicBox = (isRightColumn = false) => (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      className="bg-white border border-gray-100 p-5 rounded-xl shadow-lg"
+      layoutId="product-topic" 
+      ref={isRightColumn ? topicBoxRef : null}
+      className="bg-white"
     >
-      <div className="flex items-center gap-4 mb-4">
-        <img 
-          src={displayImages[0]?.url || product.thumbnail?.url || 'https://via.placeholder.com/150'}
-          alt={product.title}
-          className="h-20 w-16 object-cover rounded-md shadow-sm flex-shrink-0"
-        />
-        <div>
-          <h2 className="text-sm font-black line-clamp-2">{product.title}</h2>
-          <div className="text-lg font-black mt-1">₹{discountPrice.toFixed(2)}</div>
-        </div>
-      </div>
-      <button
-        onClick={handleAddToCart}
-        disabled={currentStock === 0}
-        className={`w-full h-10 text-xs uppercase font-black tracking-widest transition-all duration-300 ${
-          currentStock > 0
-            ? 'bg-black text-white hover:bg-gray-900 shadow-md'
-            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-        }`}
-      >
-        {currentStock > 0 ? 'Add to Bag' : 'Out of Stock'}
-      </button>
-    </motion.div>
-  );
-
-  const renderTopicBox = () => (
-    <motion.div layoutId="product-topic" className="bg-white">
       <div className="flex items-center justify-between mb-2">
         <p className="text-sm text-gray-400 uppercase tracking-widest font-semibold">{product.brand}</p>
         <div className="flex gap-2">
@@ -255,7 +242,20 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      <div className="mb-4">
+      <div className="flex items-center gap-5 mb-4">
+        <AnimatePresence>
+          {!isGalleryInView && (
+            <motion.img
+              initial={{ opacity: 0, scale: 0.5, width: 0, marginRight: 0 }}
+              animate={{ opacity: 1, scale: 1, width: 96, marginRight: 20 }} // 96px = w-24
+              exit={{ opacity: 0, scale: 0.5, width: 0, marginRight: 0 }}
+              transition={{ duration: 0.4, type: 'spring', bounce: 0.4 }}
+              src={displayImages[0]?.url || product.thumbnail?.url || 'https://via.placeholder.com/150'}
+              alt={product.title}
+              className="h-32 object-cover rounded-md shadow flex-shrink-0"
+            />
+          )}
+        </AnimatePresence>
         <h1 className="text-3xl lg:text-4xl font-black tracking-tight">{product.title}</h1>
       </div>
       
@@ -485,10 +485,10 @@ const ProductDetails = () => {
           )}
           </div>
           
-          {/* Animated Sticky Sidebar (Desktop) */}
+          {/* Animated Sticky Topic (Desktop) */}
           <div className="hidden md:block sticky top-24 z-10 pt-8">
             <AnimatePresence>
-              {!isGalleryInView && renderStickySidebar()}
+              {!isGalleryInView && renderTopicBox(false)}
             </AnimatePresence>
           </div>
         </div>
@@ -496,10 +496,15 @@ const ProductDetails = () => {
         {/* ─── RIGHT COLUMN ───────────────────────────────────────────── */}
         <div className="w-full md:w-1/2 flex flex-col">
           <div className="block md:hidden">
-            {renderTopicBox()}
+            {renderTopicBox(true)}
           </div>
-          <div className="hidden md:block">
-             {renderTopicBox()}
+          <div 
+            className="hidden md:block transition-all duration-300" 
+            style={{ minHeight: isGalleryInView ? 'auto' : `${topicBoxHeight}px` }}
+          >
+            <AnimatePresence>
+               {isGalleryInView && renderTopicBox(true)}
+            </AnimatePresence>
           </div>
 
           {/* Description & Specs */}
