@@ -206,6 +206,38 @@ const ProductDetails = () => {
     ? selectedVariant.images 
     : (product.images || []);
 
+  const renderStickySidebar = () => (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      className="bg-white border border-gray-100 p-5 rounded-xl shadow-lg"
+    >
+      <div className="flex items-center gap-4 mb-4">
+        <img 
+          src={displayImages[0]?.url || product.thumbnail?.url || 'https://via.placeholder.com/150'}
+          alt={product.title}
+          className="h-20 w-16 object-cover rounded-md shadow-sm flex-shrink-0"
+        />
+        <div>
+          <h2 className="text-sm font-black line-clamp-2">{product.title}</h2>
+          <div className="text-lg font-black mt-1">₹{discountPrice.toFixed(2)}</div>
+        </div>
+      </div>
+      <button
+        onClick={handleAddToCart}
+        disabled={currentStock === 0}
+        className={`w-full h-10 text-xs uppercase font-black tracking-widest transition-all duration-300 ${
+          currentStock > 0
+            ? 'bg-black text-white hover:bg-gray-900 shadow-md'
+            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+        }`}
+      >
+        {currentStock > 0 ? 'Add to Bag' : 'Out of Stock'}
+      </button>
+    </motion.div>
+  );
+
   const renderTopicBox = () => (
     <motion.div layoutId="product-topic" className="bg-white">
       <div className="flex items-center justify-between mb-2">
@@ -223,20 +255,7 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-5 mb-4">
-        <AnimatePresence>
-          {!isGalleryInView && (
-            <motion.img
-              initial={{ opacity: 0, scale: 0.5, width: 0, marginRight: 0 }}
-              animate={{ opacity: 1, scale: 1, width: 96, marginRight: 20 }} // 96px = w-24
-              exit={{ opacity: 0, scale: 0.5, width: 0, marginRight: 0 }}
-              transition={{ duration: 0.4, type: 'spring', bounce: 0.4 }}
-              src={displayImages[0]?.url || product.thumbnail?.url || 'https://via.placeholder.com/150'}
-              alt={product.title}
-              className="h-32 object-cover rounded-md shadow flex-shrink-0"
-            />
-          )}
-        </AnimatePresence>
+      <div className="mb-4">
         <h1 className="text-3xl lg:text-4xl font-black tracking-tight">{product.title}</h1>
       </div>
       
@@ -466,9 +485,11 @@ const ProductDetails = () => {
           )}
           </div>
           
-          {/* Animated Sticky Topic (Desktop) */}
+          {/* Animated Sticky Sidebar (Desktop) */}
           <div className="hidden md:block sticky top-24 z-10 pt-8">
-            {!isGalleryInView && renderTopicBox()}
+            <AnimatePresence>
+              {!isGalleryInView && renderStickySidebar()}
+            </AnimatePresence>
           </div>
         </div>
 
@@ -477,8 +498,8 @@ const ProductDetails = () => {
           <div className="block md:hidden">
             {renderTopicBox()}
           </div>
-          <div className="hidden md:block min-h-[600px]">
-             {isGalleryInView && renderTopicBox()}
+          <div className="hidden md:block">
+             {renderTopicBox()}
           </div>
 
           {/* Description & Specs */}
