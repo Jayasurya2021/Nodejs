@@ -11,6 +11,34 @@ import ProductCard from '../components/ProductCard';
 import StarRating from '../components/StarRating';
 import ProductScrollHero from '../components/ProductScrollHero';
 
+const Accordion = ({ title, children, defaultOpen = false }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="border-b border-gray-100 py-4">
+      <button onClick={() => setIsOpen(!isOpen)} className="flex justify-between items-center w-full text-left">
+        <h3 className="text-xs font-black uppercase tracking-widest text-gray-900">{title}</h3>
+        <div className="text-gray-400">
+          {isOpen ? <FiMinus size={14} /> : <FiPlus size={14} />}
+        </div>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="pt-4">
+              {children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const ProductDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -97,8 +125,8 @@ const ProductDetails = () => {
       ...product, 
       price: priceToAdd,
       qty, 
-      variant: selectedVariant,
-      size: selectedSize,
+      selectedVariant,
+      selectedSize,
       color: selectedVariant?.colorName
     }));
     toast.success('Added to bag! 🛍️');
@@ -236,38 +264,56 @@ const ProductDetails = () => {
       </div>
 
       <ProductScrollHero product={product} state={heroState}>
-        {/* Description & Specs */}
+        {/* Description & Specs Accordions */}
         <div className="pt-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-            <h3 className="text-xs font-black uppercase tracking-widest mb-3 text-gray-400">Description</h3>
-            <p className="text-gray-900 text-base leading-relaxed mb-10 whitespace-pre-line">{product.description}</p>
-          </motion.div>
+          <Accordion title="Description" defaultOpen={false}>
+            <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{product.description}</p>
+          </Accordion>
 
           {product.features?.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-              <h3 className="text-xs font-black uppercase tracking-widest mb-4 text-gray-400">Details & Features</h3>
-              <ul className="space-y-3 text-base text-gray-800 mb-10 pl-4 list-disc marker:text-gray-300">
+            <Accordion title="Details & Features">
+              <ul className="space-y-2 text-sm text-gray-600 pl-4 list-disc marker:text-gray-300">
                 {product.features.map((feature, i) => (
                   <li key={i}>{feature}</li>
                 ))}
               </ul>
-            </motion.div>
+            </Accordion>
           )}
 
           {product.specifications?.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}>
-              <h3 className="text-xs font-black uppercase tracking-widest mb-4 text-gray-400">Specifications</h3>
+            <Accordion title="Specifications">
               <div className="text-sm border-t border-gray-100">
                 {product.specifications.map((spec, i) => (
-                  <div key={i} className="flex py-4 border-b border-gray-100">
+                  <div key={i} className="flex py-3 border-b border-gray-100">
                     <span className="w-1/3 font-semibold text-gray-900 uppercase text-xs tracking-widest">{spec.key}</span>
                     <span className="w-2/3 text-gray-600">{spec.value}</span>
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </Accordion>
           )}
         </div>
+      </ProductScrollHero>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ─── RELATED PRODUCTS ─────────────────────────────────────────── */}
+      {relatedProducts.length > 0 && (
+        <section className="mt-16 pt-12">
+          <div className="flex justify-between items-end mb-10">
+            <div>
+              <p className="text-yellow-500 text-xs uppercase tracking-[0.3em] font-semibold mb-2">You might like</p>
+              <h2 className="text-3xl font-black tracking-tight">Related Products</h2>
+            </div>
+          </div>
+          <div className="flex overflow-x-auto gap-6 snap-x snap-mandatory no-scrollbar pb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
+            {relatedProducts.map((prod) => (
+              <div key={prod._id} className="w-[200px] sm:w-[220px] lg:w-[240px] flex-shrink-0 snap-start">
+                <ProductCard product={prod} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
         {/* ─── REVIEWS SECTION ───────────────────────────────────────────── */}
         <motion.section 
@@ -276,7 +322,7 @@ const ProductDetails = () => {
           viewport={{ once: true }} 
           transition={{ duration: 0.5 }}
           id="reviews" 
-          className="mt-16 pt-12"
+          className="mt-24 border-t border-gray-100 pt-16"
         >
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
             <div>
@@ -417,24 +463,7 @@ const ProductDetails = () => {
             </div>
           )}
         </motion.section>
-      </ProductScrollHero>
-
-      {/* ─── RELATED PRODUCTS ─────────────────────────────────────────── */}
-      {relatedProducts.length > 0 && (
-        <section className="mt-24 border-t border-gray-100 pt-16">
-          <div className="flex justify-between items-end mb-10">
-            <div>
-              <p className="text-yellow-500 text-xs uppercase tracking-[0.3em] font-semibold mb-2">You might like</p>
-              <h2 className="text-3xl font-black tracking-tight">Related Products</h2>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {relatedProducts.slice(0,4).map((prod) => (
-              <ProductCard key={prod._id} product={prod} />
-            ))}
-          </div>
-        </section>
-      )}
+      </div>
 
 
       {/* ─── Write Review Modal ─────────────────────────────────────────── */}

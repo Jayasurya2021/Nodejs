@@ -8,31 +8,29 @@ const shippingAddressFromStorage = localStorage.getItem('shippingAddress')
   ? JSON.parse(localStorage.getItem('shippingAddress'))
   : {};
 
+const calculatePrices = (cartItems) => {
+  const itemsPrice = cartItems.reduce((acc, item) => acc + (item.price || 0) * item.qty, 0);
+  const shippingPrice = itemsPrice > 100 ? 0 : 10;
+  const taxPrice = Number((0.15 * itemsPrice).toFixed(2));
+  const totalPrice = (Number(itemsPrice) + Number(shippingPrice) + Number(taxPrice)).toFixed(2);
+  return { itemsPrice: itemsPrice.toFixed(2), shippingPrice, taxPrice: taxPrice.toFixed(2), totalPrice };
+};
+
+const initialPrices = calculatePrices(cartItemsFromStorage);
+
 const initialState = {
   cartItems: cartItemsFromStorage,
   shippingAddress: shippingAddressFromStorage,
   paymentMethod: 'Razorpay',
+  ...initialPrices
 };
 
 const updateCart = (state) => {
-  // Calculate items price
-  state.itemsPrice = state.cartItems.reduce(
-    (acc, item) => acc + item.price * item.qty,
-    0
-  );
-
-  // Calculate shipping price (If order is over $100 then free, else $10 shipping)
-  state.shippingPrice = state.itemsPrice > 100 ? 0 : 10;
-
-  // Calculate tax price (15% tax)
-  state.taxPrice = Number((0.15 * state.itemsPrice).toFixed(2));
-
-  // Calculate total price
-  state.totalPrice = (
-    Number(state.itemsPrice) +
-    Number(state.shippingPrice) +
-    Number(state.taxPrice)
-  ).toFixed(2);
+  const prices = calculatePrices(state.cartItems);
+  state.itemsPrice = prices.itemsPrice;
+  state.shippingPrice = prices.shippingPrice;
+  state.taxPrice = prices.taxPrice;
+  state.totalPrice = prices.totalPrice;
 
   localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
 };

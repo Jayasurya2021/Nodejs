@@ -56,7 +56,7 @@ const ProductScrollHero = ({ product, state, children }) => {
     show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
   };
 
-  const PurchaseBox = () => (
+  const purchaseBoxContent = (
     <motion.div
       variants={staggerContainer}
       initial="hidden"
@@ -278,15 +278,20 @@ const ProductScrollHero = ({ product, state, children }) => {
       </AnimatePresence>
 
       {/* ─── DESKTOP (STICKY LAYOUT) ─── */}
-      <div className="hidden md:flex flex-row gap-12 lg:gap-20 w-full relative z-0">
+      <div className="hidden md:flex flex-row gap-12 lg:gap-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-0">
         
         {/* Left Column (stretches to full height) */}
         <div className="w-[55%] relative">
-          {/* Sticky Inner Container */}
-          <div className="sticky top-24 h-[calc(100vh-6rem)] flex items-center justify-center p-8 lg:p-12">
+          {/* Static Inner Container */}
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+            className="relative flex items-center justify-center p-8 lg:p-12"
+          >
           {/* We reduce the max-width to create the "20-30% reduction with whitespace" effect */}
           <motion.div 
-            className="w-full max-w-[75%] aspect-[3/4] relative group rounded-lg overflow-hidden shadow-2xl"
+            className="w-full max-w-[85%] aspect-[3/4] relative group rounded-lg overflow-hidden shadow-2xl"
             style={{ scale: imageScale, y: imageY }}
           >
             <AnimatePresence mode="wait">
@@ -328,11 +333,12 @@ const ProductScrollHero = ({ product, state, children }) => {
               </>
             )}
           </motion.div>
+        </motion.div>
         </div>
 
         {/* Right Column - Scrollable Content */}
         <div className="w-[45%] flex flex-col pt-4 pb-32 relative z-10">
-           <PurchaseBox />
+           {purchaseBoxContent}
            <div className="mt-8 border-t border-gray-100 pt-8">
               {children}
            </div>
@@ -367,9 +373,11 @@ const ProductScrollHero = ({ product, state, children }) => {
              </div>
           )}
         </div>
-        <PurchaseBox />
-        <div className="mt-10 border-t border-gray-100 pt-6">
-           {children}
+        <div className="px-4 sm:px-6">
+          {purchaseBoxContent}
+          <div className="mt-10 border-t border-gray-100 pt-6">
+             {children}
+          </div>
         </div>
       </div>
     </div>
