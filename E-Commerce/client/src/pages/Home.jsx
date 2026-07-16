@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProducts } from '../redux/slices/productSlice';
 import ProductCard from '../components/ProductCard';
+import Masonry from '../components/Masonry';
 import {
   FiTruck, FiRefreshCw, FiShield, FiHeadphones,
   FiStar, FiChevronLeft, FiChevronRight, FiArrowRight,
@@ -77,69 +78,69 @@ const FEATURES = [
 // ─── Categories ─────────────────────────────────────────────────────────
 const CATEGORIES = [
   {
-    label: "OUTERWEAR", path: "/shop?category=Outerwear",
+    id: "1", label: "OUTERWEAR", url: "/shop?category=Outerwear",
     img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop",
-    tag: "Bestseller"
+    tag: "Bestseller", height: 750
   },
   {
-    label: "SHIRTS", path: "/shop?category=Shirts",
+    id: "2", label: "SHIRTS", url: "/shop?category=Shirts",
     img: "https://images.unsplash.com/photo-1603252109303-2751441dd157?q=80&w=800&auto=format&fit=crop",
-    tag: "New In"
+    tag: "New In", height: 450
   },
   {
-    label: "DENIM", path: "/shop?category=Denim",
+    id: "3", label: "DENIM", url: "/shop?category=Denim",
     img: "https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=800&auto=format&fit=crop",
-    tag: "Trending"
+    tag: "Trending", height: 500
   },
   {
-    label: "SNEAKERS", path: "/shop?category=Sneakers",
+    id: "4", label: "SNEAKERS", url: "/shop?category=Sneakers",
     img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
-    tag: "Limited"
+    tag: "Limited", height: 350
   },
   {
-    label: "ACCESSORIES", path: "/shop?category=Accessories",
+    id: "5", label: "ACCESSORIES", url: "/shop?category=Accessories",
     img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=800&auto=format&fit=crop",
-    tag: "Curated"
+    tag: "Curated", height: 600
   },
   {
-    label: "JEANS", path: "/shop?category=Jeans",
+    id: "6", label: "JEANS", url: "/shop?category=Jeans",
     img: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=800&auto=format&fit=crop",
-    tag: "Classic"
+    tag: "Classic", height: 400
   },
   {
-    label: "JACKETS", path: "/shop?category=Jackets",
+    id: "7", label: "JACKETS", url: "/shop?category=Jackets",
     img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=800&auto=format&fit=crop",
-    tag: "Essential"
+    tag: "Essential", height: 550
   },
   {
-    label: "DRESSES", path: "/shop?category=Dresses",
+    id: "8", label: "DRESSES", url: "/shop?category=Dresses",
     img: "https://images.unsplash.com/photo-1515347619362-67fd89885c40?q=80&w=800&auto=format&fit=crop",
-    tag: "Elegant"
+    tag: "Elegant", height: 650
   },
   {
-    label: "T-SHIRTS", path: "/shop?category=T-Shirts",
+    id: "9", label: "T-SHIRTS", url: "/shop?category=T-Shirts",
     img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop",
-    tag: "Casual"
+    tag: "Casual", height: 400
   },
   {
-    label: "ACTIVEWEAR", path: "/shop?category=Activewear",
+    id: "10", label: "ACTIVEWEAR", url: "/shop?category=Activewear",
     img: "https://images.unsplash.com/photo-1518459031867-a89b944bffe4?q=80&w=800&auto=format&fit=crop",
-    tag: "Performance"
+    tag: "Performance", height: 500
   },
   {
-    label: "SWIMWEAR", path: "/shop?category=Swimwear",
+    id: "11", label: "SWIMWEAR", url: "/shop?category=Swimwear",
     img: "https://images.unsplash.com/photo-1563630381190-77c336ea545a?q=80&w=800&auto=format&fit=crop",
-    tag: "Summer"
+    tag: "Summer", height: 400
   },
   {
-    label: "SHOES", path: "/shop?category=Shoes",
+    id: "12", label: "SHOES", url: "/shop?category=Shoes",
     img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=800&auto=format&fit=crop",
-    tag: "Footwear"
+    tag: "Footwear", height: 600
   },
   {
-    label: "BAGS", path: "/shop?category=Bags",
+    id: "13", label: "BAGS", url: "/shop?category=Bags",
     img: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=800&auto=format&fit=crop",
-    tag: "Carry"
+    tag: "Carry", height: 450
   }
 ];
 
@@ -327,40 +328,18 @@ const Home = () => {
           </Link>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {CATEGORIES.map((cat, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.6, delay: i * 0.08 }}
-              className={`group relative overflow-hidden cursor-pointer ${i === 0 ? 'row-span-2 col-span-2 md:col-span-1 md:row-span-1' : ''}`}
-            >
-              <Link to={cat.path}>
-                <div className={`relative overflow-hidden ${i === 0 ? 'h-[350px] md:h-[500px]' : 'h-[220px] md:h-[240px]'}`}>
-                  <img
-                    src={cat.img}
-                    alt={cat.label}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/50 transition-colors duration-400" />
-
-                  {/* Badge */}
-                  <span className="absolute top-3 left-3 bg-yellow-400 text-black text-[9px] uppercase font-black tracking-widest px-2 py-1">
-                    {cat.tag}
-                  </span>
-
-                  <div className="absolute bottom-5 left-5 right-5 text-white">
-                    <h3 className="text-lg font-black tracking-widest mb-1">{cat.label}</h3>
-                    <span className="text-xs border-b border-white pb-0.5 group-hover:pl-3 transition-all duration-300 opacity-80">
-                      Shop Now
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+        <div className="w-full relative min-h-[500px]">
+          <Masonry
+            items={CATEGORIES}
+            ease="power3.out"
+            duration={0.6}
+            stagger={0.05}
+            animateFrom="bottom"
+            scaleOnHover={true}
+            hoverScale={0.97}
+            blurToFocus={true}
+            colorShiftOnHover={false}
+          />
         </div>
       </section>
 
