@@ -21,6 +21,7 @@ const variantSchema = new mongoose.Schema({
     url: { type: String },
     public_id: { type: String }
   },
+  originalPrice: { type: Number, required: true, default: 0 },
   price: { type: Number, required: true, default: 0 },
   stock: { type: Number, required: true, default: 0 },
   sizes: [sizeSchema],

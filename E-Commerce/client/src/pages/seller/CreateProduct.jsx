@@ -19,6 +19,7 @@ const CreateProduct = () => {
     colorName: '',
     swatchFile: null,
     swatchPreview: '',
+    originalPrice: 0,
     price: 0,
     stock: 0,
     sku: '',
@@ -48,6 +49,7 @@ const CreateProduct = () => {
       colorName: '',
       swatchFile: null,
       swatchPreview: '',
+      originalPrice: variants.length > 0 ? variants[0].originalPrice : 0,
       price: variants.length > 0 ? variants[0].price : 0,
       stock: 0,
       sku: '',
@@ -260,6 +262,7 @@ const CreateProduct = () => {
         processedVariants.push({
           colorName: variant.colorName,
           swatchImage: variantUploadedSwatch,
+          originalPrice: Number(variant.originalPrice),
           price: Number(variant.price),
           stock: Number(variant.stock),
           sku: variant.sku,
@@ -407,19 +410,25 @@ const CreateProduct = () => {
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Category</label>
-                  <input 
-                    type="text" list="categories" name="category" required value={formData.category} onChange={handleChange}
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all"
-                    placeholder="e.g. Shirts, Jeans..."
-                  />
-                  <datalist id="categories">
-                    <option value="Shirts" />
-                    <option value="Jeans" />
-                    <option value="Jackets" />
-                    <option value="Accessories" />
-                    <option value="Sneakers" />
-                    <option value="Dresses" />
-                  </datalist>
+                  <select 
+                    name="category" required value={formData.category} onChange={handleChange}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all cursor-pointer"
+                  >
+                    <option value="" disabled>Select a category</option>
+                    <option value="Outerwear">Outerwear</option>
+                    <option value="Shirts">Shirts</option>
+                    <option value="Denim">Denim</option>
+                    <option value="Sneakers">Sneakers</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Jeans">Jeans</option>
+                    <option value="Jackets">Jackets</option>
+                    <option value="Dresses">Dresses</option>
+                    <option value="T-Shirts">T-Shirts</option>
+                    <option value="Activewear">Activewear</option>
+                    <option value="Swimwear">Swimwear</option>
+                    <option value="Shoes">Shoes</option>
+                    <option value="Bags">Bags</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -613,9 +622,13 @@ const CreateProduct = () => {
                       <div className="lg:col-span-8">
                         
                         {/* Price & Stock */}
-                        <div className="grid grid-cols-3 gap-4 mb-8">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                           <div>
-                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Price (₹)</label>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Original Price</label>
+                            <input type="number" required value={variant.originalPrice} onChange={(e) => updateVariant(vIndex, 'originalPrice', e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all" />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Selling Price</label>
                             <input type="number" required value={variant.price} onChange={(e) => updateVariant(vIndex, 'price', e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all" />
                           </div>
                           <div>

@@ -77,7 +77,7 @@ const FEATURES = [
 // ─── Categories ─────────────────────────────────────────────────────────
 const CATEGORIES = [
   {
-    label: "OUTERWEAR", path: "/shop?category=Jackets",
+    label: "OUTERWEAR", path: "/shop?category=Outerwear",
     img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop",
     tag: "Bestseller"
   },
@@ -87,7 +87,7 @@ const CATEGORIES = [
     tag: "New In"
   },
   {
-    label: "DENIM", path: "/shop?category=Jeans",
+    label: "DENIM", path: "/shop?category=Denim",
     img: "https://images.unsplash.com/photo-1542272604-787c3835535d?q=80&w=800&auto=format&fit=crop",
     tag: "Trending"
   },
@@ -101,6 +101,46 @@ const CATEGORIES = [
     img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=800&auto=format&fit=crop",
     tag: "Curated"
   },
+  {
+    label: "JEANS", path: "/shop?category=Jeans",
+    img: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=800&auto=format&fit=crop",
+    tag: "Classic"
+  },
+  {
+    label: "JACKETS", path: "/shop?category=Jackets",
+    img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=800&auto=format&fit=crop",
+    tag: "Essential"
+  },
+  {
+    label: "DRESSES", path: "/shop?category=Dresses",
+    img: "https://images.unsplash.com/photo-1515347619362-67fd89885c40?q=80&w=800&auto=format&fit=crop",
+    tag: "Elegant"
+  },
+  {
+    label: "T-SHIRTS", path: "/shop?category=T-Shirts",
+    img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=800&auto=format&fit=crop",
+    tag: "Casual"
+  },
+  {
+    label: "ACTIVEWEAR", path: "/shop?category=Activewear",
+    img: "https://images.unsplash.com/photo-1518459031867-a89b944bffe4?q=80&w=800&auto=format&fit=crop",
+    tag: "Performance"
+  },
+  {
+    label: "SWIMWEAR", path: "/shop?category=Swimwear",
+    img: "https://images.unsplash.com/photo-1563630381190-77c336ea545a?q=80&w=800&auto=format&fit=crop",
+    tag: "Summer"
+  },
+  {
+    label: "SHOES", path: "/shop?category=Shoes",
+    img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=800&auto=format&fit=crop",
+    tag: "Footwear"
+  },
+  {
+    label: "BAGS", path: "/shop?category=Bags",
+    img: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=800&auto=format&fit=crop",
+    tag: "Carry"
+  }
 ];
 
 // ─── MARQUEE BRANDS ──────────────────────────────────────────────────────

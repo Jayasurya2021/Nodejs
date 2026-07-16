@@ -12,7 +12,7 @@ const ProductScrollHero = ({ product, state, children }) => {
     isWishlisted, toggleWishlist,
     handleAddToCart,
     colors, sizes, displayImages,
-    currentPrice, discountPrice, currentStock, ratingSummary,
+    sellingPrice, originalPrice, discountPercent, currentStock, ratingSummary,
     activeImageIndex, setActiveImageIndex,
     isZoomed, setIsZoomed
   } = state;
@@ -97,13 +97,13 @@ const ProductScrollHero = ({ product, state, children }) => {
       {/* Price */}
       <motion.div variants={fadeUp} className="flex items-center gap-4 mb-7 pb-7 border-b border-gray-100">
         <span className="text-3xl font-black">
-          ₹{discountPrice.toFixed(2)}
+          ₹{sellingPrice.toFixed(2)}
         </span>
-        {product.discount > 0 && (
+        {discountPercent > 0 && (
           <>
-            <span className="text-lg text-gray-400 line-through">₹{currentPrice.toFixed(2)}</span>
+            <span className="text-lg text-gray-400 line-through">₹{originalPrice.toFixed(2)}</span>
             <span className="text-xs bg-red-100 text-red-600 px-2 py-1 font-black tracking-widest uppercase">
-              -{product.discount}% OFF
+              -{discountPercent}% OFF
             </span>
           </>
         )}
@@ -260,7 +260,7 @@ const ProductScrollHero = ({ product, state, children }) => {
             </div>
             
             <div className="flex items-center gap-6">
-              <span className="font-black">₹{discountPrice.toFixed(2)}</span>
+              <span className="font-black">₹{sellingPrice.toFixed(2)}</span>
               <button
                 onClick={handleAddToCart}
                 disabled={currentStock === 0}

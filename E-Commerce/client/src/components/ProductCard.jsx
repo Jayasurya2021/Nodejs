@@ -16,6 +16,11 @@ const ProductCard = ({ product }) => {
   // Use the first two images for hover effect if available
   const mainImage = product.images[0]?.url || 'https://via.placeholder.com/600x800';
   const hoverImage = product.images[1]?.url || mainImage;
+  
+  const firstVariant = product.variants?.[0] || {};
+  const sellingPrice = firstVariant.price || 0;
+  const originalPrice = firstVariant.originalPrice || sellingPrice;
+  const discountPercent = originalPrice > sellingPrice ? Math.round(((originalPrice - sellingPrice) / originalPrice) * 100) : 0;
 
   const handleAction = (e, action) => {
     e.preventDefault();
@@ -30,15 +35,13 @@ const ProductCard = ({ product }) => {
         .then(() => toast.success('Added to wishlist! ❤️'))
         .catch((err) => toast.error(err.response?.data?.message || 'Failed to add to wishlist'));
     } else if (action === 'cart') {
-      const basePrice = product.variants?.[0]?.price || 0;
-      const priceToAdd = product.discount > 0 ? basePrice * (1 - (product.discount || 0) / 100) : basePrice;
       dispatch(addToCart({ 
         ...product, 
         qty: 1, 
-        price: priceToAdd, 
-        variant: product.variants?.[0],
-        size: product.variants?.[0]?.sizes?.[0]?.name || '',
-        color: product.variants?.[0]?.colorName || ''
+        price: sellingPrice, 
+        variant: firstVariant,
+        size: firstVariant.sizes?.[0]?.name || '',
+        color: firstVariant.colorName || ''
       }));
       toast.success('Added to bag! 🛍️');
     }
@@ -69,8 +72,8 @@ const ProductCard = ({ product }) => {
           {product.isNewArrival && (
             <span className="bg-white text-black text-[10px] uppercase font-bold tracking-widest px-3 py-1">New</span>
           )}
-          {product.discount > 0 && (
-            <span className="bg-red-500 text-white text-[10px] uppercase font-bold tracking-widest px-3 py-1">-{product.discount}%</span>
+          {discountPercent > 0 && (
+            <span className="bg-red-500 text-white text-[10px] uppercase font-bold tracking-widest px-3 py-1">-{discountPercent}%</span>
           )}
         </div>
 
@@ -109,12 +112,12 @@ const ProductCard = ({ product }) => {
         </div>
         
         <div className="flex items-center gap-3">
-          <span className={`text-sm font-medium ${product.discount > 0 ? 'text-red-600' : 'text-black'}`}>
-            ₹{((product.variants?.[0]?.price || 0) * (1 - (product.discount || 0) / 100)).toFixed(2)}
+          <span className={`text-sm font-medium ${discountPercent > 0 ? 'text-red-600' : 'text-black'}`}>
+            ₹{sellingPrice.toFixed(2)}
           </span>
-          {product.discount > 0 && (
+          {discountPercent > 0 && (
             <span className="text-sm text-gray-400 line-through">
-              ₹{(product.variants?.[0]?.price || 0).toFixed(2)}
+              ₹{originalPrice.toFixed(2)}
             </span>
           )}
         </div>

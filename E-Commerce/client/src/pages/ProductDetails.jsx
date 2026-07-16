@@ -119,7 +119,7 @@ const ProductDetails = () => {
       return; 
     }
     
-    const priceToAdd = discountPrice;
+    const priceToAdd = sellingPrice;
 
     dispatch(addToCart({ 
       ...product, 
@@ -216,13 +216,17 @@ const ProductDetails = () => {
 
   if (isError) return <div className="text-center py-20 text-red-500">{message}</div>;
 
-  const currentPrice = selectedVariant 
+  const sellingPrice = selectedVariant 
     ? (selectedVariant.price || 0)
     : (product.variants?.[0]?.price || 0);
   
-  const discountPrice = product.discount > 0 
-    ? currentPrice * (1 - product.discount / 100) 
-    : currentPrice;
+  const originalPrice = selectedVariant
+    ? (selectedVariant.originalPrice || sellingPrice)
+    : (product.variants?.[0]?.originalPrice || sellingPrice);
+
+  const discountPercent = originalPrice > sellingPrice 
+    ? Math.round(((originalPrice - sellingPrice) / originalPrice) * 100) 
+    : 0;
 
   const currentStock = selectedVariant ? selectedVariant.stock : (product.variants?.[0]?.stock || 0);
   const ratingSummary = product.ratingSummary || { averageRating: 0, totalReviews: 0, ratings: { 5:0, 4:0, 3:0, 2:0, 1:0 } };
@@ -238,7 +242,7 @@ const ProductDetails = () => {
     isWishlisted, toggleWishlist,
     handleAddToCart,
     colors, sizes, displayImages,
-    currentPrice, discountPrice, currentStock, ratingSummary,
+    sellingPrice, originalPrice, discountPercent, currentStock, ratingSummary,
     activeImageIndex, setActiveImageIndex,
     isZoomed, setIsZoomed
   };
