@@ -55,6 +55,12 @@ const userSchema = new mongoose.Schema({
     default: 'buyer'
   },
   addresses: [addressSchema],
+  cart: [{
+    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    qty: { type: Number },
+    selectedSize: { type: String },
+    selectedColorName: { type: String }
+  }],
   wishlist: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product'
@@ -62,12 +68,6 @@ const userSchema = new mongoose.Schema({
   recentlyViewed: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product'
-  }],
-  cart: [{
-    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-    qty: { type: Number, required: true },
-    selectedSize: { type: String },
-    selectedColorName: { type: String }
   }],
   resetPasswordToken: String,
   resetPasswordExpire: Date,

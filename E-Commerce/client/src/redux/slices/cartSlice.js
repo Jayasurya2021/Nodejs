@@ -1,6 +1,31 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+export const fetchCartFromBackend = createAsyncThunk(
+  'cart/fetchCartFromBackend',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { data } = await axios.get('/api/users/cart', { withCredentials: true });
+      return data.cartItems;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch cart');
+    }
+  }
+);
+
+export const syncCartToBackend = createAsyncThunk(
+  'cart/syncCartToBackend',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { cartItems } = getState().cart;
+      const { data } = await axios.post('/api/users/cart', { cartItems }, { withCredentials: true });
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to sync cart');
+    }
+  }
+);
+
 const cartItemsFromStorage = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
   : [];
@@ -36,12 +61,11 @@ const updateCart = (state) => {
   localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
 };
 
-
 export const cartSlice = createSlice({
   name: 'cart',
   initialState,
   reducers: {
-    addToCart: (state, action) => {
+    addToCartLocal: (state, action) => {
       const item = action.payload;
 
       const existItem = state.cartItems.find(
@@ -58,7 +82,7 @@ export const cartSlice = createSlice({
 
       return updateCart(state);
     },
-    removeFromCart: (state, action) => {
+    removeFromCartLocal: (state, action) => {
       state.cartItems = state.cartItems.filter(
         (x) => !(x._id === action.payload._id && x.size === action.payload.size && x.color === action.payload.color)
       );
@@ -72,103 +96,58 @@ export const cartSlice = createSlice({
       state.paymentMethod = action.payload;
       localStorage.setItem('paymentMethod', JSON.stringify(action.payload));
     },
-    clearCartItems: (state, action) => {
+    clearCartItemsLocal: (state, action) => {
       state.cartItems = [];
       localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
     },
-    setCartItems: (state, action) => {
-      state.cartItems = action.payload;
-      return updateCart(state);
-    },
   },
   extraReducers: (builder) => {
-    builder
-      .addCase('auth/logout/fulfilled', (state) => {
-        state.cartItems = [];
-        return updateCart(state);
-      })
-      .addCase('auth/forceLogout', (state) => {
-        state.cartItems = [];
-        return updateCart(state);
-      });
-  }
-});
-
-
-export const {
-  addToCart,
-  removeFromCart,
-  saveShippingAddress,
-  savePaymentMethod,
-  clearCartItems,
-  setCartItems
-} = cartSlice.actions;
-
-export default cartSlice.reducer;
-
-
-export const syncCartToBackend = createAsyncThunk(
-  'cart/syncCart',
-  async (_, { getState, rejectWithValue }) => {
-    try {
-      const { auth: { user }, cart: { cartItems } } = getState();
-      if (!user) return null;
+    builder.addCase(fetchCartFromBackend.fulfilled, (state, action) => {
+      const dbCart = action.payload;
+      const localCart = [...state.cartItems];
       
-      const response = await axios.post('/api/users/cart', { cartItems });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message);
-    }
-  }
-);
-
-export const initializeCartOnLogin = createAsyncThunk(
-  'cart/initializeCart',
-  async (_, { getState, dispatch, rejectWithValue }) => {
-    try {
-      const { auth: { user }, cart: { cartItems: localCartItems } } = getState();
-      if (!user) return null;
-      
-      const response = await axios.get('/api/users/cart');
-      const backendCartItems = response.data.cartItems || [];
-      
-      const mergedCart = [...backendCartItems];
-      let hasNewLocalItems = false;
-      
-      localCartItems.forEach(localItem => {
-        const exists = mergedCart.find(
-          bItem => bItem._id === localItem._id && 
-                   bItem.selectedSize === localItem.selectedSize && 
-                   bItem.selectedVariant?.colorName === localItem.selectedVariant?.colorName
+      dbCart.forEach(dbItem => {
+        const existItem = localCart.find(
+          (x) => x._id === dbItem._id && x.selectedSize === dbItem.selectedSize && (x.selectedVariant?.colorName === dbItem.selectedVariant?.colorName || x.color === dbItem.color)
         );
-        if (!exists) {
-          mergedCart.push(localItem);
-          hasNewLocalItems = true;
+        if (!existItem) {
+          localCart.push(dbItem);
         }
       });
       
-      dispatch(cartSlice.actions.setCartItems(mergedCart));
-      
-      if (hasNewLocalItems) {
-        dispatch(syncCartToBackend());
-      }
-      return mergedCart;
-    } catch (error) {
-      return rejectWithValue(error.response?.data?.message || error.message);
-    }
+      state.cartItems = localCart;
+      updateCart(state);
+    });
   }
-);
+});
 
-export const addToCartAndSync = (item) => (dispatch, getState) => {
-  dispatch(cartSlice.actions.addToCart(item));
-  if (getState().auth?.user) {
+export const {
+  addToCartLocal,
+  removeFromCartLocal,
+  saveShippingAddress,
+  savePaymentMethod,
+  clearCartItemsLocal,
+} = cartSlice.actions;
+
+export const addToCart = (item) => (dispatch, getState) => {
+  dispatch(addToCartLocal(item));
+  if (getState().auth.user) {
     dispatch(syncCartToBackend());
   }
 };
 
-export const removeFromCartAndSync = (item) => (dispatch, getState) => {
-  dispatch(cartSlice.actions.removeFromCart(item));
-  if (getState().auth?.user) {
+export const removeFromCart = (item) => (dispatch, getState) => {
+  dispatch(removeFromCartLocal(item));
+  if (getState().auth.user) {
     dispatch(syncCartToBackend());
   }
 };
+
+export const clearCartItems = () => (dispatch, getState) => {
+  dispatch(clearCartItemsLocal());
+  if (getState().auth.user) {
+    dispatch(syncCartToBackend());
+  }
+};
+
+export default cartSlice.reducer;

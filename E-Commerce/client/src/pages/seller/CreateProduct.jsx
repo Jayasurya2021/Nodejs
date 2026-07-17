@@ -4,6 +4,9 @@ import axios from 'axios';
 import { Box, ArrowLeft, Save, Plus, Check, Trash2, Tag, Layers, Droplet, Eye, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
+
 let cropClickStart = null;
 
 const CreateProduct = () => {
@@ -35,6 +38,8 @@ const CreateProduct = () => {
     imageUrl: '',
     vIndex: null,
     iIndex: null,
+    crop: { unit: '%', width: 50, aspect: 1 },
+    completedCrop: null,
     imageRef: null
   });
 
@@ -187,15 +192,58 @@ const CreateProduct = () => {
       imageUrl,
       vIndex,
       iIndex,
+      crop: { unit: '%', width: 50, aspect: 1 },
+      completedCrop: null,
       imageRef: null
     });
   };
 
   const closePreviewModal = () => {
-    setModal({ isOpen: false, imageUrl: '', vIndex: null, iIndex: null, imageRef: null });
+    setModal({ isOpen: false, imageUrl: '', vIndex: null, iIndex: null, crop: { unit: '%', width: 50, aspect: 1 }, completedCrop: null, imageRef: null });
   };
 
   // Removed handleImageClickToPickColor as user only wants manual color picking
+
+  const applyModalCrop = async () => {
+    if (!modal.imageRef) {
+      toast.error("Image reference not found. Please try reopening the modal.");
+      return;
+    }
+    
+    let cropToUse = modal.completedCrop;
+    if (!cropToUse?.width || !cropToUse?.height) {
+      if (modal.crop.unit === '%') {
+        cropToUse = {
+          unit: 'px',
+          x: (modal.crop.x || 0) * modal.imageRef.width / 100,
+          y: (modal.crop.y || 0) * modal.imageRef.height / 100,
+          width: modal.crop.width * modal.imageRef.width / 100,
+          height: (modal.crop.height || modal.crop.width) * modal.imageRef.height / 100,
+        };
+      } else {
+        cropToUse = modal.crop;
+      }
+    }
+
+    if (!cropToUse?.width || !cropToUse?.height) {
+      toast.error("Invalid crop area.");
+      return;
+    }
+
+    try {
+      const croppedBlob = await getCroppedImg(modal.imageRef, cropToUse);
+      const croppedUrl = URL.createObjectURL(croppedBlob);
+      
+      const newVariants = [...variants];
+      newVariants[modal.vIndex].swatchFile = new File([croppedBlob], "swatch.jpg", { type: "image/jpeg" });
+      newVariants[modal.vIndex].swatchPreview = croppedUrl;
+      setVariants(newVariants);
+      closePreviewModal();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to crop image.");
+    }
+  };
 
   const deleteModalImage = () => {
     removeVariantImage(modal.vIndex, modal.iIndex);
@@ -273,11 +321,11 @@ const CreateProduct = () => {
             
             {/* Left: Image Viewer */}
             <div 
-              className="md:w-2/3 bg-gray-100 flex items-center justify-center relative p-6 min-h-[400px] cursor-crosshair"
-              onPointerDown={(e) => {
+              className="md:w-2/3 bg-gray-100 flex items-center justify-center relative p-6 min-h-[400px]"
+              onPointerDownCapture={(e) => {
                 cropClickStart = { x: e.clientX, y: e.clientY };
               }}
-              onPointerUp={async (e) => {
+              onPointerUpCapture={async (e) => {
                 if (!cropClickStart) return;
                 const dist = Math.hypot(e.clientX - cropClickStart.x, e.clientY - cropClickStart.y);
                 cropClickStart = null;
@@ -288,6 +336,8 @@ const CreateProduct = () => {
                     e.clientX >= rect.left && e.clientX <= rect.right &&
                     e.clientY >= rect.top && e.clientY <= rect.bottom
                   ) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
                     
@@ -322,22 +372,29 @@ const CreateProduct = () => {
             >
               <div className="absolute top-4 left-6 z-10 flex flex-col gap-1 pointer-events-none">
                 <span className="text-xs font-black uppercase tracking-widest text-black bg-white px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2 max-w-fit pointer-events-auto">
-                  <Eye size={14} /> Pick Swatch
+                  <Eye size={14} /> Crop Swatch
                 </span>
                 <span className="text-[10px] text-gray-500 bg-white/80 backdrop-blur px-3 py-1 rounded-full shadow-sm max-w-fit pointer-events-auto">
-                  Click anywhere on the image to instantly pick that spot as your swatch.
+                  Click anywhere to instantly pick a swatch, or drag to crop manually.
                 </span>
               </div>
-              <img 
-                src={modal.imageUrl} 
-                alt="Pick Swatch" 
-                crossOrigin="anonymous"
-                onLoad={(e) => {
-                  const img = e.currentTarget;
-                  setModal(prev => ({ ...prev, imageRef: img }));
-                }}
-                className="max-h-[60vh] max-w-full object-contain drop-shadow-xl"
-              />
+              <ReactCrop
+                crop={modal.crop}
+                onChange={(c) => setModal(prev => ({ ...prev, crop: c }))}
+                onComplete={(c) => setModal(prev => ({ ...prev, completedCrop: c }))}
+                aspect={1}
+              >
+                <img 
+                  src={modal.imageUrl} 
+                  alt="Crop" 
+                  crossOrigin="anonymous"
+                  onLoad={(e) => {
+                    const img = e.currentTarget;
+                    setModal(prev => ({ ...prev, imageRef: img }));
+                  }}
+                  className="max-h-[60vh] max-w-full object-contain drop-shadow-xl"
+                />
+              </ReactCrop>
             </div>
             
             {/* Right: Tools & Actions */}
@@ -346,9 +403,12 @@ const CreateProduct = () => {
                 <X size={20} />
               </button>
               
-              <h3 className="text-xl font-black text-gray-900 mb-6">Image Actions</h3>
+              <h3 className="text-xl font-black text-gray-900 mb-6">Crop Actions</h3>
               
               <div className="space-y-3">
+                <button onClick={applyModalCrop} className="w-full bg-black text-white rounded-xl py-3.5 font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex justify-center items-center gap-2">
+                  <Check size={18} /> Save as Swatch
+                </button>
                 <button onClick={deleteModalImage} className="w-full bg-white text-red-500 border border-red-100 rounded-xl py-3.5 font-bold shadow-sm hover:bg-red-50 hover:border-red-200 transition-all flex justify-center items-center gap-2">
                   <Trash2 size={18} /> Delete Image
                 </button>

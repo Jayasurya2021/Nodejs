@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { forceLogout } from './redux/slices/authSlice';
 import { Toaster } from 'react-hot-toast';
 import Layout from './layouts/Layout';
@@ -35,19 +35,11 @@ import CreateProduct from './pages/seller/CreateProduct';
 import EditProduct from './pages/seller/EditProduct';
 import LoginModal from './components/LoginModal';
 import { Categories, Brands, Contact, FAQ, Reviews, SellerList, Offers, Blogs, PrivacyPolicy, Terms, ShippingPolicy } from './pages/StaticPages';
-import { initializeCartOnLogin } from './redux/slices/cartSlice';
 
 const GlobalEventListener = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { user } = useSelector(state => state.auth);
-
-  useEffect(() => {
-    if (user) {
-      dispatch(initializeCartOnLogin());
-    }
-  }, [user, dispatch]);
 
   useEffect(() => {
     const handleNavigate = (e) => {
@@ -58,10 +50,10 @@ const GlobalEventListener = () => {
     const handleLogout = () => {
       dispatch(forceLogout());
     };
-    
+
     window.addEventListener('app-navigate', handleNavigate);
     window.addEventListener('app-logout', handleLogout);
-    
+
     return () => {
       window.removeEventListener('app-navigate', handleNavigate);
       window.removeEventListener('app-logout', handleLogout);
@@ -75,7 +67,7 @@ function App() {
   return (
     <Router>
       <GlobalEventListener />
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-right" reverseOrder={false} />
       <LoginModal />
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -88,13 +80,13 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="faq" element={<FAQ />} />
           <Route path="reviews" element={<Reviews />} />
-          <Route path="sellers" element={<SellerList />} /> 
+          <Route path="sellers" element={<SellerList />} />
           <Route path="offers" element={<Offers />} />
           <Route path="blogs" element={<Blogs />} />
           <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="terms" element={<Terms />} />
           <Route path="shipping-policy" element={<ShippingPolicy />} />
-          
+
           <Route path="forbidden" element={<Forbidden />} />
           <Route path="server-error" element={<ServerError />} />
           <Route path="network-error" element={<NetworkError />} />
@@ -124,7 +116,7 @@ function App() {
             <Route path="addresses" element={<Addresses />} />
             <Route path="order/:id" element={<OrderDetails />} />
           </Route>
-          
+
           {/* Seller Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={['seller']} />}>
             <Route path="seller/dashboard" element={<SellerDashboard />} />

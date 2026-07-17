@@ -2,6 +2,59 @@ const asyncHandler = require('../middleware/asyncHandler');
 const User = require('../models/userModel');
 const Product = require('../models/productModel');
 
+// @desc    Sync user cart
+// @route   POST /api/users/cart
+// @access  Private
+const syncCart = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    const cartItems = req.body.cartItems || [];
+    user.cart = cartItems.map(item => ({
+      product: item._id,
+      qty: item.qty,
+      selectedSize: item.selectedSize,
+      selectedColorName: item.selectedVariant?.colorName || item.color
+    }));
+    await user.save();
+    res.json({ success: true, message: 'Cart synced successfully' });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Get user cart
+// @route   GET /api/users/cart
+// @access  Private
+const getCart = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).populate('cart.product');
+  if (user) {
+    const cartItems = user.cart.map(item => {
+      if (!item.product) return null;
+      
+      const product = item.product;
+      const variant = product.variants?.find(v => v.colorName === item.selectedColorName);
+      
+      return {
+        _id: product._id,
+        title: product.title,
+        price: variant ? variant.price : (product.variants?.[0]?.price || product.price),
+        originalPrice: variant ? variant.originalPrice : (product.variants?.[0]?.originalPrice || product.originalPrice),
+        images: variant && variant.images?.length > 0 ? variant.images : product.images,
+        qty: item.qty,
+        selectedSize: item.selectedSize,
+        color: item.selectedColorName,
+        selectedVariant: variant || { colorName: item.selectedColorName }
+      };
+    }).filter(Boolean);
+
+    res.json({ success: true, cartItems });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
 // @desc    Get user wishlist
 // @route   GET /api/users/wishlist
 // @access  Private
@@ -59,69 +112,10 @@ const removeFromWishlist = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Sync user cart
-// @route   POST /api/users/cart
-// @access  Private
-const syncCart = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
-  const cartItems = req.body.cartItems || [];
-
-  if (user) {
-    user.cart = cartItems.map(item => ({
-      product: item._id,
-      qty: item.qty,
-      selectedSize: item.selectedSize || '',
-      selectedColorName: item.selectedVariant?.colorName || item.selectedColorName || ''
-    }));
-    await user.save();
-    res.json({ success: true, message: 'Cart synced' });
-  } else {
-    res.status(404);
-    throw new Error('User not found');
-  }
-});
-
-// @desc    Get user cart
-// @route   GET /api/users/cart
-// @access  Private
-const getCart = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).populate('cart.product');
-
-  if (user) {
-    const formattedCart = user.cart
-      .filter(item => item.product) // Filter out deleted products
-      .map(item => {
-        const product = item.product;
-        let selectedVariant = null;
-        if (item.selectedColorName && product.variants) {
-          selectedVariant = product.variants.find(v => v.colorName === item.selectedColorName);
-        }
-        
-        return {
-          _id: product._id.toString(),
-          title: product.title,
-          brand: product.brand,
-          price: selectedVariant ? selectedVariant.price : product.price,
-          stock: selectedVariant ? selectedVariant.stock : product.stock,
-          images: product.images,
-          thumbnail: product.thumbnail,
-          selectedSize: item.selectedSize,
-          selectedVariant: selectedVariant,
-          qty: item.qty
-        };
-    });
-
-    res.json({ success: true, cartItems: formattedCart });
-  } else {
-    res.status(404);
-    throw new Error('User not found');
-  }
-});
-
 module.exports = {
+  syncCart,
+  getCart,
   getWishlist,
   addToWishlist,
   removeFromWishlist,
-  getCart,
-  syncCart
 };
