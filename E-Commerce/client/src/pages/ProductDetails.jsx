@@ -130,7 +130,6 @@ const ProductDetails = () => {
       color: selectedVariant?.colorName
     }));
     toast.success('Added to bag! 🛍️');
-    window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/cart' }));
   };
 
   const toggleWishlist = async () => {

@@ -146,6 +146,17 @@ export const cartSlice = createSlice({
       return updateCart(state);
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase('auth/logout/fulfilled', (state) => {
+        state.cartItems = [];
+        return updateCart(state);
+      })
+      .addCase('auth/forceLogout', (state) => {
+        state.cartItems = [];
+        return updateCart(state);
+      });
+  }
 });
 
 export const {
