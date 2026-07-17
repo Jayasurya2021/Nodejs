@@ -36,6 +36,77 @@ const updateCart = (state) => {
   localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
 };
 
+
+export const cartSlice = createSlice({
+  name: 'cart',
+  initialState,
+  reducers: {
+    addToCart: (state, action) => {
+      const item = action.payload;
+
+      const existItem = state.cartItems.find(
+        (x) => x._id === item._id && x.selectedSize === item.selectedSize && x.selectedVariant?.colorName === item.selectedVariant?.colorName
+      );
+
+      if (existItem) {
+        state.cartItems = state.cartItems.map((x) =>
+          x._id === existItem._id && x.selectedSize === existItem.selectedSize && x.selectedVariant?.colorName === existItem.selectedVariant?.colorName ? item : x
+        );
+      } else {
+        state.cartItems = [...state.cartItems, item];
+      }
+
+      return updateCart(state);
+    },
+    removeFromCart: (state, action) => {
+      state.cartItems = state.cartItems.filter(
+        (x) => !(x._id === action.payload._id && x.size === action.payload.size && x.color === action.payload.color)
+      );
+      return updateCart(state);
+    },
+    saveShippingAddress: (state, action) => {
+      state.shippingAddress = action.payload;
+      localStorage.setItem('shippingAddress', JSON.stringify(action.payload));
+    },
+    savePaymentMethod: (state, action) => {
+      state.paymentMethod = action.payload;
+      localStorage.setItem('paymentMethod', JSON.stringify(action.payload));
+    },
+    clearCartItems: (state, action) => {
+      state.cartItems = [];
+      localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
+    },
+    setCartItems: (state, action) => {
+      state.cartItems = action.payload;
+      return updateCart(state);
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase('auth/logout/fulfilled', (state) => {
+        state.cartItems = [];
+        return updateCart(state);
+      })
+      .addCase('auth/forceLogout', (state) => {
+        state.cartItems = [];
+        return updateCart(state);
+      });
+  }
+});
+
+
+export const {
+  addToCart,
+  removeFromCart,
+  saveShippingAddress,
+  savePaymentMethod,
+  clearCartItems,
+  setCartItems
+} = cartSlice.actions;
+
+export default cartSlice.reducer;
+
+
 export const syncCartToBackend = createAsyncThunk(
   'cart/syncCart',
   async (_, { getState, rejectWithValue }) => {
@@ -101,71 +172,3 @@ export const removeFromCartAndSync = (item) => (dispatch, getState) => {
     dispatch(syncCartToBackend());
   }
 };
-
-export const cartSlice = createSlice({
-  name: 'cart',
-  initialState,
-  reducers: {
-    addToCart: (state, action) => {
-      const item = action.payload;
-
-      const existItem = state.cartItems.find(
-        (x) => x._id === item._id && x.selectedSize === item.selectedSize && x.selectedVariant?.colorName === item.selectedVariant?.colorName
-      );
-
-      if (existItem) {
-        state.cartItems = state.cartItems.map((x) =>
-          x._id === existItem._id && x.selectedSize === existItem.selectedSize && x.selectedVariant?.colorName === existItem.selectedVariant?.colorName ? item : x
-        );
-      } else {
-        state.cartItems = [...state.cartItems, item];
-      }
-
-      return updateCart(state);
-    },
-    removeFromCart: (state, action) => {
-      state.cartItems = state.cartItems.filter(
-        (x) => !(x._id === action.payload._id && x.size === action.payload.size && x.color === action.payload.color)
-      );
-      return updateCart(state);
-    },
-    saveShippingAddress: (state, action) => {
-      state.shippingAddress = action.payload;
-      localStorage.setItem('shippingAddress', JSON.stringify(action.payload));
-    },
-    savePaymentMethod: (state, action) => {
-      state.paymentMethod = action.payload;
-      localStorage.setItem('paymentMethod', JSON.stringify(action.payload));
-    },
-    clearCartItems: (state, action) => {
-      state.cartItems = [];
-      localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
-    },
-    setCartItems: (state, action) => {
-      state.cartItems = action.payload;
-      return updateCart(state);
-    },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase('auth/logout/fulfilled', (state) => {
-        state.cartItems = [];
-        return updateCart(state);
-      })
-      .addCase('auth/forceLogout', (state) => {
-        state.cartItems = [];
-        return updateCart(state);
-      });
-  }
-});
-
-export const {
-  addToCart,
-  removeFromCart,
-  saveShippingAddress,
-  savePaymentMethod,
-  clearCartItems,
-  setCartItems
-} = cartSlice.actions;
-
-export default cartSlice.reducer;
