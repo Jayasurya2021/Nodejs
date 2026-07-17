@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
+let cropClickStart = null;
+
 const CreateProduct = () => {
   const navigate = useNavigate();
   
@@ -122,8 +124,8 @@ const CreateProduct = () => {
     const canvas = document.createElement('canvas');
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
-    canvas.width = crop.width;
-    canvas.height = crop.height;
+    canvas.width = Math.round(crop.width * scaleX);
+    canvas.height = Math.round(crop.height * scaleY);
     const ctx = canvas.getContext('2d');
 
     ctx.drawImage(
@@ -134,8 +136,8 @@ const CreateProduct = () => {
       crop.height * scaleY,
       0,
       0,
-      crop.width,
-      crop.height
+      canvas.width,
+      canvas.height
     );
 
     return new Promise((resolve) => {
@@ -207,13 +209,29 @@ const CreateProduct = () => {
       toast.error("Image reference not found. Please try reopening the modal.");
       return;
     }
-    if (!modal.completedCrop?.width || !modal.completedCrop?.height) {
-      toast.error("Please drag to select a crop area first.");
+    
+    let cropToUse = modal.completedCrop;
+    if (!cropToUse?.width || !cropToUse?.height) {
+      if (modal.crop.unit === '%') {
+        cropToUse = {
+          unit: 'px',
+          x: (modal.crop.x || 0) * modal.imageRef.width / 100,
+          y: (modal.crop.y || 0) * modal.imageRef.height / 100,
+          width: modal.crop.width * modal.imageRef.width / 100,
+          height: (modal.crop.height || modal.crop.width) * modal.imageRef.height / 100,
+        };
+      } else {
+        cropToUse = modal.crop;
+      }
+    }
+
+    if (!cropToUse?.width || !cropToUse?.height) {
+      toast.error("Invalid crop area.");
       return;
     }
 
     try {
-      const croppedBlob = await getCroppedImg(modal.imageRef, modal.completedCrop);
+      const croppedBlob = await getCroppedImg(modal.imageRef, cropToUse);
       const croppedUrl = URL.createObjectURL(croppedBlob);
       
       const newVariants = [...variants];
@@ -302,13 +320,62 @@ const CreateProduct = () => {
           <div className="bg-white rounded-3xl overflow-hidden max-w-4xl w-full flex flex-col md:flex-row shadow-2xl relative">
             
             {/* Left: Image Viewer */}
-            <div className="md:w-2/3 bg-gray-100 flex items-center justify-center relative p-6 min-h-[400px]">
-              <div className="absolute top-4 left-6 z-10 flex flex-col gap-1">
-                <span className="text-xs font-black uppercase tracking-widest text-black bg-white px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2">
+            <div 
+              className="md:w-2/3 bg-gray-100 flex items-center justify-center relative p-6 min-h-[400px]"
+              onPointerDownCapture={(e) => {
+                cropClickStart = { x: e.clientX, y: e.clientY };
+              }}
+              onPointerUpCapture={async (e) => {
+                if (!cropClickStart) return;
+                const dist = Math.hypot(e.clientX - cropClickStart.x, e.clientY - cropClickStart.y);
+                cropClickStart = null;
+                
+                if (dist < 5 && modal.imageRef) {
+                  const rect = modal.imageRef.getBoundingClientRect();
+                  if (
+                    e.clientX >= rect.left && e.clientX <= rect.right &&
+                    e.clientY >= rect.top && e.clientY <= rect.bottom
+                  ) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const cropSize = Math.min(60, rect.width, rect.height);
+                    let cropX = x - cropSize / 2;
+                    let cropY = y - cropSize / 2;
+                    
+                    if (cropX < 0) cropX = 0;
+                    if (cropY < 0) cropY = 0;
+                    if (cropX + cropSize > rect.width) cropX = Math.max(0, rect.width - cropSize);
+                    if (cropY + cropSize > rect.height) cropY = Math.max(0, rect.height - cropSize);
+
+                    const crop = { x: cropX, y: cropY, width: cropSize, height: cropSize, unit: 'px' };
+                    
+                    try {
+                      const croppedBlob = await getCroppedImg(modal.imageRef, crop);
+                      const croppedUrl = URL.createObjectURL(croppedBlob);
+                      
+                      const newVariants = [...variants];
+                      newVariants[modal.vIndex].swatchFile = new File([croppedBlob], "swatch.jpg", { type: "image/jpeg" });
+                      newVariants[modal.vIndex].swatchPreview = croppedUrl;
+                      setVariants(newVariants);
+                      closePreviewModal();
+                      toast.success("Swatch picked!");
+                    } catch (error) {
+                      console.error(error);
+                      toast.error("Failed to pick swatch.");
+                    }
+                  }
+                }
+              }}
+            >
+              <div className="absolute top-4 left-6 z-10 flex flex-col gap-1 pointer-events-none">
+                <span className="text-xs font-black uppercase tracking-widest text-black bg-white px-3 py-1.5 rounded-full shadow-sm flex items-center gap-2 max-w-fit pointer-events-auto">
                   <Eye size={14} /> Crop Swatch
                 </span>
-                <span className="text-[10px] text-gray-500 bg-white/80 backdrop-blur px-3 py-1 rounded-full shadow-sm">
-                  Drag to crop the fabric/color swatch.
+                <span className="text-[10px] text-gray-500 bg-white/80 backdrop-blur px-3 py-1 rounded-full shadow-sm max-w-fit pointer-events-auto">
+                  Click anywhere to instantly pick a swatch, or drag to crop manually.
                 </span>
               </div>
               <ReactCrop
