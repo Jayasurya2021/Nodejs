@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 const cartItemsFromStorage = localStorage.getItem('cartItems')
   ? JSON.parse(localStorage.getItem('cartItems'))
@@ -33,6 +34,72 @@ const updateCart = (state) => {
   state.totalPrice = prices.totalPrice;
 
   localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
+};
+
+export const syncCartToBackend = createAsyncThunk(
+  'cart/syncCart',
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { auth: { user }, cart: { cartItems } } = getState();
+      if (!user) return null;
+      
+      const response = await axios.post('/api/users/cart', { cartItems });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const initializeCartOnLogin = createAsyncThunk(
+  'cart/initializeCart',
+  async (_, { getState, dispatch, rejectWithValue }) => {
+    try {
+      const { auth: { user }, cart: { cartItems: localCartItems } } = getState();
+      if (!user) return null;
+      
+      const response = await axios.get('/api/users/cart');
+      const backendCartItems = response.data.cartItems || [];
+      
+      const mergedCart = [...backendCartItems];
+      let hasNewLocalItems = false;
+      
+      localCartItems.forEach(localItem => {
+        const exists = mergedCart.find(
+          bItem => bItem._id === localItem._id && 
+                   bItem.selectedSize === localItem.selectedSize && 
+                   bItem.selectedVariant?.colorName === localItem.selectedVariant?.colorName
+        );
+        if (!exists) {
+          mergedCart.push(localItem);
+          hasNewLocalItems = true;
+        }
+      });
+      
+      dispatch(cartSlice.actions.setCartItems(mergedCart));
+      
+      if (hasNewLocalItems) {
+        dispatch(syncCartToBackend());
+      }
+      return mergedCart;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const addToCartAndSync = (item) => (dispatch, getState) => {
+  dispatch(cartSlice.actions.addToCart(item));
+  if (getState().auth?.user) {
+    dispatch(syncCartToBackend());
+  }
+};
+
+export const removeFromCartAndSync = (item) => (dispatch, getState) => {
+  dispatch(cartSlice.actions.removeFromCart(item));
+  if (getState().auth?.user) {
+    dispatch(syncCartToBackend());
+  }
 };
 
 export const cartSlice = createSlice({
@@ -74,6 +141,10 @@ export const cartSlice = createSlice({
       state.cartItems = [];
       localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
     },
+    setCartItems: (state, action) => {
+      state.cartItems = action.payload;
+      return updateCart(state);
+    },
   },
 });
 
@@ -83,6 +154,7 @@ export const {
   saveShippingAddress,
   savePaymentMethod,
   clearCartItems,
+  setCartItems
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

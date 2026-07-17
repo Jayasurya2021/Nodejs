@@ -63,6 +63,12 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product'
   }],
+  cart: [{
+    product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    qty: { type: Number, required: true },
+    selectedSize: { type: String },
+    selectedColorName: { type: String }
+  }],
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 }, {

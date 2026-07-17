@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { forceLogout } from './redux/slices/authSlice';
 import { Toaster } from 'react-hot-toast';
 import Layout from './layouts/Layout';
@@ -35,11 +35,19 @@ import CreateProduct from './pages/seller/CreateProduct';
 import EditProduct from './pages/seller/EditProduct';
 import LoginModal from './components/LoginModal';
 import { Categories, Brands, Contact, FAQ, Reviews, SellerList, Offers, Blogs, PrivacyPolicy, Terms, ShippingPolicy } from './pages/StaticPages';
+import { initializeCartOnLogin } from './redux/slices/cartSlice';
 
 const GlobalEventListener = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const { user } = useSelector(state => state.auth);
+
+  useEffect(() => {
+    if (user) {
+      dispatch(initializeCartOnLogin());
+    }
+  }, [user, dispatch]);
 
   useEffect(() => {
     const handleNavigate = (e) => {

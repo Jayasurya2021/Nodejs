@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { addToCart, removeFromCart } from '../redux/slices/cartSlice';
+import { addToCartAndSync, removeFromCartAndSync } from '../redux/slices/cartSlice';
 import { FiTrash2, FiMinus, FiPlus, FiArrowRight } from 'react-icons/fi';
 
 const Cart = () => {
@@ -10,11 +10,11 @@ const Cart = () => {
   const { cartItems, itemsPrice, taxPrice, shippingPrice, totalPrice } = useSelector((state) => state.cart);
 
   const addToCartHandler = (product, qty) => {
-    dispatch(addToCart({ ...product, qty }));
+    dispatch(addToCartAndSync({ ...product, qty }));
   };
 
   const removeFromCartHandler = (product) => {
-    dispatch(removeFromCart(product));
+    dispatch(removeFromCartAndSync(product));
   };
 
   const checkoutHandler = () => {

@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProductById, clearProduct } from '../redux/slices/productSlice';
-import { addToCart } from '../redux/slices/cartSlice';
+import { addToCartAndSync } from '../redux/slices/cartSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiHeart, FiMinus, FiPlus, FiChevronRight, FiStar, FiCheck, FiShare2, FiX, FiChevronLeft } from 'react-icons/fi';
 import toast from 'react-hot-toast';
@@ -121,7 +121,7 @@ const ProductDetails = () => {
     
     const priceToAdd = sellingPrice;
 
-    dispatch(addToCart({ 
+    dispatch(addToCartAndSync({ 
       ...product, 
       price: priceToAdd,
       qty, 

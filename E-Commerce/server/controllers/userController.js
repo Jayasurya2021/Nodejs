@@ -59,8 +59,69 @@ const removeFromWishlist = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Sync user cart
+// @route   POST /api/users/cart
+// @access  Private
+const syncCart = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const cartItems = req.body.cartItems || [];
+
+  if (user) {
+    user.cart = cartItems.map(item => ({
+      product: item._id,
+      qty: item.qty,
+      selectedSize: item.selectedSize || '',
+      selectedColorName: item.selectedVariant?.colorName || item.selectedColorName || ''
+    }));
+    await user.save();
+    res.json({ success: true, message: 'Cart synced' });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Get user cart
+// @route   GET /api/users/cart
+// @access  Private
+const getCart = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).populate('cart.product');
+
+  if (user) {
+    const formattedCart = user.cart
+      .filter(item => item.product) // Filter out deleted products
+      .map(item => {
+        const product = item.product;
+        let selectedVariant = null;
+        if (item.selectedColorName && product.variants) {
+          selectedVariant = product.variants.find(v => v.colorName === item.selectedColorName);
+        }
+        
+        return {
+          _id: product._id.toString(),
+          title: product.title,
+          brand: product.brand,
+          price: selectedVariant ? selectedVariant.price : product.price,
+          stock: selectedVariant ? selectedVariant.stock : product.stock,
+          images: product.images,
+          thumbnail: product.thumbnail,
+          selectedSize: item.selectedSize,
+          selectedVariant: selectedVariant,
+          qty: item.qty
+        };
+    });
+
+    res.json({ success: true, cartItems: formattedCart });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
 module.exports = {
   getWishlist,
   addToWishlist,
   removeFromWishlist,
+  getCart,
+  syncCart
 };
