@@ -1,5 +1,6 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const Order = require('../models/orderModel');
+const Product = require('../models/productModel');
 
 // @desc    Create new order
 // @route   POST /api/orders
@@ -21,9 +22,13 @@ const addOrderItems = asyncHandler(async (req, res) => {
   } else {
     const order = new Order({
       orderItems: orderItems.map((x) => ({
-        ...x,
+        name: x.title || x.name,
+        qty: x.qty,
+        image: x.images?.[0]?.url || x.image || 'https://via.placeholder.com/80',
+        price: x.price,
+        size: x.selectedSize || x.size || 'N/A',
+        color: x.color || x.selectedVariant?.colorName || 'Default',
         product: x._id,
-        _id: undefined
       })),
       user: req.user._id,
       shippingAddress,
@@ -35,6 +40,36 @@ const addOrderItems = asyncHandler(async (req, res) => {
     });
 
     const createdOrder = await order.save();
+
+    // Deduct stock for each item
+    for (const item of order.orderItems) {
+      const product = await Product.findById(item.product);
+      if (product) {
+        const variantIndex = product.variants.findIndex(
+          (v) => v.colorName === item.color
+        );
+        
+        let variant = null;
+        if (variantIndex !== -1) {
+          variant = product.variants[variantIndex];
+        } else if (product.variants.length > 0) {
+          variant = product.variants[0]; // fallback
+        }
+
+        if (variant) {
+          variant.stock = Math.max(0, variant.stock - item.qty);
+          
+          if (item.size && item.size !== 'N/A') {
+            const sizeIndex = variant.sizes.findIndex(s => s.name === item.size);
+            if (sizeIndex !== -1) {
+              variant.sizes[sizeIndex].stock = Math.max(0, variant.sizes[sizeIndex].stock - item.qty);
+            }
+          }
+        }
+        await product.save();
+      }
+    }
+
     res.status(201).json(createdOrder);
   }
 });
