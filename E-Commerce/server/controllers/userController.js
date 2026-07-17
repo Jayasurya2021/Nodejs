@@ -35,11 +35,22 @@ const getCart = asyncHandler(async (req, res) => {
       const product = item.product;
       const variant = product.variants?.find(v => v.colorName === item.selectedColorName);
       
+      let price = variant ? variant.price : (product.variants?.[0]?.price || product.price);
+      let originalPrice = variant ? variant.originalPrice : (product.variants?.[0]?.originalPrice || product.originalPrice);
+
+      if (variant && item.selectedSize) {
+        const sizeObj = variant.sizes?.find(s => s.name === item.selectedSize);
+        if (sizeObj) {
+          if (sizeObj.price != null && sizeObj.price !== '') price = Number(sizeObj.price);
+          if (sizeObj.originalPrice != null && sizeObj.originalPrice !== '') originalPrice = Number(sizeObj.originalPrice);
+        }
+      }
+
       return {
         _id: product._id,
         title: product.title,
-        price: variant ? variant.price : (product.variants?.[0]?.price || product.price),
-        originalPrice: variant ? variant.originalPrice : (product.variants?.[0]?.originalPrice || product.originalPrice),
+        price,
+        originalPrice,
         images: variant && variant.images?.length > 0 ? variant.images : product.images,
         qty: item.qty,
         selectedSize: item.selectedSize,

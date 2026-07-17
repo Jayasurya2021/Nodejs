@@ -216,13 +216,16 @@ const ProductDetails = () => {
 
   if (isError) return <div className="text-center py-20 text-red-500">{message}</div>;
 
-  const sellingPrice = selectedVariant 
-    ? (selectedVariant.price || 0)
-    : (product.variants?.[0]?.price || 0);
-  
-  const originalPrice = selectedVariant
-    ? (selectedVariant.originalPrice || sellingPrice)
-    : (product.variants?.[0]?.originalPrice || sellingPrice);
+  let sellingPrice = selectedVariant ? (selectedVariant.price || 0) : (product.variants?.[0]?.price || 0);
+  let originalPrice = selectedVariant ? (selectedVariant.originalPrice || sellingPrice) : (product.variants?.[0]?.originalPrice || sellingPrice);
+
+  if (selectedVariant && selectedSize) {
+    const sizeObj = selectedVariant.sizes?.find(s => s.name === selectedSize);
+    if (sizeObj) {
+      if (sizeObj.price != null && sizeObj.price !== '') sellingPrice = Number(sizeObj.price);
+      if (sizeObj.originalPrice != null && sizeObj.originalPrice !== '') originalPrice = Number(sizeObj.originalPrice);
+    }
+  }
 
   const discountPercent = originalPrice > sellingPrice 
     ? Math.round(((originalPrice - sellingPrice) / originalPrice) * 100) 

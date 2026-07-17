@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 
 const sizeSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  stock: { type: Number, default: 0, required: true }
+  stock: { type: Number, default: 0, required: true },
+  price: { type: Number },
+  originalPrice: { type: Number }
 });
 
 const fabricSchema = new mongoose.Schema({

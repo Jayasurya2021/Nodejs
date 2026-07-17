@@ -91,7 +91,7 @@ const CreateProduct = () => {
     const newVariants = [...variants];
     newVariants[vIndex] = {
       ...newVariants[vIndex],
-      sizes: [...newVariants[vIndex].sizes, { name: '', stock: 0 }]
+      sizes: [...newVariants[vIndex].sizes, { name: '', stock: 0, price: '', originalPrice: '' }]
     };
     setVariants(newVariants);
   };
@@ -743,12 +743,14 @@ const CreateProduct = () => {
                                   <option value="S">S</option>
                                   <option value="M">M</option>
                                   <option value="L">L</option>
-                                  <option value="XL">XL</option>
-                                  <option value="XXL">XXL</option>
-                                  <option value="3XL">3XL</option>
+                                  {['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', 'Free Size', '28', '30', '32', '34', '36', '38', '40', '42'].map(size => (
+                                    <option key={size} value={size}>{size}</option>
+                                  ))}
                                 </select>
-                                <input type="number" placeholder="Stock" value={s.stock} onChange={(e) => updateSize(vIndex, sIndex, 'stock', e.target.value)} className="w-24 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
-                                <button type="button" onClick={() => removeSize(vIndex, sIndex)} className="text-gray-400 hover:text-red-500 p-2"><X size={16} /></button>
+                                <input type="number" placeholder="Price (Opt)" value={s.price} onChange={(e) => updateSize(vIndex, sIndex, 'price', e.target.value)} className="w-24 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                                <input type="number" placeholder="Orig. Price (Opt)" value={s.originalPrice} onChange={(e) => updateSize(vIndex, sIndex, 'originalPrice', e.target.value)} className="w-28 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                                <input type="number" placeholder="Stock" required value={s.stock} onChange={(e) => updateSize(vIndex, sIndex, 'stock', e.target.value)} className="w-20 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-black" />
+                                <button type="button" onClick={() => removeSize(vIndex, sIndex)} className="w-9 h-9 flex items-center justify-center bg-gray-100 text-red-500 rounded-lg hover:bg-red-50 transition-colors"><Trash2 size={14}/></button>
                               </div>
                             ))}
                             {variant.sizes.length === 0 && <p className="text-sm text-gray-400 italic">No specific sizes added. Using base stock.</p>}
