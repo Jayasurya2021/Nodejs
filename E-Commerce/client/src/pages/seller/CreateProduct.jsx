@@ -100,7 +100,13 @@ const CreateProduct = () => {
     const newVariants = [...variants];
     const newSizes = [...newVariants[vIndex].sizes];
     newSizes.splice(sIndex, 1);
-    newVariants[vIndex] = { ...newVariants[vIndex], sizes: newSizes };
+    
+    let newStock = newVariants[vIndex].stock;
+    if (newSizes.length > 0) {
+      newStock = newSizes.reduce((sum, s) => sum + (Number(s.stock) || 0), 0);
+    }
+    
+    newVariants[vIndex] = { ...newVariants[vIndex], sizes: newSizes, stock: newStock };
     setVariants(newVariants);
   };
 
@@ -108,7 +114,14 @@ const CreateProduct = () => {
     const newVariants = [...variants];
     const newSizes = [...newVariants[vIndex].sizes];
     newSizes[sIndex] = { ...newSizes[sIndex], [field]: value };
-    newVariants[vIndex] = { ...newVariants[vIndex], sizes: newSizes };
+    
+    let updatedVariant = { ...newVariants[vIndex], sizes: newSizes };
+    
+    if (field === 'stock' || field === 'name') {
+      updatedVariant.stock = newSizes.reduce((sum, s) => sum + (Number(s.stock) || 0), 0);
+    }
+    
+    newVariants[vIndex] = updatedVariant;
     setVariants(newVariants);
   };
 
@@ -700,7 +713,14 @@ const CreateProduct = () => {
                           </div>
                           <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Base Stock</label>
-                            <input type="number" required value={variant.stock} onChange={(e) => updateVariant(vIndex, 'stock', e.target.value)} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all" />
+                            <input 
+                              type="number" 
+                              required 
+                              value={variant.stock} 
+                              onChange={(e) => updateVariant(vIndex, 'stock', e.target.value)} 
+                              disabled={variant.sizes && variant.sizes.length > 0}
+                              className={`w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black transition-all ${variant.sizes && variant.sizes.length > 0 ? 'bg-gray-100 text-gray-500 cursor-not-allowed opacity-70' : 'bg-white'}`} 
+                            />
                           </div>
                           <div>
                             <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">SKU (Opt)</label>
