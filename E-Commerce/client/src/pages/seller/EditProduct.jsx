@@ -346,7 +346,12 @@ const EditProduct = () => {
           stock: Number(variant.stock),
           sku: variant.sku,
           fabricQuality: variant.fabricQuality,
-          sizes: variant.sizes.map(s => ({ name: s.name, stock: Number(s.stock) })),
+          sizes: variant.sizes.map(s => ({ 
+            name: s.name, 
+            stock: Number(s.stock),
+            price: s.price ? Number(s.price) : null,
+            originalPrice: s.originalPrice ? Number(s.originalPrice) : null
+          })),
           images: variantUploadedImages
         });
       }
