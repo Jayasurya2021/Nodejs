@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
 const { protect, isSellerOrAdmin } = require('../middleware/authMiddleware');
 
@@ -16,14 +15,7 @@ if (useCloudinary) {
     api_secret: process.env.CLOUDINARY_API_SECRET
   });
   
-  storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-      folder: 'ecommerce_products',
-      allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-      transformation: [{ width: 1000, height: 1000, crop: 'limit' }]
-    }
-  });
+  storage = multer.memoryStorage();
 } else {
   const fs = require('fs');
   const path = require('path');
@@ -46,29 +38,49 @@ if (useCloudinary) {
 
 const upload = multer({ storage: storage });
 
-router.post('/', protect, isSellerOrAdmin, upload.array('images', 10), (req, res) => {
+router.post('/', protect, isSellerOrAdmin, upload.array('images', 10), async (req, res) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).send('No files were uploaded.');
   }
 
-  const uploadedImages = req.files.map(file => {
-    if (useCloudinary) {
-      return {
-        url: file.path,
-        public_id: file.filename
-      };
-    } else {
-      return {
-        url: `${process.env.VITE_API_URL ? process.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000'}/uploads/${file.filename}`,
-        public_id: file.filename
-      };
-    }
-  });
+  try {
+    const uploadPromises = req.files.map(async (file) => {
+      if (useCloudinary) {
+        return new Promise((resolve, reject) => {
+          const uploadStream = cloudinary.uploader.upload_stream(
+            {
+              folder: 'ecommerce_products',
+              allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+              transformation: [{ width: 1000, height: 1000, crop: 'limit' }]
+            },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve({
+                url: result.secure_url || result.url,
+                public_id: result.public_id
+              });
+            }
+          );
+          uploadStream.end(file.buffer);
+        });
+      } else {
+        return {
+          url: `${process.env.VITE_API_URL ? process.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000'}/uploads/${file.filename}`,
+          public_id: file.filename
+        };
+      }
+    });
 
-  res.json({
-    message: 'Images Uploaded Successfully',
-    images: uploadedImages
-  });
+    const uploadedImages = await Promise.all(uploadPromises);
+
+    res.json({
+      message: 'Images Uploaded Successfully',
+      images: uploadedImages
+    });
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ message: 'Error uploading images', error: error.message });
+  }
 });
 
 module.exports = router;
