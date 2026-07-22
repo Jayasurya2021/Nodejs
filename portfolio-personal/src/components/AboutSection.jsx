@@ -37,13 +37,13 @@ export default function AboutSection() {
           
           <div className="flex flex-col gap-6 text-lg text-white/70 leading-relaxed font-light">
             <p>
-              I am a passionate Full-Stack Developer with a keen eye for aesthetics and a drive for creating seamless digital experiences. With over 5 years of experience in the MERN stack, I bridge the gap between design and engineering.
+              I'm a passionate Full-Stack Developer with a strong interest in building modern, scalable, and user-friendly web applications. I specialize in the MERN stack (MongoDB, Express.js, React, and Node.js) and enjoy transforming ideas into real-world solutions through clean, maintainable code.
             </p>
             <p>
-              My approach focuses on clean code, intuitive user interfaces, and scalable architectures. I believe that great software not only solves problems but also provides an enjoyable experience for the end-user.
+              My journey into software development has been driven by continuous learning and hands-on projects. I enjoy solving challenging problems, building responsive user interfaces, designing RESTful APIs, and creating secure backend systems.
             </p>
             <p>
-              When I'm not coding, you can find me exploring the latest web technologies, contributing to open-source projects, or sharing my knowledge with the developer community.
+              I'm always eager to learn new technologies, improve my development skills, and collaborate with teams to build impactful products. My goal is to grow as a software engineer while creating applications that deliver meaningful value to users.
             </p>
           </div>
           
