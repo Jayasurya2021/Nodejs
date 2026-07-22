@@ -5,7 +5,6 @@ import React from 'react'
 
 function MovieTicketBooking() {
 
-    8
 
   return (
     <div>
