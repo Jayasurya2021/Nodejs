@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 
 // Setup global axios defaults
 axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 // Setup global interceptors
 axios.interceptors.response.use(
