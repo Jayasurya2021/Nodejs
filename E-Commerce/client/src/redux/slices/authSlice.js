@@ -78,13 +78,13 @@ export const googleLogin = createAsyncThunk(
   async ({ token, role }, thunkAPI) => {
     try {
       const response = await axios.post(API_URL + 'google', { token, role });
-      
+
       // If user requires role selection, we still save the pending user so they are authenticated
       // for the /complete-profile page
       if (response.data?.user) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
-      
+
       return {
         user: response.data.user,
         requireRole: response.data.requireRole || false

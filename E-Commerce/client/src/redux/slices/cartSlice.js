@@ -105,7 +105,7 @@ export const cartSlice = createSlice({
     builder.addCase(fetchCartFromBackend.fulfilled, (state, action) => {
       const dbCart = action.payload;
       const localCart = [...state.cartItems];
-      
+
       dbCart.forEach(dbItem => {
         const existItem = localCart.find(
           (x) => x._id === dbItem._id && x.selectedSize === dbItem.selectedSize && (x.selectedVariant?.colorName === dbItem.selectedVariant?.colorName || x.color === dbItem.color)
@@ -114,7 +114,7 @@ export const cartSlice = createSlice({
           localCart.push(dbItem);
         }
       });
-      
+
       state.cartItems = localCart;
       updateCart(state);
     });

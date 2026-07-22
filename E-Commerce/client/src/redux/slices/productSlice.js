@@ -23,7 +23,7 @@ export const getProducts = createAsyncThunk(
       if (queryArgs) {
         Object.keys(queryArgs).forEach(key => {
           if (queryArgs[key] !== undefined && queryArgs[key] !== '' && key !== 'append') {
-             queryStr += `${encodeURIComponent(key)}=${encodeURIComponent(queryArgs[key])}&`;
+            queryStr += `${encodeURIComponent(key)}=${encodeURIComponent(queryArgs[key])}&`;
           }
         });
       }
@@ -45,7 +45,7 @@ export const searchProducts = createAsyncThunk(
       if (queryArgs) {
         Object.keys(queryArgs).forEach(key => {
           if (queryArgs[key] !== undefined && queryArgs[key] !== '' && key !== 'append') {
-             queryStr += `${encodeURIComponent(key)}=${encodeURIComponent(queryArgs[key])}&`;
+            queryStr += `${encodeURIComponent(key)}=${encodeURIComponent(queryArgs[key])}&`;
           }
         });
       }
