@@ -6,8 +6,17 @@ const User = require('../models/userModel');
 const protect = asyncHandler(async (req, res, next) => {
   let token;
 
-  // Read the JWT from the cookie
-  token = req.cookies.jwt;
+  // Read the JWT from the Authorization header (Bearer token)
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  } 
+  // Fallback to cookie for backwards compatibility
+  else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
 
   if (token) {
     try {

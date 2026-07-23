@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 // Get user from localStorage
 let user = JSON.parse(localStorage.getItem('user'));
@@ -33,6 +34,9 @@ export const register = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const response = await axios.post(API_URL + 'register', userData);
+      if (response.data?.token) {
+        Cookies.set('token', response.data.token, { expires: 30 });
+      }
       if (response.data?.user) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
@@ -53,6 +57,9 @@ export const register = createAsyncThunk(
 export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
   try {
     const response = await axios.post(API_URL + 'login', user);
+    if (response.data?.token) {
+      Cookies.set('token', response.data.token, { expires: 30 });
+    }
     if (response.data?.user) {
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
@@ -70,6 +77,7 @@ export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
 export const logout = createAsyncThunk('auth/logout', async () => {
   await axios.post(API_URL + 'logout');
   localStorage.removeItem('user');
+  Cookies.remove('token');
 });
 
 // Google Sign-In
@@ -78,6 +86,10 @@ export const googleLogin = createAsyncThunk(
   async ({ token, role }, thunkAPI) => {
     try {
       const response = await axios.post(API_URL + 'google', { token, role });
+
+      if (response.data?.token) {
+        Cookies.set('token', response.data.token, { expires: 30 });
+      }
 
       // If user requires role selection, we still save the pending user so they are authenticated
       // for the /complete-profile page
@@ -105,6 +117,9 @@ export const selectRole = createAsyncThunk(
   async ({ role }, thunkAPI) => {
     try {
       const response = await axios.patch(API_URL + 'select-role', { role });
+      if (response.data?.token) {
+        Cookies.set('token', response.data.token, { expires: 30 });
+      }
       if (response.data?.user) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
       }
@@ -132,6 +147,7 @@ export const authSlice = createSlice({
     forceLogout: (state) => {
       state.user = null;
       localStorage.removeItem('user');
+      Cookies.remove('token');
     }
   },
   extraReducers: (builder) => {
