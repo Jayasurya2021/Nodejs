@@ -1,28 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import Cookies from 'js-cookie';
-
-// Get user from localStorage
-let user = JSON.parse(localStorage.getItem('user'));
-
-// Fix for corrupted localStorage from previous bug
-if (user) {
-  if (user.user && user.success !== undefined) {
-    user = user.user;
-    localStorage.setItem('user', JSON.stringify(user));
-  }
-  // If it's an empty object, treat it as null
-  if (Object.keys(user).length === 0) {
-    user = null;
-    localStorage.removeItem('user');
-  }
-}
 
 const initialState = {
-  user: user ? user : null,
+  user: null,
   isError: false,
   isSuccess: false,
   isLoading: false,
+  isCheckingAuth: true,
   message: '',
 };
 
@@ -34,12 +18,6 @@ export const register = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const response = await axios.post(API_URL + 'register', userData);
-      if (response.data?.token) {
-        Cookies.set('token', response.data.token, { expires: 30 });
-      }
-      if (response.data?.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      }
       return response.data.user || response.data;
     } catch (error) {
       const message =
@@ -57,12 +35,6 @@ export const register = createAsyncThunk(
 export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
   try {
     const response = await axios.post(API_URL + 'login', user);
-    if (response.data?.token) {
-      Cookies.set('token', response.data.token, { expires: 30 });
-    }
-    if (response.data?.user) {
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-    }
     return response.data.user || response.data;
   } catch (error) {
     const message =
@@ -76,8 +48,6 @@ export const login = createAsyncThunk('auth/login', async (user, thunkAPI) => {
 // Logout
 export const logout = createAsyncThunk('auth/logout', async () => {
   await axios.post(API_URL + 'logout');
-  localStorage.removeItem('user');
-  Cookies.remove('token');
 });
 
 // Google Sign-In
@@ -86,17 +56,6 @@ export const googleLogin = createAsyncThunk(
   async ({ token, role }, thunkAPI) => {
     try {
       const response = await axios.post(API_URL + 'google', { token, role });
-
-      if (response.data?.token) {
-        Cookies.set('token', response.data.token, { expires: 30 });
-      }
-
-      // If user requires role selection, we still save the pending user so they are authenticated
-      // for the /complete-profile page
-      if (response.data?.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      }
-
       return {
         user: response.data.user,
         requireRole: response.data.requireRole || false
@@ -117,12 +76,23 @@ export const selectRole = createAsyncThunk(
   async ({ role }, thunkAPI) => {
     try {
       const response = await axios.patch(API_URL + 'select-role', { role });
-      if (response.data?.token) {
-        Cookies.set('token', response.data.token, { expires: 30 });
-      }
-      if (response.data?.user) {
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-      }
+      return response.data.user;
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
+// Check current Auth status (fetch profile)
+export const checkAuth = createAsyncThunk(
+  'auth/checkAuth',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get(API_URL + 'profile');
       return response.data.user;
     } catch (error) {
       const message =
@@ -146,8 +116,6 @@ export const authSlice = createSlice({
     },
     forceLogout: (state) => {
       state.user = null;
-      localStorage.removeItem('user');
-      Cookies.remove('token');
     }
   },
   extraReducers: (builder) => {
@@ -191,8 +159,6 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.user = action.payload.user;
-        // If the backend says requireRole, we can optionally use it in the component, 
-        // but typically checking user.role === 'pending' is sufficient.
       })
       .addCase(googleLogin.rejected, (state, action) => {
         state.isLoading = false;
@@ -213,6 +179,18 @@ export const authSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
+      })
+      // Check Auth (Profile validation on mount)
+      .addCase(checkAuth.pending, (state) => {
+        state.isCheckingAuth = true;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.isCheckingAuth = false;
+        state.user = action.payload;
+      })
+      .addCase(checkAuth.rejected, (state) => {
+        state.isCheckingAuth = false;
+        state.user = null;
       });
   },
 });

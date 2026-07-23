@@ -1,7 +1,7 @@
 import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { forceLogout } from './redux/slices/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { forceLogout, checkAuth } from './redux/slices/authSlice';
 import { Toaster } from 'react-hot-toast';
 import Layout from './layouts/Layout';
 import GuestRoute from './components/routes/GuestRoute';
@@ -79,6 +79,17 @@ const GlobalEventListener = () => {
 };
 
 function App() {
+  const dispatch = useDispatch();
+  const { isCheckingAuth } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
+
+  if (isCheckingAuth) {
+    return <Loading />;
+  }
+
   return (
     <Router>
       <GlobalEventListener />

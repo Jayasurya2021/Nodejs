@@ -42,12 +42,11 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid email or password');
   }
 
-  const token = generateToken(res, user._id);
+  generateToken(res, user._id);
 
   res.json({
     success: true,
     message: "Login successful",
-    token,
     user: {
       _id: user._id,
       name: user.name,
@@ -88,12 +87,11 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid user data');
   }
 
-  const token = generateToken(res, user._id);
+  generateToken(res, user._id);
 
   res.status(201).json({
     success: true,
     message: "Login successful",
-    token,
     user: {
       _id: user._id,
       name: user.name,
@@ -192,12 +190,11 @@ const googleSignIn = asyncHandler(async (req, res) => {
   }
 
   // Issue the same HTTP-only JWT cookie used by local auth
-  const authToken = generateToken(res, user._id);
+  generateToken(res, user._id);
 
   res.status(200).json({
     success: true,
     message: 'Google Sign-In successful',
-    token: authToken,
     requireRole,
     user: {
       _id: user._id,
@@ -215,9 +212,10 @@ const googleSignIn = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/logout
 // @access  Private
 const logoutUser = asyncHandler(async (req, res) => {
-  res.cookie('jwt', '', {
+  res.clearCookie('token', {
     httpOnly: true,
-    expires: new Date(0)
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   });
   res.status(200).json({ success: true, message: 'Logged out successfully' });
 });
@@ -306,11 +304,10 @@ const selectRole = asyncHandler(async (req, res) => {
   const updatedUser = await user.save();
 
   // Re-issue token just in case
-  const token = generateToken(res, updatedUser._id);
+  generateToken(res, updatedUser._id);
 
   res.json({
     success: true,
-    token,
     user: {
       _id: updatedUser._id,
       name: updatedUser.name,
