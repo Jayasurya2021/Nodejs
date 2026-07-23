@@ -192,12 +192,12 @@ const googleSignIn = asyncHandler(async (req, res) => {
   }
 
   // Issue the same HTTP-only JWT cookie used by local auth
-  const token = generateToken(res, user._id);
+  const authToken = generateToken(res, user._id);
 
   res.status(200).json({
     success: true,
     message: 'Google Sign-In successful',
-    token,
+    token: authToken,
     requireRole,
     user: {
       _id: user._id,
