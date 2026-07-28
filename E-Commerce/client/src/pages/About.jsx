@@ -127,7 +127,7 @@ const About = () => {
       </section>
 
       {/* Brand Story */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
+      <section className="py-24 px-4 w-full mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <motion.div
             initial={{ opacity: 0, x: -40 }}
@@ -185,7 +185,7 @@ const About = () => {
 
       {/* Stats Section */}
       <section className="py-24 bg-black text-white">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="w-full mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -220,7 +220,7 @@ const About = () => {
       </section>
 
       {/* Values */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
+      <section className="py-24 px-4 w-full mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -255,7 +255,7 @@ const About = () => {
 
       {/* Team */}
       <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="w-full mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -300,7 +300,7 @@ const About = () => {
       </section>
 
       {/* Process */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
+      <section className="py-24 px-4 w-full mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

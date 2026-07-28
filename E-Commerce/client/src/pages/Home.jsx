@@ -273,7 +273,7 @@ const Home = () => {
 
       {/* ─── TRUST BADGES ─────────────────────────────────────────────── */}
       <section className="py-8 border-y border-gray-100 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="w-full mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {FEATURES.map((feature, i) => (
               <motion.div
@@ -312,7 +312,7 @@ const Home = () => {
       </section>
 
       {/* ─── FEATURED CATEGORIES ──────────────────────────────────────── */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
+      <section className="py-24 px-4 w-full mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -345,7 +345,7 @@ const Home = () => {
 
       {/* ─── NEW ARRIVALS ──────────────────────────────────────────────── */}
       <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="w-full mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -398,7 +398,7 @@ const Home = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent" />
         <div className="absolute inset-0 flex items-center">
-          <div className="max-w-7xl mx-auto px-4 w-full">
+          <div className="w-full mx-auto px-4 w-full">
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -426,7 +426,7 @@ const Home = () => {
       </section>
 
       {/* ─── MORE PRODUCTS ─────────────────────────────────────────────── */}
-      <section className="py-24 px-4 max-w-7xl mx-auto">
+      <section className="py-24 px-4 w-full mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -486,7 +486,7 @@ const Home = () => {
 
       {/* ─── PAYMENT SECTION ───────────────────────────────────────────── */}
       <section className="py-16 bg-black text-white">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="w-full mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
             <div className="md:col-span-1">
               <p className="text-yellow-400 text-xs uppercase tracking-[0.3em] font-semibold mb-2">Checkout</p>
@@ -536,7 +536,7 @@ const Home = () => {
       </section>
 
       {/* ─── REVIEWS SECTION ───────────────────────────────────────────── */}
-      <section ref={reviewsRef} className="py-24 px-4 max-w-7xl mx-auto">
+      <section ref={reviewsRef} className="py-24 px-4 w-full mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -662,7 +662,7 @@ const Home = () => {
 
       {/* ─── INSTAGRAM SECTION ─────────────────────────────────────────── */}
       <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4">
+        <div className="w-full mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

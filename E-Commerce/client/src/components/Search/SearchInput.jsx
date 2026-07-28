@@ -65,7 +65,7 @@ const SearchInput = ({ isOpen, onClose }) => {
       exit={{ opacity: 0, y: -20 }}
       className="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 z-50"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <form onSubmit={handleSubmit} className="relative">
           <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input

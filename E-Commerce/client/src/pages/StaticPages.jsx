@@ -4,7 +4,7 @@ const StaticPageTemplate = ({ title, description }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 min-h-[60vh] flex flex-col items-center justify-center text-center"
+    className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-20 min-h-[60vh] flex flex-col items-center justify-center text-center"
   >
     <div className="w-12 h-1 bg-yellow-400 mb-6" />
     <h1 className="text-4xl md:text-5xl font-black uppercase tracking-widest mb-6">{title}</h1>

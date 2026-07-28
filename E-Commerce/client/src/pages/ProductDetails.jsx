@@ -67,6 +67,7 @@ const ProductDetails = () => {
 
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     dispatch(getProductById(id));
     fetchRelatedProducts();
     return () => { dispatch(clearProduct()); };
@@ -200,7 +201,7 @@ const ProductDetails = () => {
 
   if (isLoading || !product) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="animate-pulse flex flex-col md:flex-row gap-10 w-full">
           <div className="shimmer aspect-[3/4] w-full md:w-1/2" />
           <div className="flex flex-col gap-6 w-full md:w-1/2 mt-10">
@@ -257,7 +258,7 @@ const ProductDetails = () => {
       exit={{ opacity: 0 }}
       className="w-full py-12"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumbs */}
         <div className="flex items-center text-xs text-gray-400 uppercase tracking-widest mb-10 gap-2">
           <span className="cursor-pointer hover:text-black transition-colors" onClick={() => navigate('/')}>Home</span>
@@ -302,7 +303,7 @@ const ProductDetails = () => {
         </div>
       </ProductScrollHero>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
       {/* ─── RELATED PRODUCTS ─────────────────────────────────────────── */}
       {relatedProducts.length > 0 && (
         <section className="mt-16 pt-12">

@@ -278,7 +278,7 @@ const ProductScrollHero = ({ product, state, children }) => {
       </AnimatePresence>
 
       {/* ─── DESKTOP (STICKY LAYOUT) ─── */}
-      <div className="hidden md:flex flex-row gap-12 lg:gap-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-0">
+      <div className="hidden md:flex flex-row gap-12 lg:gap-20 w-full w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-0">
         
         {/* Left Column (stretches to full height) */}
         <div className="w-[55%] relative">
@@ -291,7 +291,7 @@ const ProductScrollHero = ({ product, state, children }) => {
           >
           {/* We reduce the max-width to create the "20-30% reduction with whitespace" effect */}
           <motion.div 
-            className="w-full max-w-[95%] aspect-[3/4] relative group rounded-lg overflow-hidden shadow-2xl"
+            className="w-full max-w-[500px] xl:max-w-[600px] aspect-[3/4] relative group rounded-lg overflow-hidden shadow-2xl mx-auto"
             style={{ scale: imageScale, y: imageY }}
           >
             <AnimatePresence mode="wait">
