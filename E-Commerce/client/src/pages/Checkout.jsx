@@ -130,7 +130,28 @@ const Checkout = () => {
 
   const handleNextStep = async () => {
     if (step === 0) {
-    setStep((prev) => Math.min(2, prev + 1));
+      if (!address.street) {
+        toast.error('Please select a shipping address');
+        return;
+      }
+      dispatch(saveShippingAddress(address));
+      setStep(1);
+    } else if (step === 1) {
+      if (!paymentMethod) {
+        toast.error('Please select a payment method');
+        return;
+      }
+      if (paymentMethod === 'card' && (!cardDetails.number || !cardDetails.name || !cardDetails.expiry || !cardDetails.cvv)) {
+        toast.error('Please enter complete card details');
+        return;
+      }
+      if (paymentMethod === 'upi' && !upiId) {
+        toast.error('Please enter UPI ID');
+        return;
+      }
+      dispatch(savePaymentMethod(paymentMethod));
+      setStep(2);
+    }
   };
 
   const placeOrderHandler = async () => {
