@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 export default function EducationSection() {
+  const [hoveredCert, setHoveredCert] = useState(null);
+  const [hoveredAchieve, setHoveredAchieve] = useState(null);
   const education = [
     {
       degree: 'Bachelor of Business Administration (BBA)',
@@ -69,11 +71,18 @@ export default function EducationSection() {
               <h2 className="text-huge text-4xl md:text-5xl lg:text-huge">Professional Certifications</h2>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" onMouseLeave={() => setHoveredCert(null)}>
               {certifications.map((cert, idx) => (
                 <motion.div 
                   key={idx}
-                  className="p-6 border border-brand-border rounded-lg bg-white/5 hover:bg-white/10 transition-colors h-full flex items-center"
+                  onMouseEnter={() => setHoveredCert(idx)}
+                  className={`p-6 border border-brand-border rounded-lg transition-all duration-300 h-full flex items-center ${
+                    hoveredCert !== null
+                      ? hoveredCert === idx
+                        ? 'scale-105 bg-white/10 border-accent-cyan/50 opacity-100 shadow-[0_0_20px_rgba(0,255,255,0.1)] z-10'
+                        : 'scale-[0.95] opacity-40 bg-white/5'
+                      : 'bg-white/5 hover:bg-white/10'
+                  }`}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -89,11 +98,18 @@ export default function EducationSection() {
               <span className="txt-cursive text-2xl text-accent-cyan mt-2 block">Key Milestones</span>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" onMouseLeave={() => setHoveredAchieve(null)}>
               {achievements.map((achievement, idx) => (
                 <motion.div 
                   key={idx}
-                  className="p-6 border border-brand-border rounded-lg bg-white/5 hover:bg-white/10 transition-colors h-full flex items-center"
+                  onMouseEnter={() => setHoveredAchieve(idx)}
+                  className={`p-6 border border-brand-border rounded-lg transition-all duration-300 h-full flex items-center ${
+                    hoveredAchieve !== null
+                      ? hoveredAchieve === idx
+                        ? 'scale-105 bg-white/10 border-accent-cyan/50 opacity-100 shadow-[0_0_20px_rgba(0,255,255,0.1)] z-10'
+                        : 'scale-[0.95] opacity-40 bg-white/5'
+                      : 'bg-white/5 hover:bg-white/10'
+                  }`}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
