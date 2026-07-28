@@ -1,25 +1,19 @@
-import React, { useRef, useState } from 'react'
-import OnlineExamResult from './components/OnlineExamResult'
+import React, { useEffect, useRef, useState } from 'react'
 
 function App() {
 
-  const outputRef = useRef(0)
-const [value, setValue] = useState(0)
-  function handleClick(){
-    const result = outputRef.current + 1
-    console.log(result)
-  }
+  const outputRef = useRef("")
 
-  function hanldeUpdate(){
-    setValue(outputRef.current)
-  }
+  useEffect(()=>{
+    outputRef.current
+  })
+
   return (
     <div>
 
-      {outputRef.current}
+      <input type="text" value={outputRef.current} ref={outputRef} />
       <button onClick={handleClick}>click</button>
-      <button onClick={hanldeUpdate}>update</button>
-      {/* <OnlineExamResult/> */}
+
     </div>
   )
 }

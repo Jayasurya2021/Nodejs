@@ -26,9 +26,7 @@ export const syncCartToBackend = createAsyncThunk(
   }
 );
 
-const cartItemsFromStorage = localStorage.getItem('cartItems')
-  ? JSON.parse(localStorage.getItem('cartItems'))
-  : [];
+const cartItemsFromStorage = [];
 
 const shippingAddressFromStorage = localStorage.getItem('shippingAddress')
   ? JSON.parse(localStorage.getItem('shippingAddress'))
@@ -57,8 +55,6 @@ const updateCart = (state) => {
   state.shippingPrice = prices.shippingPrice;
   state.taxPrice = prices.taxPrice;
   state.totalPrice = prices.totalPrice;
-
-  localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
 };
 
 export const cartSlice = createSlice({
@@ -98,24 +94,11 @@ export const cartSlice = createSlice({
     },
     clearCartItemsLocal: (state, action) => {
       state.cartItems = [];
-      localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
     },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchCartFromBackend.fulfilled, (state, action) => {
-      const dbCart = action.payload;
-      const localCart = [...state.cartItems];
-
-      dbCart.forEach(dbItem => {
-        const existItem = localCart.find(
-          (x) => x._id === dbItem._id && x.selectedSize === dbItem.selectedSize && (x.selectedVariant?.colorName === dbItem.selectedVariant?.colorName || x.color === dbItem.color)
-        );
-        if (!existItem) {
-          localCart.push(dbItem);
-        }
-      });
-
-      state.cartItems = localCart;
+      state.cartItems = action.payload || [];
       updateCart(state);
     });
   }
