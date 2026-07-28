@@ -33,10 +33,10 @@ export default function EducationSection() {
 
   return (
     <section id="education" className="py-32 bg-[#050505] border-y border-brand-border">
-      <div className="container mx-auto px-8 max-w-7xl">
+      <div className="container mx-auto px-8 max-w-5xl">
         <div className="flex flex-col gap-16">
           <div className="w-full">
-            <div className="mb-12">
+            <div className="mb-12 text-center flex flex-col items-center">
               <h2 className="text-huge text-4xl md:text-5xl lg:text-huge">Education</h2>
               <span className="txt-cursive text-2xl text-accent-cyan mt-2 block">Academic Background</span>
             </div>
@@ -67,7 +67,7 @@ export default function EducationSection() {
           </div>
           
           <div className="w-full">
-            <div className="mb-12">
+            <div className="mb-12 text-center flex flex-col items-center">
               <h2 className="text-huge text-4xl md:text-5xl lg:text-huge">Professional Certifications</h2>
             </div>
             
@@ -93,7 +93,7 @@ export default function EducationSection() {
               ))}
             </div>
 
-            <div className="mb-12 mt-16">
+            <div className="mb-12 mt-16 text-center flex flex-col items-center">
               <h2 className="text-huge text-4xl md:text-5xl lg:text-huge">Achievements</h2>
               <span className="txt-cursive text-2xl text-accent-cyan mt-2 block">Key Milestones</span>
             </div>
