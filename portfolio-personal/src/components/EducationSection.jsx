@@ -4,30 +4,36 @@ import { motion } from 'framer-motion';
 export default function EducationSection() {
   const education = [
     {
-      degree: 'Bachelor of Science in Computer Science',
-      institution: 'University of Technology',
-      period: '2017 - 2021',
-      description: 'Graduated with honors. Specialized in Software Engineering and Web Technologies.',
-    },
-    {
-      degree: 'Full-Stack Web Development Bootcamp',
-      institution: 'Code Academy',
-      period: '2021',
-      description: 'Intensive 12-week program focusing on MERN stack, agile methodologies, and modern web development practices.',
+      degree: 'Bachelor of Business Administration (BBA)',
+      institution: 'S.S. Government Arts College, Tiruttani',
+      period: '2020 – 2023',
+      description: 'Completed a Bachelor\'s degree in Business Administration with a strong foundation in Management, Marketing, Finance, Business Communication, and Information Systems. Developed analytical thinking, problem-solving, teamwork, and communication skills that support modern software development.',
     }
   ];
 
   const certifications = [
-    'AWS Certified Developer - Associate',
-    'Meta React Native Specialist',
-    'Google Cloud Professional Cloud Architect'
+    'MERN Stack Full Stack Web Development',
+    'JavaScript (ES6+) Programming',
+    'React.js Development',
+    'Node.js & Express.js Development',
+    'MongoDB Database Development',
+    'Git & GitHub Version Control'
+  ];
+
+  const achievements = [
+    '🚀 Built 5+ Full Stack MERN Projects',
+    '🌐 Successfully Deployed Applications using Vercel & Render',
+    '🔐 Implemented JWT Authentication and Google OAuth',
+    '📱 Developed Fully Responsive Web Applications',
+    '🗄️ Designed REST APIs with MongoDB Atlas',
+    '💻 Version Control using Git & GitHub'
   ];
 
   return (
     <section id="education" className="py-32 bg-[#050505] border-y border-brand-border">
       <div className="container mx-auto px-8 max-w-7xl">
-        <div className="flex flex-col lg:flex-row gap-16">
-          <div className="w-full lg:w-2/3">
+        <div className="flex flex-col gap-16">
+          <div className="w-full">
             <div className="mb-12">
               <h2 className="text-huge text-4xl md:text-5xl lg:text-huge">Education</h2>
               <span className="txt-cursive text-2xl text-accent-cyan mt-2 block">Academic Background</span>
@@ -58,23 +64,42 @@ export default function EducationSection() {
             </div>
           </div>
           
-          <div className="w-full lg:w-1/3">
-            <div className="mb-12 lg:mt-0">
-              <h2 className="text-huge text-4xl md:text-5xl lg:text-huge">Certificates</h2>
-              <span className="txt-cursive text-2xl text-accent-red mt-2 block">Professional</span>
+          <div className="w-full">
+            <div className="mb-12">
+              <h2 className="text-huge text-4xl md:text-5xl lg:text-huge">Professional Certifications</h2>
             </div>
             
-            <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {certifications.map((cert, idx) => (
                 <motion.div 
                   key={idx}
-                  className="p-6 border border-brand-border rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
-                  initial={{ opacity: 0, x: 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  className="p-6 border border-brand-border rounded-lg bg-white/5 hover:bg-white/10 transition-colors h-full flex items-center"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
                 >
                   <p className="text-lg font-medium">{cert}</p>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mb-12 mt-16">
+              <h2 className="text-huge text-4xl md:text-5xl lg:text-huge">Achievements</h2>
+              <span className="txt-cursive text-2xl text-accent-cyan mt-2 block">Key Milestones</span>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {achievements.map((achievement, idx) => (
+                <motion.div 
+                  key={idx}
+                  className="p-6 border border-brand-border rounded-lg bg-white/5 hover:bg-white/10 transition-colors h-full flex items-center"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                >
+                  <p className="text-lg font-medium">{achievement}</p>
                 </motion.div>
               ))}
             </div>
