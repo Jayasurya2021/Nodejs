@@ -17,8 +17,14 @@ const Cart = () => {
     dispatch(removeFromCart(product));
   };
 
+  const { user } = useSelector((state) => state.auth);
+
   const checkoutHandler = () => {
-    navigate('/login?redirect=/checkout');
+    if (user && Object.keys(user).length > 0) {
+      navigate('/checkout');
+    } else {
+      navigate('/login?redirect=/checkout');
+    }
   };
 
   return (

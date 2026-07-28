@@ -88,43 +88,50 @@ const Profile = () => {
           ) : (
             <div className="space-y-6">
               {orders.map((order) => (
-                <div key={order._id} className="border border-border p-6 hover:shadow-lg transition-shadow">
-                  <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 pb-4 border-b border-border gap-4">
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Order Number</p>
-                      <p className="font-semibold">{order._id}</p>
+                <div key={order._id} className="flex flex-col xl:flex-row items-center justify-between border border-gray-100 bg-white p-4 hover:border-black hover:shadow-md transition-all duration-300 gap-6">
+                  {/* Images on the left */}
+                  <div className="flex -space-x-4 overflow-hidden p-2 flex-shrink-0">
+                    {order.orderItems.slice(0, 3).map((item, index) => (
+                      <div key={index} className="relative z-10 w-14 h-14 rounded-full border-2 border-white shadow-sm bg-gray-50 overflow-hidden">
+                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                    {order.orderItems.length > 3 && (
+                      <div className="w-14 h-14 rounded-full bg-gray-100 border-2 border-white shadow-sm flex items-center justify-center text-[10px] font-black z-10">
+                        +{order.orderItems.length - 3}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Order Info */}
+                  <div className="flex-1 flex flex-wrap md:flex-nowrap items-center justify-between gap-6 w-full px-4">
+                    <div className="text-center md:text-left">
+                      <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1 font-bold">Order ID</p>
+                      <p className="font-bold text-sm uppercase truncate max-w-[120px]">{order._id.substring(0, 8)}...</p>
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Date</p>
-                      <p className="font-semibold">{new Date(order.createdAt).toLocaleDateString()}</p>
+                    <div className="text-center md:text-left">
+                      <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1 font-bold">Date</p>
+                      <p className="font-bold text-sm">{new Date(order.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Total</p>
-                      <p className="font-semibold">₹{order.totalPrice.toFixed(2)}</p>
+                    <div className="text-center md:text-left">
+                      <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1 font-bold">Total</p>
+                      <p className="font-bold text-sm">₹{order.totalPrice.toFixed(2)}</p>
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Status</p>
-                      <span className={`px-3 py-1 text-xs font-bold uppercase tracking-widest rounded-full ${
-                        order.isDelivered ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    <div className="text-center md:text-left">
+                      <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1 font-bold">Status</p>
+                      <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full ${
+                        order.isDelivered ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
                       }`}>
-                        {order.orderStatus}
+                        {order.orderStatus || (order.isDelivered ? 'Delivered' : 'Processing')}
                       </span>
                     </div>
                   </div>
-                  
-                  <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
-                    {order.orderItems.map((item, index) => (
-                      <div key={index} className="flex-shrink-0 w-20 relative">
-                        <img src={item.image} alt={item.name} className="w-full h-24 object-cover" />
-                        <span className="absolute -top-2 -right-2 w-5 h-5 bg-black text-white text-[10px] flex items-center justify-center rounded-full">
-                          {item.qty}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <div className="mt-4 flex justify-end">
-                    <button onClick={() => navigate(`/order/${order._id}`)} className="text-xs border-b border-black pb-1 uppercase tracking-widest font-bold">View Details</button>
+
+                  {/* Button */}
+                  <div className="w-full xl:w-auto mt-2 xl:mt-0 flex-shrink-0">
+                    <button onClick={() => navigate(`/order/${order._id}`)} className="w-full xl:w-auto px-6 py-3 bg-white border-2 border-black text-black text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-colors">
+                      View Details
+                    </button>
                   </div>
                 </div>
               ))}

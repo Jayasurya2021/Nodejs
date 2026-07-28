@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { forceLogout, checkAuth } from './redux/slices/authSlice';
@@ -9,47 +9,36 @@ import ProtectedRoute from './components/routes/ProtectedRoute';
 import LoginModal from './components/LoginModal';
 import Loading from './components/Loading';
 
-// Lazy loaded page components
-const Home = lazy(() => import('./pages/Home'));
-const Shop = lazy(() => import('./pages/Shop'));
-const ProductDetails = lazy(() => import('./pages/ProductDetails'));
-const Cart = lazy(() => import('./pages/Cart'));
-const Login = lazy(() => import('./pages/Login'));
-const Signup = lazy(() => import('./pages/Signup'));
-const Checkout = lazy(() => import('./pages/Checkout'));
-const Profile = lazy(() => import('./pages/Profile'));
-const CompleteProfile = lazy(() => import('./pages/CompleteProfile'));
-const OrderDetails = lazy(() => import('./pages/OrderDetails'));
+// Static page imports
+import Home from './pages/Home';
+import Shop from './pages/Shop';
+import ProductDetails from './pages/ProductDetails';
+import Cart from './pages/Cart';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Checkout from './pages/Checkout';
+import Profile from './pages/Profile';
+import CompleteProfile from './pages/CompleteProfile';
+import OrderDetails from './pages/OrderDetails';
 
-const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
-const ApprovalQueue = lazy(() => import('./pages/admin/ApprovalQueue'));
-const UsersList = lazy(() => import('./pages/admin/UsersList'));
-const OrdersList = lazy(() => import('./pages/admin/OrdersList'));
-const ProductEdit = lazy(() => import('./pages/admin/ProductEdit'));
-const Forbidden = lazy(() => import('./pages/Forbidden'));
-const SellerDashboard = lazy(() => import('./pages/seller/SellerDashboard'));
-const NotFound = lazy(() => import('./pages/errors/NotFound'));
-const ServerError = lazy(() => import('./pages/errors/ServerError'));
-const NetworkError = lazy(() => import('./pages/errors/NetworkError'));
-const Orders = lazy(() => import('./pages/Orders'));
-const Wishlist = lazy(() => import('./pages/Wishlist'));
-const Addresses = lazy(() => import('./pages/Addresses'));
-const ManageProducts = lazy(() => import('./pages/seller/ManageProducts'));
-const CreateProduct = lazy(() => import('./pages/seller/CreateProduct'));
-const EditProduct = lazy(() => import('./pages/seller/EditProduct'));
+import AdminDashboard from './pages/admin/AdminDashboard';
+import ApprovalQueue from './pages/admin/ApprovalQueue';
+import UsersList from './pages/admin/UsersList';
+import OrdersList from './pages/admin/OrdersList';
+import ProductEdit from './pages/admin/ProductEdit';
+import Forbidden from './pages/Forbidden';
+import SellerDashboard from './pages/seller/SellerDashboard';
+import NotFound from './pages/errors/NotFound';
+import ServerError from './pages/errors/ServerError';
+import NetworkError from './pages/errors/NetworkError';
+import Orders from './pages/Orders';
+import Wishlist from './pages/Wishlist';
+import Addresses from './pages/Addresses';
+import ManageProducts from './pages/seller/ManageProducts';
+import CreateProduct from './pages/seller/CreateProduct';
+import EditProduct from './pages/seller/EditProduct';
 
-// Lazy load named exports from StaticPages
-const Categories = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.Categories })));
-const Brands = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.Brands })));
-const Contact = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.Contact })));
-const FAQ = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.FAQ })));
-const Reviews = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.Reviews })));
-const SellerList = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.SellerList })));
-const Offers = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.Offers })));
-const Blogs = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.Blogs })));
-const PrivacyPolicy = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.PrivacyPolicy })));
-const Terms = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.Terms })));
-const ShippingPolicy = lazy(() => import('./pages/StaticPages').then(m => ({ default: m.ShippingPolicy })));
+import { Categories, Brands, Contact, FAQ, Reviews, SellerList, Offers, Blogs, PrivacyPolicy, Terms, ShippingPolicy } from './pages/StaticPages';
 
 const GlobalEventListener = () => {
   const navigate = useNavigate();
@@ -95,8 +84,7 @@ function App() {
       <GlobalEventListener />
       <Toaster position="top-right" reverseOrder={false} />
       <LoginModal />
-      <Suspense fallback={<Loading />}>
-        <Routes>
+      <Routes>
           <Route path="/" element={<Layout />}>
             {/* Public / Guest Routes (Accessible to everyone) */}
             <Route index element={<Home />} />
@@ -167,7 +155,6 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
-      </Suspense>
     </Router>
   );
 }

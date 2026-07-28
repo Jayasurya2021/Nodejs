@@ -1,11 +1,39 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { MapPin, Plus, Edit2, Trash2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { updateAddresses } from '../redux/slices/authSlice';
+import AddressForm from '../components/AddressForm';
 
 const Addresses = () => {
   const { user } = useSelector((state) => state.auth);
-  // Mock data for now as we don't have a backend endpoint for this yet, or it's within user profile.
-  const [addresses, setAddresses] = useState(user?.addresses || []);
+  const dispatch = useDispatch();
+
+  const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
+  const [editingAddressData, setEditingAddressData] = useState(null);
+
+  const handleAddressFormSubmit = async (formData, shouldSave) => {
+    try {
+      if (editingAddressData?._id) {
+        const { data } = await axios.put(`/api/users/addresses/${editingAddressData._id}`, formData, { withCredentials: true });
+        dispatch(updateAddresses(data.addresses));
+        toast.success('Address updated successfully!');
+      } else {
+        const { data } = await axios.post('/api/users/addresses', formData, { withCredentials: true });
+        dispatch(updateAddresses(data.addresses));
+        toast.success('Address saved successfully!');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Could not save address');
+      return;
+    }
+    
+    setIsAddingNewAddress(false);
+    setEditingAddressData(null);
+  };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-screen">
@@ -16,35 +44,60 @@ const Addresses = () => {
           </h1>
           <p className="text-gray-500 mt-2">Manage your delivery addresses for a faster checkout.</p>
         </div>
-        <button className="bg-black text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors flex items-center gap-2">
-          <Plus size={18} /> Add New
-        </button>
+        {!isAddingNewAddress && (
+          <button 
+            onClick={() => setIsAddingNewAddress(true)}
+            className="bg-black text-white px-6 py-3 text-sm font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors flex items-center gap-2"
+          >
+            <Plus size={18} /> Add New
+          </button>
+        )}
       </div>
 
-      {addresses.length === 0 ? (
-        <div className="text-center py-24 bg-gray-50 border border-gray-100 rounded-lg">
-          <MapPin size={48} className="mx-auto text-gray-300 mb-4" />
-          <h2 className="text-xl font-bold mb-2">No Addresses Found</h2>
-          <p className="text-gray-500">You haven't saved any addresses yet.</p>
-        </div>
+      {isAddingNewAddress ? (
+        <AddressForm 
+          initialData={editingAddressData} 
+          onSubmit={handleAddressFormSubmit} 
+          onCancel={() => {
+            setIsAddingNewAddress(false);
+            setEditingAddressData(null);
+          }}
+          isCheckoutMode={false} 
+        />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {addresses.map((address, i) => (
-            <div key={i} className="bg-white border border-gray-200 rounded-lg p-6 relative group hover:border-black transition-colors">
-              <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button className="p-2 bg-gray-50 hover:bg-gray-200 rounded-full transition-colors"><Edit2 size={14} /></button>
-                <button className="p-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-full transition-colors"><Trash2 size={14} /></button>
-              </div>
-              <h3 className="font-bold text-lg mb-2">{address.fullName}</h3>
-              <p className="text-gray-600 mb-1">{address.street}</p>
-              <p className="text-gray-600 mb-1">{address.city}, {address.state} {address.zipCode}</p>
-              <p className="text-gray-600">{address.country}</p>
-              <p className="text-gray-500 mt-4 text-sm flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-black"></span> {address.phone}
-              </p>
+        <>
+          {(!user?.addresses || user.addresses.length === 0) ? (
+            <div className="text-center py-24 bg-gray-50 border border-gray-100 rounded-lg">
+              <MapPin size={48} className="mx-auto text-gray-300 mb-4" />
+              <h2 className="text-xl font-bold mb-2">No Addresses Found</h2>
+              <p className="text-gray-500">You haven't saved any addresses yet.</p>
             </div>
-          ))}
-        </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {user.addresses.map((address, i) => (
+                <div key={i} className="bg-white border border-gray-200 rounded-lg p-6 relative group hover:border-black transition-colors">
+                  <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => {
+                        setEditingAddressData(address);
+                        setIsAddingNewAddress(true);
+                      }}
+                      className="p-2 bg-gray-50 hover:bg-gray-200 rounded-full transition-colors"
+                    >
+                      <Edit2 size={14} />
+                    </button>
+                    {/* Trash logic will go here eventually */}
+                    {/* <button className="p-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-full transition-colors"><Trash2 size={14} /></button> */}
+                  </div>
+                  <h3 className="font-bold text-lg mb-2 uppercase tracking-widest">{address.label || 'Home'}</h3>
+                  <p className="text-gray-600 mb-1">{address.street}</p>
+                  <p className="text-gray-600 mb-1">{address.city}, {address.state} {address.postalCode}</p>
+                  <p className="text-gray-600">{address.country}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

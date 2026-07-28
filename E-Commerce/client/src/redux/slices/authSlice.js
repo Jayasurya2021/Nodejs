@@ -116,6 +116,11 @@ export const authSlice = createSlice({
     },
     forceLogout: (state) => {
       state.user = null;
+    },
+    updateAddresses: (state, action) => {
+      if (state.user) {
+        state.user.addresses = action.payload;
+      }
     }
   },
   extraReducers: (builder) => {
@@ -195,5 +200,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { reset, forceLogout } = authSlice.actions;
+export const { reset, forceLogout, updateAddresses } = authSlice.actions;
 export default authSlice.reducer;

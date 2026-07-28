@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { saveShippingAddress, savePaymentMethod } from '../redux/slices/cartSlice';
+import { updateAddresses } from '../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { FiCheck, FiCreditCard, FiSmartphone, FiTruck, FiMapPin, FiArrowRight } from 'react-icons/fi';
+import AddressForm from '../components/AddressForm';
 
 // ─── Progress Steps ──────────────────────────────────────────────────────
 const STEPS = ['Shipping', 'Payment', 'Review'];
@@ -87,29 +89,47 @@ const Checkout = () => {
     postalCode: shippingAddress.postalCode || '',
     country: shippingAddress.country || '',
     state: shippingAddress.state || '',
+    label: shippingAddress.label || 'Home',
   });
+  const [isAddingNewAddress, setIsAddingNewAddress] = useState(!user?.addresses || user.addresses.length === 0);
+  const [editingAddressData, setEditingAddressData] = useState(null);
   const [paymentMethod, setPaymentMethodState] = useState('razorpay');
   const [cardDetails, setCardDetails] = useState({ number: '', name: '', expiry: '', cvv: '' });
   const [upiId, setUpiId] = useState('');
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   useEffect(() => {
-    if (!user) navigate('/login?redirect=/checkout');
+    if (!user || Object.keys(user).length === 0) navigate('/login?redirect=/checkout');
   }, [user, navigate]);
 
-  const handleAddressChange = (e) => setAddress({ ...address, [e.target.name]: e.target.value });
-
-  const validateShipping = () => {
-    if (!address.street || !address.city || !address.postalCode || !address.country || !address.state) {
-      toast.error('Please fill in all shipping fields');
-      return false;
+  const handleAddressFormSubmit = async (formData, shouldSave) => {
+    if (shouldSave) {
+      try {
+        if (editingAddressData?._id) {
+          const { data } = await axios.put(`/api/users/addresses/${editingAddressData._id}`, formData, { withCredentials: true });
+          dispatch(updateAddresses(data.addresses));
+          toast.success('Address updated successfully!');
+        } else {
+          const { data } = await axios.post('/api/users/addresses', formData, { withCredentials: true });
+          dispatch(updateAddresses(data.addresses));
+          toast.success('Address saved to profile!');
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error('Could not save address to profile');
+        return;
+      }
     }
-    return true;
+    
+    setAddress(formData);
+    dispatch(saveShippingAddress(formData));
+    setStep(1);
+    setIsAddingNewAddress(false);
+    setEditingAddressData(null);
   };
 
-  const handleNextStep = () => {
-    if (step === 0 && !validateShipping()) return;
-    dispatch(saveShippingAddress(address));
+  const handleNextStep = async () => {
+    if (step === 0) {
     setStep((prev) => Math.min(2, prev + 1));
   };
 
@@ -165,61 +185,99 @@ const Checkout = () => {
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.4 }}
               >
-                <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
-                  <FiMapPin className="text-gray-400" size={20} />
-                  <h2 className="text-lg font-black uppercase tracking-widest">Shipping Address</h2>
-                </div>
+                {isAddingNewAddress ? (
+                  <AddressForm 
+                    initialData={editingAddressData} 
+                    onSubmit={handleAddressFormSubmit} 
+                    onCancel={user?.addresses && user.addresses.length > 0 ? () => {
+                      setIsAddingNewAddress(false);
+                      setEditingAddressData(null);
+                    } : null}
+                    isCheckoutMode={true} 
+                  />
+                ) : (
+                  <>
+                    <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
+                      <FiMapPin className="text-gray-400" size={20} />
+                      <h2 className="text-lg font-black uppercase tracking-widest">Shipping Address</h2>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {user.addresses.map((savedAddr, idx) => (
+                          <motion.label
+                            key={idx}
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
+                            className={`relative cursor-pointer rounded-none border-2 p-5 transition-all duration-300 ${
+                              address.street === savedAddr.street && address.city === savedAddr.city ? 'border-black shadow-lg bg-gray-50' : 'border-gray-200 hover:border-gray-400 bg-white'
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="savedAddress"
+                              className="sr-only"
+                              checked={address.street === savedAddr.street && address.city === savedAddr.city}
+                              onChange={() => {
+                                setAddress({
+                                  street: savedAddr.street,
+                                  city: savedAddr.city,
+                                  state: savedAddr.state,
+                                  postalCode: savedAddr.postalCode,
+                                  country: savedAddr.country,
+                                  label: savedAddr.label || 'Other'
+                                });
+                              }}
+                            />
+                            {(address.street === savedAddr.street && address.city === savedAddr.city) && (
+                              <div className="absolute top-3 right-3 w-5 h-5 bg-black rounded-full flex items-center justify-center">
+                                <FiCheck size={10} className="text-white" strokeWidth={3} />
+                              </div>
+                            )}
+                            <div className="flex items-start gap-4">
+                              <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
+                                <FiMapPin className="text-gray-500" size={18} />
+                              </div>
+                              <div className="flex-1">
+                                <p className="font-black text-sm mb-1 uppercase tracking-widest">{savedAddr.label || 'Address'}</p>
+                                <p className="text-xs text-gray-600 truncate">{savedAddr.street}</p>
+                                <p className="text-xs text-gray-500">{savedAddr.city}, {savedAddr.state}</p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingAddressData(savedAddr);
+                                  setIsAddingNewAddress(true);
+                                }}
+                                className="text-[10px] font-black tracking-widest uppercase underline text-gray-400 hover:text-black transition-colors"
+                              >
+                                Edit
+                              </button>
+                            </div>
+                          </motion.label>
+                        ))}
+                      </div>
+                      <button
+                        onClick={() => {
+                          setIsAddingNewAddress(true);
+                          setEditingAddressData(null);
+                        }}
+                        className="mt-4 text-xs font-bold uppercase tracking-widest border-b border-black pb-1 hover:text-gray-600 hover:border-gray-600 transition-colors"
+                      >
+                        + Add New Address
+                      </button>
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="md:col-span-2">
-                    <label className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-2 block">Street Address *</label>
-                    <input
-                      type="text" name="street" value={address.street} onChange={handleAddressChange} required
-                      placeholder="123 Main Street, Apt 4B"
-                      className="w-full border border-gray-200 px-4 py-3.5 text-sm focus:outline-none focus:border-black transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-2 block">City *</label>
-                    <input
-                      type="text" name="city" value={address.city} onChange={handleAddressChange} required
-                      placeholder="Mumbai"
-                      className="w-full border border-gray-200 px-4 py-3.5 text-sm focus:outline-none focus:border-black transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-2 block">State / Province *</label>
-                    <input
-                      type="text" name="state" value={address.state} onChange={handleAddressChange} required
-                      placeholder="Maharashtra"
-                      className="w-full border border-gray-200 px-4 py-3.5 text-sm focus:outline-none focus:border-black transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-2 block">Postal Code *</label>
-                    <input
-                      type="text" name="postalCode" value={address.postalCode} onChange={handleAddressChange} required
-                      placeholder="400001"
-                      className="w-full border border-gray-200 px-4 py-3.5 text-sm focus:outline-none focus:border-black transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs uppercase tracking-widest font-bold text-gray-400 mb-2 block">Country *</label>
-                    <input
-                      type="text" name="country" value={address.country} onChange={handleAddressChange} required
-                      placeholder="India"
-                      className="w-full border border-gray-200 px-4 py-3.5 text-sm focus:outline-none focus:border-black transition-colors"
-                    />
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleNextStep}
-                  className="mt-8 w-full py-4 bg-black text-white text-sm font-black uppercase tracking-widest hover:bg-gray-900 transition-colors flex items-center justify-center gap-3 group"
-                >
-                  Continue to Payment
-                  <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-                </button>
+                    <button
+                      onClick={handleNextStep}
+                      className="mt-8 w-full py-4 bg-black text-white text-sm font-black uppercase tracking-widest hover:bg-gray-900 transition-colors flex items-center justify-center gap-3 group"
+                    >
+                      Continue to Payment
+                      <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </>
+                )}
               </motion.div>
             )}
 

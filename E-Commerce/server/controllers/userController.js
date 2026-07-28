@@ -123,10 +123,68 @@ const removeFromWishlist = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Add a new address to user profile
+// @route   POST /api/users/addresses
+// @access  Private
+const addAddress = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    const newAddress = {
+      street: req.body.street,
+      city: req.body.city,
+      state: req.body.state,
+      postalCode: req.body.postalCode,
+      country: req.body.country,
+      label: req.body.label || 'Other',
+      isDefault: req.body.isDefault || false
+    };
+    user.addresses.push(newAddress);
+    await user.save();
+    res.status(201).json({ success: true, message: 'Address saved successfully', addresses: user.addresses });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Update an existing address in user profile
+// @route   PUT /api/users/addresses/:id
+// @access  Private
+const updateAddress = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    const addressId = req.params.id;
+    const addressIndex = user.addresses.findIndex(addr => addr._id.toString() === addressId);
+    
+    if (addressIndex !== -1) {
+      user.addresses[addressIndex] = {
+        _id: user.addresses[addressIndex]._id, // preserve id
+        street: req.body.street || user.addresses[addressIndex].street,
+        city: req.body.city || user.addresses[addressIndex].city,
+        state: req.body.state || user.addresses[addressIndex].state,
+        postalCode: req.body.postalCode || user.addresses[addressIndex].postalCode,
+        country: req.body.country || user.addresses[addressIndex].country,
+        label: req.body.label || user.addresses[addressIndex].label,
+        isDefault: req.body.isDefault !== undefined ? req.body.isDefault : user.addresses[addressIndex].isDefault
+      };
+      await user.save();
+      res.json({ success: true, message: 'Address updated successfully', addresses: user.addresses });
+    } else {
+      res.status(404);
+      throw new Error('Address not found');
+    }
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
 module.exports = {
   syncCart,
   getCart,
   getWishlist,
   addToWishlist,
   removeFromWishlist,
+  addAddress,
+  updateAddress,
 };
