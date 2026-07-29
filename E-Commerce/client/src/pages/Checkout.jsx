@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useBlocker } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
-import { saveShippingAddress, savePaymentMethod } from '../redux/slices/cartSlice';
+import { saveShippingAddress, savePaymentMethod, clearCartItems } from '../redux/slices/cartSlice';
 import { updateAddresses } from '../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { FiCheck, FiCreditCard, FiSmartphone, FiTruck, FiMapPin, FiArrowRight, FiEdit2, FiTrash2, FiAlertCircle } from 'react-icons/fi';
+import { FiCheck, FiCreditCard, FiSmartphone, FiTruck, FiMapPin, FiArrowRight, FiEdit2, FiTrash2, FiAlertCircle, FiShield, FiXCircle } from 'react-icons/fi';
 import AddressForm from '../components/AddressForm';
 
 // ─── Progress Steps ──────────────────────────────────────────────────────
@@ -98,7 +98,62 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethodState] = useState('razorpay');
   const [cardDetails, setCardDetails] = useState({ number: '', name: '', expiry: '', cvv: '' });
   const [upiId, setUpiId] = useState('');
+  
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [showPaymentGateway, setShowPaymentGateway] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState('idle'); // idle, processing, success, failed
+
+  // Navigation Protection Blocker
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      cartItems.length > 0 &&
+      !isPlacingOrder &&
+      currentLocation.pathname !== nextLocation.pathname &&
+      !nextLocation.pathname.includes('/order/')
+  );
+
+  // BeforeUnload native browser protection
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (cartItems.length > 0 && !isPlacingOrder) {
+        e.preventDefault();
+        e.returnValue = ''; // Trigger native prompt
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [cartItems, isPlacingOrder]);
+
+  // Restore state from SessionStorage (Auto-Save)
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      const savedStep = sessionStorage.getItem('checkout_step');
+      if (savedStep !== null) setStep(Number(savedStep));
+      
+      const savedAddress = sessionStorage.getItem('checkout_address');
+      if (savedAddress) setAddress(JSON.parse(savedAddress));
+      
+      const savedPaymentMethod = sessionStorage.getItem('checkout_paymentMethod');
+      if (savedPaymentMethod) setPaymentMethodState(savedPaymentMethod);
+      
+      const savedCardDetails = sessionStorage.getItem('checkout_cardDetails');
+      if (savedCardDetails) setCardDetails(JSON.parse(savedCardDetails));
+      
+      const savedUpiId = sessionStorage.getItem('checkout_upiId');
+      if (savedUpiId) setUpiId(savedUpiId);
+    }
+  }, []); // Run only on mount
+
+  // Auto-Save whenever fields change
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      sessionStorage.setItem('checkout_step', step.toString());
+      sessionStorage.setItem('checkout_address', JSON.stringify(address));
+      sessionStorage.setItem('checkout_paymentMethod', paymentMethod);
+      sessionStorage.setItem('checkout_cardDetails', JSON.stringify(cardDetails));
+      sessionStorage.setItem('checkout_upiId', upiId);
+    }
+  }, [step, address, paymentMethod, cardDetails, upiId, cartItems]);
 
   useEffect(() => {
     if (user?.addresses && user.addresses.length === 0 && !isAddingNewAddress && step === 0) {
@@ -178,20 +233,53 @@ const Checkout = () => {
     }
   };
 
-  const placeOrderHandler = async () => {
+  const handlePlaceOrderClick = () => {
+    if (paymentMethod === 'cod') {
+      processActualOrder();
+    } else {
+      setShowPaymentGateway(true);
+      setPaymentStatus('idle');
+    }
+  };
+
+  const simulatePayment = (success) => {
+    setPaymentStatus('processing');
+    setTimeout(() => {
+      if (success) {
+        setPaymentStatus('success');
+        processActualOrder();
+      } else {
+        setPaymentStatus('failed');
+      }
+    }, 2000); // 2 second mock delay
+  };
+
+  const processActualOrder = async () => {
     dispatch(saveShippingAddress(address));
     dispatch(savePaymentMethod(paymentMethod));
     try {
       setIsPlacingOrder(true);
       const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true };
       const orderData = { orderItems: cartItems, shippingAddress: address, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice };
+      
       const { data } = await axios.post('/api/orders', orderData, config);
+      
+      // Cleanup Order State
+      dispatch(clearCartItems());
+      sessionStorage.removeItem('checkout_step');
+      sessionStorage.removeItem('checkout_address');
+      sessionStorage.removeItem('checkout_paymentMethod');
+      sessionStorage.removeItem('checkout_cardDetails');
+      sessionStorage.removeItem('checkout_upiId');
+      
       setIsPlacingOrder(false);
+      setShowPaymentGateway(false);
       toast.success('Order Placed Successfully! 🎉');
       navigate(`/order/${data._id}`);
     } catch (error) {
       setIsPlacingOrder(false);
       toast.error(error.response?.data?.message || error.message);
+      if (showPaymentGateway) setPaymentStatus('failed');
     }
   };
 
@@ -208,11 +296,15 @@ const Checkout = () => {
 
   return (
     <>
+    <div className="w-full bg-yellow-100 text-yellow-800 py-2 text-center text-xs font-bold uppercase tracking-widest relative z-10 flex items-center justify-center gap-2">
+      <span className="animate-pulse">🟡</span> Checkout in Progress: Your items are reserved until payment is completed
+    </div>
+
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
-      className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-12"
+      className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-8"
     >
       <h1 className="text-3xl font-black tracking-widest uppercase mb-4 text-center">Checkout</h1>
       <StepIndicator currentStep={step} />
@@ -569,7 +661,7 @@ const Checkout = () => {
                     Back
                   </button>
                   <button
-                    onClick={placeOrderHandler}
+                    onClick={handlePlaceOrderClick}
                     disabled={isPlacingOrder}
                     className="flex-1 py-4 bg-black text-white text-sm font-black uppercase tracking-widest hover:bg-gray-900 transition-colors flex items-center justify-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
@@ -722,6 +814,106 @@ const Checkout = () => {
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Exit Confirmation Protection Modal */}
+      <AnimatePresence>
+        {blocker.state === 'blocked' && (
+           <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+             <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+             />
+             <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="relative bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md text-center"
+             >
+               <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4 text-yellow-600">
+                  <FiShield size={32} />
+               </div>
+               <h3 className="text-xl font-black uppercase tracking-widest mb-3">Leave Checkout?</h3>
+               <p className="text-sm text-gray-500 mb-8 leading-relaxed">
+                 Your checkout process is not completed yet. If you leave now, your order will not be placed.<br/><br/>
+                 <strong className="text-gray-900">The selected items will remain safely in your cart.</strong>
+               </p>
+               <div className="flex flex-col gap-3">
+                 <button onClick={() => blocker.reset()} className="w-full py-4 bg-black text-white font-bold tracking-widest uppercase rounded-lg text-sm hover:bg-gray-900 transition-colors">
+                   Continue Checkout
+                 </button>
+                 <button onClick={() => blocker.proceed()} className="w-full py-4 border-2 border-gray-200 text-gray-600 font-bold tracking-widest uppercase rounded-lg text-sm hover:bg-gray-50 hover:text-black hover:border-black transition-colors">
+                   Leave Checkout
+                 </button>
+               </div>
+             </motion.div>
+           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Simulated Payment Gateway Modal */}
+      <AnimatePresence>
+        {showPaymentGateway && (
+           <div className="fixed inset-0 z-[90] flex items-center justify-center px-4">
+             <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+             />
+             <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+              className="relative bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md text-center border-t-8 border-black"
+             >
+               <h3 className="text-sm font-black uppercase tracking-widest mb-1 text-gray-400">Payment Gateway</h3>
+               <h4 className="text-xl font-black mb-8">Test Simulation</h4>
+               
+               {paymentStatus === 'idle' && (
+                 <>
+                  <p className="text-sm text-gray-500 mb-8">Since this is a demo, please choose how you would like the simulated payment to resolve.</p>
+                  <div className="flex flex-col gap-3">
+                    <button onClick={() => simulatePayment(true)} className="w-full py-4 bg-green-600 text-white font-bold tracking-widest uppercase rounded-lg text-sm hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                      <FiCheck size={18} /> Simulate Success
+                    </button>
+                    <button onClick={() => simulatePayment(false)} className="w-full py-4 bg-red-600 text-white font-bold tracking-widest uppercase rounded-lg text-sm hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
+                      <FiXCircle size={18} /> Simulate Failure
+                    </button>
+                  </div>
+                 </>
+               )}
+
+               {paymentStatus === 'processing' && (
+                 <div className="py-8 flex flex-col items-center">
+                   <svg className="animate-spin w-10 h-10 text-black mb-4" fill="none" viewBox="0 0 24 24">
+                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                   </svg>
+                   <p className="text-sm font-bold uppercase tracking-widest animate-pulse">Processing Payment...</p>
+                 </div>
+               )}
+
+               {paymentStatus === 'failed' && (
+                 <div className="py-4 flex flex-col items-center">
+                   <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 text-red-600">
+                     <FiXCircle size={32} />
+                   </div>
+                   <h3 className="text-lg font-black uppercase mb-2 text-red-600">Payment Failed</h3>
+                   <p className="text-sm text-gray-600 mb-8">Your items are still safely preserved in your cart. Please try again with a different method.</p>
+                   <button onClick={() => { setShowPaymentGateway(false); setPaymentStatus('idle'); }} className="w-full py-4 bg-black text-white font-bold tracking-widest uppercase rounded-lg text-sm hover:bg-gray-900 transition-colors">
+                     Retry Payment
+                   </button>
+                 </div>
+               )}
+
+               {paymentStatus === 'success' && (
+                 <div className="py-4 flex flex-col items-center">
+                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 text-green-600">
+                     <FiCheck size={32} />
+                   </div>
+                   <h3 className="text-lg font-black uppercase mb-2 text-green-600">Payment Successful</h3>
+                   <p className="text-sm text-gray-500">Creating your order...</p>
+                 </div>
+               )}
+
+             </motion.div>
+           </div>
         )}
       </AnimatePresence>
     </>
