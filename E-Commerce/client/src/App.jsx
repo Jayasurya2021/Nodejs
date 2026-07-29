@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { createBrowserRouter, RouterProvider, createRoutesFromElements } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, createRoutesFromElements, Route } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { forceLogout, checkAuth } from './redux/slices/authSlice';
 import { Toaster } from 'react-hot-toast';
@@ -65,7 +65,12 @@ const GlobalEventListener = () => {
     };
   }, [navigate, location.pathname, dispatch]);
 
-  return <Outlet />;
+  return (
+    <>
+      <LoginModal />
+      <Outlet />
+    </>
+  );
 };
 
 const router = createBrowserRouter(
@@ -159,7 +164,6 @@ function App() {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
-      <LoginModal />
       <RouterProvider router={router} />
     </>
   );
