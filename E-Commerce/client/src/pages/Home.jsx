@@ -167,7 +167,11 @@ const Home = () => {
   const visibleReviews = REVIEWS.slice(reviewPage * REVIEWS_PER_PAGE, (reviewPage + 1) * REVIEWS_PER_PAGE);
 
   useEffect(() => {
-    dispatch(getProducts({ sort: 'newest' }));
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => dispatch(getProducts({ sort: 'newest' })));
+    } else {
+      setTimeout(() => dispatch(getProducts({ sort: 'newest' })), 0);
+    }
   }, [dispatch]);
 
   // Auto-rotate review page

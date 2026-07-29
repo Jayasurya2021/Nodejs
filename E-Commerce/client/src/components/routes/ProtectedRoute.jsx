@@ -5,14 +5,11 @@ import { openLoginModal } from '../../redux/slices/uiSlice';
 
 const ProtectedRoute = ({ allowedRoles = [] }) => {
   const dispatch = useDispatch();
-  const { user, isLoading } = useSelector((state) => state.auth);
+  const { user, isLoading, isCheckingAuth } = useSelector((state) => state.auth);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
-      </div>
-    );
+  if (isLoading || isCheckingAuth) {
+    // Render immediately with default values while checking auth (silent initialization)
+    return <Outlet />;
   }
 
   // If not logged in, redirect to login

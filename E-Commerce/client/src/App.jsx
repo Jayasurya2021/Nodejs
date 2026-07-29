@@ -131,9 +131,7 @@ function App() {
     dispatch(checkAuth());
   }, [dispatch]);
 
-  if (isCheckingAuth) {
-    return <Loading />;
-  }
+  // Removed isCheckingAuth blocking render to allow instant initial paint
 
   return (
     <>
