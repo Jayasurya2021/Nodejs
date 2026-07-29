@@ -130,7 +130,11 @@ const addAddress = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   if (user) {
     const newAddress = {
+      fullName: req.body.fullName,
+      mobile: req.body.mobile,
       street: req.body.street,
+      addressLine2: req.body.addressLine2,
+      landmark: req.body.landmark,
       city: req.body.city,
       state: req.body.state,
       postalCode: req.body.postalCode,
@@ -159,7 +163,11 @@ const updateAddress = asyncHandler(async (req, res) => {
     if (addressIndex !== -1) {
       user.addresses[addressIndex] = {
         _id: user.addresses[addressIndex]._id, // preserve id
+        fullName: req.body.fullName || user.addresses[addressIndex].fullName,
+        mobile: req.body.mobile || user.addresses[addressIndex].mobile,
         street: req.body.street || user.addresses[addressIndex].street,
+        addressLine2: req.body.addressLine2 !== undefined ? req.body.addressLine2 : user.addresses[addressIndex].addressLine2,
+        landmark: req.body.landmark !== undefined ? req.body.landmark : user.addresses[addressIndex].landmark,
         city: req.body.city || user.addresses[addressIndex].city,
         state: req.body.state || user.addresses[addressIndex].state,
         postalCode: req.body.postalCode || user.addresses[addressIndex].postalCode,
@@ -179,6 +187,29 @@ const updateAddress = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Delete an existing address in user profile
+// @route   DELETE /api/users/addresses/:id
+// @access  Private
+const deleteAddress = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    const addressId = req.params.id;
+    const initialLength = user.addresses.length;
+    user.addresses = user.addresses.filter(addr => addr._id.toString() !== addressId);
+    
+    if (user.addresses.length < initialLength) {
+      await user.save();
+      res.json({ success: true, message: 'Address deleted successfully', addresses: user.addresses });
+    } else {
+      res.status(404);
+      throw new Error('Address not found');
+    }
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
 module.exports = {
   syncCart,
   getCart,
@@ -187,4 +218,5 @@ module.exports = {
   removeFromWishlist,
   addAddress,
   updateAddress,
+  deleteAddress,
 };

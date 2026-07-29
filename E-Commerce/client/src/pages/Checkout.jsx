@@ -6,7 +6,7 @@ import { saveShippingAddress, savePaymentMethod } from '../redux/slices/cartSlic
 import { updateAddresses } from '../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { FiCheck, FiCreditCard, FiSmartphone, FiTruck, FiMapPin, FiArrowRight } from 'react-icons/fi';
+import { FiCheck, FiCreditCard, FiSmartphone, FiTruck, FiMapPin, FiArrowRight, FiEdit2, FiTrash2, FiAlertCircle } from 'react-icons/fi';
 import AddressForm from '../components/AddressForm';
 
 // ─── Progress Steps ──────────────────────────────────────────────────────
@@ -91,12 +91,20 @@ const Checkout = () => {
     state: shippingAddress.state || '',
     label: shippingAddress.label || 'Home',
   });
-  const [isAddingNewAddress, setIsAddingNewAddress] = useState(!user?.addresses || user.addresses.length === 0);
+  const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [editingAddressData, setEditingAddressData] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState(null);
   const [paymentMethod, setPaymentMethodState] = useState('razorpay');
   const [cardDetails, setCardDetails] = useState({ number: '', name: '', expiry: '', cvv: '' });
   const [upiId, setUpiId] = useState('');
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+
+  useEffect(() => {
+    if (user?.addresses && user.addresses.length === 0 && !isAddingNewAddress && step === 0) {
+      setIsAddingNewAddress(true);
+    }
+  }, [user, isAddingNewAddress, step]);
 
   useEffect(() => {
     if (!user || Object.keys(user).length === 0) navigate('/login?redirect=/checkout');
@@ -123,9 +131,25 @@ const Checkout = () => {
     
     setAddress(formData);
     dispatch(saveShippingAddress(formData));
-    setStep(1);
     setIsAddingNewAddress(false);
     setEditingAddressData(null);
+  };
+
+  const deleteAddressHandler = async () => {
+    if (!addressToDelete) return;
+    try {
+      const { data } = await axios.delete(`/api/users/addresses/${addressToDelete}`, { withCredentials: true });
+      dispatch(updateAddresses(data.addresses));
+      toast.success('Address deleted successfully!');
+      if (address._id === addressToDelete) {
+        setAddress({}); // Clear selected address if deleted
+      }
+    } catch (error) {
+      toast.error('Failed to delete address');
+    } finally {
+      setIsDeleteModalOpen(false);
+      setAddressToDelete(null);
+    }
   };
 
   const handleNextStep = async () => {
@@ -183,6 +207,7 @@ const Checkout = () => {
   }
 
   return (
+    <>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -206,17 +231,6 @@ const Checkout = () => {
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.4 }}
               >
-                {isAddingNewAddress ? (
-                  <AddressForm 
-                    initialData={editingAddressData} 
-                    onSubmit={handleAddressFormSubmit} 
-                    onCancel={user?.addresses && user.addresses.length > 0 ? () => {
-                      setIsAddingNewAddress(false);
-                      setEditingAddressData(null);
-                    } : null}
-                    isCheckoutMode={true} 
-                  />
-                ) : (
                   <>
                     <div className="flex items-center gap-3 mb-6 pb-3 border-b border-gray-100">
                       <FiMapPin className="text-gray-400" size={20} />
@@ -225,66 +239,100 @@ const Checkout = () => {
                     
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {user.addresses.map((savedAddr, idx) => (
-                          <motion.label
-                            key={idx}
-                            whileHover={{ scale: 1.01 }}
-                            whileTap={{ scale: 0.99 }}
-                            className={`relative cursor-pointer rounded-none border-2 p-5 transition-all duration-300 ${
-                              address.street === savedAddr.street && address.city === savedAddr.city ? 'border-black shadow-lg bg-gray-50' : 'border-gray-200 hover:border-gray-400 bg-white'
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="savedAddress"
-                              className="sr-only"
-                              checked={address.street === savedAddr.street && address.city === savedAddr.city}
-                              onChange={() => {
-                                setAddress({
-                                  street: savedAddr.street,
-                                  city: savedAddr.city,
-                                  state: savedAddr.state,
-                                  postalCode: savedAddr.postalCode,
-                                  country: savedAddr.country,
-                                  label: savedAddr.label || 'Other'
-                                });
-                              }}
-                            />
-                            {(address.street === savedAddr.street && address.city === savedAddr.city) && (
-                              <div className="absolute top-3 right-3 w-5 h-5 bg-black rounded-full flex items-center justify-center">
-                                <FiCheck size={10} className="text-white" strokeWidth={3} />
-                              </div>
-                            )}
-                            <div className="flex items-start gap-4">
-                              <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
-                                <FiMapPin className="text-gray-500" size={18} />
-                              </div>
-                              <div className="flex-1">
-                                <p className="font-black text-sm mb-1 uppercase tracking-widest">{savedAddr.label || 'Address'}</p>
-                                <p className="text-xs text-gray-600 truncate">{savedAddr.street}</p>
-                                <p className="text-xs text-gray-500">{savedAddr.city}, {savedAddr.state}</p>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setEditingAddressData(savedAddr);
-                                  setIsAddingNewAddress(true);
+                        {user?.addresses?.map((savedAddr) => {
+                          const isSelected = address.street === savedAddr.street && address.city === savedAddr.city;
+                          return (
+                            <motion.label
+                              key={savedAddr._id || savedAddr.street}
+                              whileHover={{ scale: 1.01 }}
+                              whileTap={{ scale: 0.99 }}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className={`group relative cursor-pointer rounded-xl border-2 p-5 transition-all duration-250 flex flex-col justify-between min-h-[160px] overflow-hidden ${
+                                isSelected ? 'border-black bg-gray-50/50 shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white'
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="savedAddress"
+                                className="sr-only"
+                                checked={isSelected}
+                                onChange={() => {
+                                  setAddress({
+                                    ...savedAddr,
+                                    label: savedAddr.label || 'Other'
+                                  });
                                 }}
-                                className="text-[10px] font-black tracking-widest uppercase underline text-gray-400 hover:text-black transition-colors"
-                              >
-                                Edit
-                              </button>
-                            </div>
-                          </motion.label>
-                        ))}
+                              />
+                              
+                              {/* Selected Checkmark Overlay */}
+                              {isSelected && (
+                                <motion.div 
+                                  initial={{ scale: 0 }} animate={{ scale: 1 }}
+                                  className="absolute top-4 right-4 w-6 h-6 bg-black rounded-full flex items-center justify-center shadow-md z-10"
+                                >
+                                  <FiCheck size={14} className="text-white" strokeWidth={3} />
+                                </motion.div>
+                              )}
+
+                              {/* Hover Actions (Edit/Delete) */}
+                              <div className={`absolute top-4 right-4 flex items-center gap-2 z-20 md:opacity-0 group-hover:opacity-100 transition-opacity duration-250 ${isSelected ? 'md:right-12' : ''}`}>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingAddressData(savedAddr);
+                                    setIsAddingNewAddress(true);
+                                  }}
+                                  className="w-8 h-8 rounded-full bg-white border border-gray-200 text-gray-500 flex items-center justify-center hover:bg-gray-100 hover:text-black transition-colors shadow-sm"
+                                  title="Edit Address"
+                                >
+                                  <FiEdit2 size={14} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setAddressToDelete(savedAddr._id);
+                                    setIsDeleteModalOpen(true);
+                                  }}
+                                  className="w-8 h-8 rounded-full bg-white border border-gray-200 text-red-500 flex items-center justify-center hover:bg-red-50 hover:border-red-200 transition-colors shadow-sm"
+                                  title="Delete Address"
+                                >
+                                  <FiTrash2 size={14} />
+                                </button>
+                              </div>
+
+                              <div>
+                                <div className="flex items-center gap-2 mb-3">
+                                  <span className="text-[10px] font-black uppercase tracking-wider bg-gray-100 px-2 py-1 rounded">
+                                    {savedAddr.label || 'Other'}
+                                  </span>
+                                  {savedAddr.isDefault && (
+                                    <span className="text-[10px] font-black uppercase tracking-wider bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                                      Default
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="font-bold text-sm text-gray-900 mb-1">{savedAddr.fullName}</p>
+                                <p className="text-xs text-gray-600 leading-relaxed mb-2 line-clamp-2">
+                                  {savedAddr.street}
+                                  {savedAddr.addressLine2 && `, ${savedAddr.addressLine2}`}
+                                  <br />
+                                  {savedAddr.city}, {savedAddr.state} {savedAddr.postalCode}
+                                </p>
+                              </div>
+                              <p className="text-xs font-semibold text-gray-500 mt-2">Mobile: {savedAddr.mobile}</p>
+                            </motion.label>
+                          );
+                        })}
                       </div>
                       <button
                         onClick={() => {
                           setIsAddingNewAddress(true);
                           setEditingAddressData(null);
                         }}
-                        className="mt-4 text-xs font-bold uppercase tracking-widest border-b border-black pb-1 hover:text-gray-600 hover:border-gray-600 transition-colors"
+                        className="mt-6 w-full py-5 border-2 border-dashed border-gray-300 rounded-xl text-sm font-bold uppercase tracking-widest text-gray-500 hover:border-black hover:text-black hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
                       >
                         + Add New Address
                       </button>
@@ -292,13 +340,12 @@ const Checkout = () => {
 
                     <button
                       onClick={handleNextStep}
-                      className="mt-8 w-full py-4 bg-black text-white text-sm font-black uppercase tracking-widest hover:bg-gray-900 transition-colors flex items-center justify-center gap-3 group"
+                      className="mt-8 w-full py-4 bg-black text-white text-sm font-black uppercase tracking-widest rounded-lg hover:bg-gray-900 shadow-lg hover:shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-3 group"
                     >
                       Continue to Payment
                       <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
                     </button>
                   </>
-                )}
               </motion.div>
             )}
 
@@ -608,6 +655,76 @@ const Checkout = () => {
         </div>
       </div>
     </motion.div>
+
+      {/* Address Form Modal */}
+      <AnimatePresence>
+        {isAddingNewAddress && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4 sm:px-6">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => user?.addresses?.length > 0 && setIsAddingNewAddress(false)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 100, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 100, scale: 0.95 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-2xl z-10 my-8"
+            >
+              <AddressForm 
+                initialData={editingAddressData} 
+                onSubmit={handleAddressFormSubmit} 
+                onCancel={user?.addresses?.length > 0 ? () => {
+                  setIsAddingNewAddress(false);
+                  setEditingAddressData(null);
+                } : null}
+                isCheckoutMode={true} 
+              />
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {isDeleteModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="relative bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm z-10"
+            >
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4 text-red-600">
+                <FiAlertCircle size={24} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Address</h3>
+              <p className="text-sm text-gray-500 mb-6">Are you sure you want to delete this address? This action cannot be undone.</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={deleteAddressHandler}
+                  className="flex-1 py-2.5 rounded-lg bg-red-600 text-sm font-semibold text-white hover:bg-red-700 shadow-sm transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

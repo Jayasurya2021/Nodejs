@@ -166,7 +166,7 @@ const ProductDetails = () => {
     setSubmittingReview(true);
     try {
       const config = { headers: { 'Content-Type': 'application/json' }, withCredentials: true };
-      await axios.post('/api/reviews', {
+      const { data } = await axios.post('/api/reviews', {
         productId: id,
         rating: newReview.rating,
         title: newReview.title,
@@ -176,6 +176,14 @@ const ProductDetails = () => {
       toast.success('Review submitted successfully!');
       setShowReviewModal(false);
       setNewReview({ rating: 5, title: '', comment: '' });
+      
+      // Immediately show the new review in the UI
+      if (data && data.review) {
+        setReviews(prevReviews => [data.review, ...prevReviews]);
+      }
+      
+      setSortBy('newest');
+      setReviewsPage(1);
       fetchReviews();
       dispatch(getProductById(id)); // Refresh product to get updated ratingSummary
     } catch (error) {
