@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { createBrowserRouter, RouterProvider, createRoutesFromElements, Route } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, createRoutesFromElements, Route, useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { forceLogout, checkAuth } from './redux/slices/authSlice';
 import { Toaster } from 'react-hot-toast';
@@ -9,37 +9,11 @@ import ProtectedRoute from './components/routes/ProtectedRoute';
 import LoginModal from './components/LoginModal';
 import Loading from './components/Loading';
 
-// Static page imports
-import Home from './pages/Home';
-import Shop from './pages/Shop';
-import ProductDetails from './pages/ProductDetails';
-import Cart from './pages/Cart';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Checkout from './pages/Checkout';
-import Profile from './pages/Profile';
-import CompleteProfile from './pages/CompleteProfile';
-import OrderDetails from './pages/OrderDetails';
-
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ApprovalQueue from './pages/admin/ApprovalQueue';
-import UsersList from './pages/admin/UsersList';
-import OrdersList from './pages/admin/OrdersList';
-import ProductEdit from './pages/admin/ProductEdit';
-import Forbidden from './pages/Forbidden';
-import SellerDashboard from './pages/seller/SellerDashboard';
-import NotFound from './pages/errors/NotFound';
-import ServerError from './pages/errors/ServerError';
-import NetworkError from './pages/errors/NetworkError';
-import Orders from './pages/Orders';
-import Wishlist from './pages/Wishlist';
-import Addresses from './pages/Addresses';
-import ManageProducts from './pages/seller/ManageProducts';
-import CreateProduct from './pages/seller/CreateProduct';
-import EditProduct from './pages/seller/EditProduct';
-
-import { Categories, Brands, Contact, FAQ, Reviews, SellerList, Offers, Blogs, PrivacyPolicy, Terms, ShippingPolicy } from './pages/StaticPages';
-import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+// Helper for default exports
+const lazyImport = (path) => async () => {
+  const module = await path();
+  return { Component: module.default || module.Component || Object.values(module)[0] };
+};
 
 const GlobalEventListener = () => {
   const navigate = useNavigate();
@@ -78,72 +52,72 @@ const router = createBrowserRouter(
     <Route element={<GlobalEventListener />}>
       <Route path="/" element={<Layout />}>
         {/* Public / Guest Routes */}
-        <Route index element={<Home />} />
-        <Route path="shop" element={<Shop />} />
-        <Route path="product/:id" element={<ProductDetails />} />
-        <Route path="categories" element={<Categories />} />
-        <Route path="brands" element={<Brands />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="faq" element={<FAQ />} />
-        <Route path="reviews" element={<Reviews />} />
-        <Route path="sellers" element={<SellerList />} />
-        <Route path="offers" element={<Offers />} />
-        <Route path="blogs" element={<Blogs />} />
-        <Route path="privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="terms" element={<Terms />} />
-        <Route path="shipping-policy" element={<ShippingPolicy />} />
+        <Route index lazy={lazyImport(() => import('./pages/Home'))} />
+        <Route path="shop" lazy={lazyImport(() => import('./pages/Shop'))} />
+        <Route path="product/:id" lazy={lazyImport(() => import('./pages/ProductDetails'))} />
+        <Route path="categories" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.Categories })))} />
+        <Route path="brands" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.Brands })))} />
+        <Route path="contact" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.Contact })))} />
+        <Route path="faq" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.FAQ })))} />
+        <Route path="reviews" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.Reviews })))} />
+        <Route path="sellers" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.SellerList })))} />
+        <Route path="offers" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.Offers })))} />
+        <Route path="blogs" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.Blogs })))} />
+        <Route path="privacy-policy" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.PrivacyPolicy })))} />
+        <Route path="terms" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.Terms })))} />
+        <Route path="shipping-policy" lazy={lazyImport(() => import('./pages/StaticPages').then(m => ({ default: m.ShippingPolicy })))} />
 
-        <Route path="forbidden" element={<Forbidden />} />
-        <Route path="server-error" element={<ServerError />} />
-        <Route path="network-error" element={<NetworkError />} />
+        <Route path="forbidden" lazy={lazyImport(() => import('./pages/Forbidden'))} />
+        <Route path="server-error" lazy={lazyImport(() => import('./pages/errors/ServerError'))} />
+        <Route path="network-error" lazy={lazyImport(() => import('./pages/errors/NetworkError'))} />
 
         {/* Guest-only Routes */}
         <Route element={<GuestRoute />}>
-          <Route path="login" element={<Login />} />
-          <Route path="signup" element={<Signup />} />
+          <Route path="login" lazy={lazyImport(() => import('./pages/Login'))} />
+          <Route path="signup" lazy={lazyImport(() => import('./pages/Signup'))} />
         </Route>
 
         {/* Pending Profile Route */}
         <Route element={<ProtectedRoute allowedRoles={['pending']} />}>
-          <Route path="complete-profile" element={<CompleteProfile />} />
+          <Route path="complete-profile" lazy={lazyImport(() => import('./pages/CompleteProfile'))} />
         </Route>
 
         {/* Shared Authenticated Routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="profile" element={<Profile />} />
+          <Route path="profile" lazy={lazyImport(() => import('./pages/Profile'))} />
         </Route>
 
         {/* Buyer Protected Routes */}
         <Route element={<ProtectedRoute allowedRoles={['buyer', 'admin']} />}>
-          <Route path="cart" element={<Cart />} />
-          <Route path="checkout" element={<Checkout />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="wishlist" element={<Wishlist />} />
-          <Route path="addresses" element={<Addresses />} />
-          <Route path="order/:id" element={<OrderDetails />} />
+          <Route path="cart" lazy={lazyImport(() => import('./pages/Cart'))} />
+          <Route path="checkout" lazy={lazyImport(() => import('./pages/Checkout'))} />
+          <Route path="orders" lazy={lazyImport(() => import('./pages/Orders'))} />
+          <Route path="wishlist" lazy={lazyImport(() => import('./pages/Wishlist'))} />
+          <Route path="addresses" lazy={lazyImport(() => import('./pages/Addresses'))} />
+          <Route path="order/:id" lazy={lazyImport(() => import('./pages/OrderDetails'))} />
         </Route>
 
         {/* Seller Protected Routes */}
         <Route element={<ProtectedRoute allowedRoles={['seller']} />}>
-          <Route path="seller/dashboard" element={<SellerDashboard />} />
-          <Route path="seller/products" element={<ManageProducts />} />
-          <Route path="seller/product/new" element={<CreateProduct />} />
-          <Route path="seller/product/:id/edit" element={<EditProduct />} />
-          <Route path="seller/orders" element={<OrdersList />} />
+          <Route path="seller/dashboard" lazy={lazyImport(() => import('./pages/seller/SellerDashboard'))} />
+          <Route path="seller/products" lazy={lazyImport(() => import('./pages/seller/ManageProducts'))} />
+          <Route path="seller/product/new" lazy={lazyImport(() => import('./pages/seller/CreateProduct'))} />
+          <Route path="seller/product/:id/edit" lazy={lazyImport(() => import('./pages/seller/EditProduct'))} />
+          <Route path="seller/orders" lazy={lazyImport(() => import('./pages/admin/OrdersList'))} />
         </Route>
 
         {/* Admin Protected Routes */}
         <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-          <Route path="admin/dashboard" element={<AdminDashboard />} />
-          <Route path="admin/approvals" element={<ApprovalQueue />} />
-          <Route path="admin/users" element={<UsersList />} />
-          <Route path="admin/orders" element={<OrdersList />} />
-          <Route path="admin/products" element={<ManageProducts />} />
-          <Route path="admin/product/:id/edit" element={<ProductEdit />} />
+          <Route path="admin/dashboard" lazy={lazyImport(() => import('./pages/admin/AdminDashboard'))} />
+          <Route path="admin/approvals" lazy={lazyImport(() => import('./pages/admin/ApprovalQueue'))} />
+          <Route path="admin/users" lazy={lazyImport(() => import('./pages/admin/UsersList'))} />
+          <Route path="admin/orders" lazy={lazyImport(() => import('./pages/admin/OrdersList'))} />
+          <Route path="admin/products" lazy={lazyImport(() => import('./pages/seller/ManageProducts'))} />
+          <Route path="admin/product/:id/edit" lazy={lazyImport(() => import('./pages/admin/ProductEdit'))} />
         </Route>
 
         {/* Fallback 404 Route */}
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" lazy={lazyImport(() => import('./pages/errors/NotFound'))} />
       </Route>
     </Route>
   )
