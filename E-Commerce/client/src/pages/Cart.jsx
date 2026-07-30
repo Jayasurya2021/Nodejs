@@ -1,13 +1,34 @@
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 import { addToCart, removeFromCart } from '../redux/slices/cartSlice';
 import { FiTrash2, FiMinus, FiPlus, FiArrowRight } from 'react-icons/fi';
+import ProductCard from '../components/ProductCard';
 
 const Cart = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { cartItems, itemsPrice, taxPrice, shippingPrice, totalPrice } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
+  
+  const [suggestedProducts, setSuggestedProducts] = useState([]);
+
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      const fetchSuggestions = async () => {
+        try {
+          const { data } = await axios.get('/api/products?limit=4');
+          // Usually data.products contains the array
+          setSuggestedProducts(data.products || data);
+        } catch (error) {
+          console.error('Error fetching suggested products', error);
+        }
+      };
+      fetchSuggestions();
+    }
+  }, [cartItems.length]);
 
   const addToCartHandler = (product, qty) => {
     dispatch(addToCart({ ...product, qty }));
@@ -16,8 +37,6 @@ const Cart = () => {
   const removeFromCartHandler = (product) => {
     dispatch(removeFromCart(product));
   };
-
-  const { user } = useSelector((state) => state.auth);
 
   const checkoutHandler = () => {
     if (user && Object.keys(user).length > 0) {
@@ -37,11 +56,24 @@ const Cart = () => {
       <h1 className="text-3xl font-bold tracking-widest uppercase mb-10 text-center">Shopping Bag</h1>
 
       {cartItems.length === 0 ? (
-        <div className="text-center py-20 flex flex-col items-center">
-          <p className="text-gray-500 mb-6 uppercase tracking-widest text-sm">Your bag is currently empty.</p>
-          <Link to="/shop" className="px-10 py-4 bg-black text-white text-sm uppercase tracking-widest font-semibold hover:bg-gray-800 transition-colors">
-            Continue Shopping
-          </Link>
+        <div className="flex flex-col items-center w-full">
+          <div className="text-center py-20 flex flex-col items-center">
+            <p className="text-gray-500 mb-6 uppercase tracking-widest text-sm">Your bag is currently empty.</p>
+            <Link to="/shop" className="px-10 py-4 bg-black text-white text-sm uppercase tracking-widest font-semibold hover:bg-gray-800 transition-colors">
+              Continue Shopping
+            </Link>
+          </div>
+
+          {suggestedProducts.length > 0 && (
+            <div className="w-full mt-8 border-t border-gray-100 pt-16 mb-8">
+              <h2 className="text-xl font-bold tracking-widest uppercase mb-10 text-center">You Might Also Like</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+                {suggestedProducts.slice(0, 4).map((product) => (
+                  <ProductCard key={product._id} product={product} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex flex-col lg:flex-row gap-12">
