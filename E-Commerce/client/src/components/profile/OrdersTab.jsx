@@ -25,6 +25,92 @@ const OrdersTab = () => {
     fetchOrders();
   }, []);
 
+  const handleDownloadInvoice = (order) => {
+    const invoiceHtml = `
+      <html>
+        <head>
+          <title>Invoice - ${order._id}</title>
+          <style>
+            body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 40px; color: #333; }
+            .header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 40px; }
+            .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; }
+            .invoice-title { font-size: 24px; color: #666; }
+            .details { display: flex; justify-content: space-between; margin-top: 40px; }
+            .section-title { font-size: 12px; font-weight: bold; text-transform: uppercase; color: #999; margin-bottom: 10px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 40px; }
+            th { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; font-size: 12px; text-transform: uppercase; color: #666; }
+            td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+            .totals { margin-top: 40px; text-align: right; }
+            .totals p { margin: 5px 0; font-size: 14px; }
+            .totals .grand-total { font-size: 18px; font-weight: bold; margin-top: 10px; border-top: 2px solid #000; padding-top: 10px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo">LUXE.</div>
+            <div class="invoice-title">INVOICE</div>
+          </div>
+          
+          <div class="details">
+            <div>
+              <div class="section-title">Bill To:</div>
+              <p style="margin:0">${order.shippingAddress?.fullName || 'Customer'}</p>
+              <p style="margin:0">${order.shippingAddress?.street || ''}</p>
+              <p style="margin:0">${order.shippingAddress?.city || ''}, ${order.shippingAddress?.state || ''} ${order.shippingAddress?.postalCode || ''}</p>
+              <p style="margin:0">${order.shippingAddress?.country || ''}</p>
+            </div>
+            <div style="text-align: right;">
+              <p style="margin:0"><span class="section-title">Order ID:</span> ${order._id}</p>
+              <p style="margin:0"><span class="section-title">Date:</span> ${new Date(order.createdAt).toLocaleDateString()}</p>
+              <p style="margin:0"><span class="section-title">Status:</span> ${order.isPaid ? 'Paid' : 'Pending'}</p>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th style="text-align: right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${order.orderItems.map(item => `
+                <tr>
+                  <td>${item.name}</td>
+                  <td>${item.qty}</td>
+                  <td>₹${item.price.toFixed(2)}</td>
+                  <td style="text-align: right">₹${(item.qty * item.price).toFixed(2)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="totals">
+            <p><span class="section-title">Subtotal:</span> ₹${order.itemsPrice.toFixed(2)}</p>
+            <p><span class="section-title">Shipping:</span> ₹${order.shippingPrice.toFixed(2)}</p>
+            <p><span class="section-title">Tax:</span> ₹${order.taxPrice.toFixed(2)}</p>
+            <p class="grand-total"><span class="section-title" style="color:#000">Total:</span> ₹${order.totalPrice.toFixed(2)}</p>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(invoiceHtml);
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+        // Optional: printWindow.close(); after printing
+      }, 250);
+    } else {
+      toast.error('Please allow popups for this site to print invoices.');
+    }
+  };
+
   const filteredOrders = orders.filter(order => 
     order._id.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -131,7 +217,10 @@ const OrdersTab = () => {
               
               <div className="flex flex-wrap gap-3 w-full md:w-auto justify-end">
                 {order.orderStatus !== 'Cancelled' && (
-                  <button className="px-4 py-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+                  <button 
+                    onClick={() => handleDownloadInvoice(order)}
+                    className="px-4 py-2 flex items-center gap-2 text-xs font-bold uppercase tracking-widest border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+                  >
                     <Download size={14} /> Invoice
                   </button>
                 )}
