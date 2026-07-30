@@ -11,6 +11,40 @@ import {
   FiInstagram, FiCheck
 } from 'react-icons/fi';
 
+// ─── HERO SLIDES DATA ──────────────────────────────────────────────────
+const HERO_SLIDES = [
+  {
+    id: 1,
+    image: "https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=1920&auto=format&fit=crop",
+    subtitle: "New Season Collection",
+    title: "THE NEW",
+    highlight: "ESSENTIALS",
+    desc: "Discover our latest collection of premium menswear. Designed for comfort, tailored for perfection.",
+    link1: { text: "Explore Collection", url: "/shop" },
+    link2: { text: "Our Story", url: "/about" }
+  },
+  {
+    id: 2,
+    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=1920&auto=format&fit=crop",
+    subtitle: "Signature Tailoring",
+    title: "MODERN",
+    highlight: "CLASSICS",
+    desc: "Elevate your wardrobe with timeless pieces crafted from the finest European fabrics.",
+    link1: { text: "Shop Suits", url: "/shop?category=Suits" },
+    link2: { text: "View Lookbook", url: "/shop" }
+  },
+  {
+    id: 3,
+    image: "https://images.unsplash.com/photo-1490114538077-0a7f8cb49891?q=80&w=1920&auto=format&fit=crop",
+    subtitle: "Weekend Ready",
+    title: "CASUAL",
+    highlight: "LUXURY",
+    desc: "Unwind in style. From premium denim to soft cashmere knits for your off-duty moments.",
+    link1: { text: "Shop Casuals", url: "/shop?category=Casual" },
+    link2: { text: "Discover More", url: "/shop" }
+  }
+];
+
 // ─── Static Reviews Data ────────────────────────────────────────────────
 const REVIEWS = [
   {
@@ -153,6 +187,7 @@ const Home = () => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [reviewPage, setReviewPage] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [activeCategory, setActiveCategory] = useState(0);
   const reviewsRef = useRef(null);
 
@@ -182,6 +217,14 @@ const Home = () => {
     return () => clearInterval(timer);
   }, [totalReviewPages]);
 
+  // Auto-rotate hero slides
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -191,15 +234,24 @@ const Home = () => {
     >
       {/* ─── HERO SECTION ─────────────────────────────────────────────── */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=1920&auto=format&fit=crop"
-            alt="Hero"
-            className="w-full h-full object-cover object-top"
-            style={{ animation: 'float 16s ease-in-out infinite' }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60" />
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentSlide}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+            className="absolute inset-0 z-0"
+          >
+            <img
+              src={HERO_SLIDES[currentSlide].image}
+              alt="Hero"
+              className="w-full h-full object-cover object-top"
+              style={{ animation: 'float 16s ease-in-out infinite' }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/60" />
+          </motion.div>
+        </AnimatePresence>
 
         {/* Floating particles */}
         {[...Array(8)].map((_, i) => (
@@ -217,61 +269,63 @@ const Home = () => {
           />
         ))}
 
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-yellow-400 text-xs uppercase tracking-[0.4em] font-semibold mb-6 block"
-          >
-            New Season Collection
-          </motion.span>
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-white text-6xl md:text-8xl font-black tracking-tight mb-4 leading-none"
-          >
-            THE NEW<br />
-            <span className="italic font-light text-5xl md:text-7xl">ESSENTIALS</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-gray-200 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light"
-          >
-            Discover our latest collection of premium menswear. Designed for comfort, tailored for perfection.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Link
-              to="/shop"
-              className="px-12 py-4 bg-white text-black text-sm uppercase tracking-widest font-bold hover:bg-gray-100 active:scale-95 transition-all duration-300"
+        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto mt-10">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.8 }}
             >
-              Explore Collection
-            </Link>
-            <Link
-              to="/about"
-              className="px-12 py-4 border border-white text-white text-sm uppercase tracking-widest font-bold hover:bg-white hover:text-black transition-all duration-300"
-            >
-              Our Story
-            </Link>
-          </motion.div>
+              <span className="text-yellow-400 text-xs uppercase tracking-[0.4em] font-semibold mb-6 block drop-shadow-md">
+                {HERO_SLIDES[currentSlide].subtitle}
+              </span>
+              <h1 className="text-white text-6xl md:text-8xl font-black tracking-tight mb-4 leading-none drop-shadow-lg">
+                {HERO_SLIDES[currentSlide].title}<br />
+                <span className="italic font-light text-5xl md:text-7xl">{HERO_SLIDES[currentSlide].highlight}</span>
+              </h1>
+              <p className="text-gray-100 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light drop-shadow-md">
+                {HERO_SLIDES[currentSlide].desc}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  to={HERO_SLIDES[currentSlide].link1.url}
+                  className="px-12 py-4 bg-white text-black text-sm uppercase tracking-widest font-bold hover:bg-gray-100 active:scale-95 transition-all duration-300"
+                >
+                  {HERO_SLIDES[currentSlide].link1.text}
+                </Link>
+                <Link
+                  to={HERO_SLIDES[currentSlide].link2.url}
+                  className="px-12 py-4 border border-white text-white text-sm uppercase tracking-widest font-bold hover:bg-white hover:text-black transition-all duration-300 backdrop-blur-sm bg-black/10"
+                >
+                  {HERO_SLIDES[currentSlide].link2.text}
+                </Link>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Slide Indicators */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+          {HERO_SLIDES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentSlide(i)}
+              className={`h-1.5 transition-all duration-500 rounded-full ${i === currentSlide ? 'w-10 bg-yellow-400' : 'w-4 bg-white/50 hover:bg-white/80'}`}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+        <div className="absolute bottom-12 right-12 z-10 hidden md:flex flex-col items-center gap-2">
+          <span className="text-white text-[10px] tracking-widest uppercase opacity-60" style={{ writingMode: 'vertical-rl' }}>Scroll</span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
             className="w-px h-12 bg-gradient-to-b from-white to-transparent"
           />
-          <span className="text-white text-[10px] tracking-widest uppercase opacity-60">Scroll</span>
         </div>
       </section>
 
