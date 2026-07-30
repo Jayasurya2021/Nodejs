@@ -56,7 +56,7 @@ const GoogleLoginButton = ({ redirectTo = '/', label = 'Continue with Google', r
       const resultAction = await dispatch(googleLogin({ token: tokenResponse.access_token, role }));
 
       if (googleLogin.fulfilled.match(resultAction)) {
-        toast.success('Welcome to LUXE! 🎉', {
+        toast.success('Welcome to LookFashion! 🎉', {
           icon: '✨',
           style: { fontWeight: '600' }
         });

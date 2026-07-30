@@ -47,7 +47,7 @@ const OrdersTab = () => {
         </head>
         <body>
           <div class="header">
-            <div class="logo">LUXE.</div>
+            <div class="logo">LookFashion.</div>
             <div class="invoice-title">INVOICE</div>
           </div>
           

@@ -17,7 +17,7 @@ const REVIEWS = [
     id: 1, name: "Arjun Mehta", location: "Mumbai, India",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&h=100&auto=format&fit=crop&crop=face",
     rating: 5,
-    text: "Absolutely stunning quality. The fabric is luxurious and the fit is perfect. LUXE has become my go-to for everything premium. Every compliment I've received about my style recently traces back to this brand.",
+    text: "Absolutely stunning quality. The fabric is luxurious and the fit is perfect. LookFashion has become my go-to for everything premium. Every compliment I've received about my style recently traces back to this brand.",
     product: "Classic Oxford Shirt", verified: true, date: "2 weeks ago"
   },
   {
@@ -38,14 +38,14 @@ const REVIEWS = [
     id: 4, name: "Priya Kapoor", location: "Chennai, India",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=100&h=100&auto=format&fit=crop&crop=face",
     rating: 5,
-    text: "Bought this as a gift for my husband — he hasn't stopped wearing it! The quality is exceptional and LUXE's customer service went above and beyond when I had a question about sizing.",
+    text: "Bought this as a gift for my husband — he hasn't stopped wearing it! The quality is exceptional and LookFashion's customer service went above and beyond when I had a question about sizing.",
     product: "Premium Cashmere Sweater", verified: true, date: "5 days ago"
   },
   {
     id: 5, name: "Karthik Nair", location: "Hyderabad, India",
     avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=100&h=100&auto=format&fit=crop&crop=face",
     rating: 5,
-    text: "The linen shirt I ordered is breathable, stylish, and incredibly versatile. Wore it to a business meeting and got multiple compliments. LUXE truly understands the modern professional wardrobe.",
+    text: "The linen shirt I ordered is breathable, stylish, and incredibly versatile. Wore it to a business meeting and got multiple compliments. LookFashion truly understands the modern professional wardrobe.",
     product: "Relaxed Linen Shirt", verified: true, date: "1 week ago"
   },
   {
@@ -674,7 +674,7 @@ const Home = () => {
             className="text-center mb-10"
           >
             <FiInstagram size={28} className="mx-auto mb-3 text-gray-400" />
-            <h2 className="text-3xl font-black">@luxemenswear</h2>
+            <h2 className="text-3xl font-black">@LookFashionmenswear</h2>
             <p className="text-gray-500 text-sm mt-2">Follow us for daily style inspiration</p>
           </motion.div>
 

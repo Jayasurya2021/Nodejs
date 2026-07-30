@@ -119,7 +119,7 @@ const WishlistTab = () => {
             </Link>
             
             <div className="p-5 flex flex-col flex-grow">
-              <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">{product.brand || 'Luxe Brand'}</p>
+              <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold mb-1">{product.brand || 'LookFashion Brand'}</p>
               <h3 className="font-bold text-sm mb-1 line-clamp-2 min-h-[40px]">{product.title}</h3>
               
               <div className="mt-auto pt-4 flex items-center justify-between">

@@ -93,7 +93,7 @@ const About = () => {
       <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
         <img
           src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1920&auto=format&fit=crop"
-          alt="About LUXE"
+          alt="About LookFashion"
           className="absolute inset-0 w-full h-full object-cover object-center scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
@@ -121,7 +121,7 @@ const About = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-gray-200 text-lg md:text-xl font-light max-w-2xl mx-auto"
           >
-            Since 2015, LUXE has been redefining premium menswear — where timeless design meets modern innovation.
+            Since 2015, LookFashion has been redefining premium menswear — where timeless design meets modern innovation.
           </motion.p>
         </div>
       </section>
@@ -162,11 +162,11 @@ const About = () => {
               </h2>
             </div>
             <p className="text-gray-500 text-base leading-relaxed">
-              LUXE was founded in 2015 by Alexander Reid, a former architect with an obsession for precision and detail. 
+              LookFashion was founded in 2015 by Alexander Reid, a former architect with an obsession for precision and detail. 
               Frustrated by the lack of truly premium, thoughtfully designed menswear, he set out to create something different.
             </p>
             <p className="text-gray-500 text-base leading-relaxed">
-              Today, LUXE is synonymous with quality, sophistication, and a relentless pursuit of excellence. 
+              Today, LookFashion is synonymous with quality, sophistication, and a relentless pursuit of excellence. 
               Every garment in our collection is a result of months of design iteration, sourcing the finest materials 
               from around the world, and working with master craftsmen who share our vision.
             </p>
@@ -363,7 +363,7 @@ const About = () => {
             transition={{ delay: 0.2 }}
             className="text-gray-300 text-lg font-light mb-10 max-w-xl mx-auto"
           >
-            Discover our latest collection and experience the LUXE difference today.
+            Discover our latest collection and experience the LookFashion difference today.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -382,7 +382,7 @@ const About = () => {
               to="/signup"
               className="px-10 py-4 border border-white text-white text-sm font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300"
             >
-              Join LUXE
+              Join LookFashion
             </Link>
           </motion.div>
         </div>

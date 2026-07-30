@@ -6,7 +6,7 @@ const ReviewsTab = () => {
   const reviews = [
     {
       id: 1,
-      product: { id: 'p1', name: 'Luxe Cotton Oversized T-Shirt', image: 'https://placehold.co/100x100' },
+      product: { id: 'p1', name: 'LookFashion Cotton Oversized T-Shirt', image: 'https://placehold.co/100x100' },
       rating: 5,
       date: '2023-10-15',
       content: 'Absolutely love the fit and the material is incredibly soft. Would definitely buy in other colors.',

@@ -87,7 +87,7 @@ const Login = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <Link to="/" className="text-white font-bold text-3xl tracking-widest uppercase">
-              LUXE<span className="text-yellow-400">.</span>
+              LookFashion<span className="text-yellow-400">.</span>
             </Link>
           </motion.div>
 
@@ -152,7 +152,7 @@ const Login = () => {
           {/* Mobile Logo */}
           <div className="lg:hidden mb-8">
             <Link to="/" className="font-bold text-2xl tracking-widest uppercase">
-              LUXE<span className="text-yellow-500">.</span>
+              LookFashion<span className="text-yellow-500">.</span>
             </Link>
           </div>
 

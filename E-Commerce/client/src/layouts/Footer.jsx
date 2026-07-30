@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
           <div className="col-span-1 md:col-span-1">
-            <h2 className="font-bold text-2xl tracking-widest uppercase mb-6">LUXE.</h2>
+            <h2 className="font-bold text-2xl tracking-widest uppercase mb-6">LookFashion.</h2>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               Redefining premium menswear. Crafted with precision, designed for the modern gentleman.
             </p>
@@ -67,7 +67,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="border-t border-gray-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-500 text-xs mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} LUXE MENSWEAR. ALL RIGHTS RESERVED.
+            &copy; {new Date().getFullYear()} LookFashion MENSWEAR. ALL RIGHTS RESERVED.
           </p>
           <div className="flex space-x-6 text-gray-500 text-xs">
             <Link to="/privacy" className="hover:text-white transition-colors">PRIVACY POLICY</Link>

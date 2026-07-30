@@ -92,7 +92,7 @@ const Signup = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <Link to="/" className="text-white font-bold text-3xl tracking-widest uppercase">
-              LUXE<span className="text-yellow-400">.</span>
+              LookFashion<span className="text-yellow-400">.</span>
             </Link>
           </motion.div>
 
@@ -104,7 +104,7 @@ const Signup = () => {
               transition={{ duration: 0.7, delay: 0.4 }}
             >
               <div className="w-12 h-0.5 bg-yellow-400 mb-6" />
-              <h2 className="text-white text-2xl font-bold mb-2">Join the LUXE family</h2>
+              <h2 className="text-white text-2xl font-bold mb-2">Join the LookFashion family</h2>
               <p className="text-gray-300 text-sm font-light mb-8">
                 Premium menswear, curated for the discerning gentleman.
               </p>
@@ -156,7 +156,7 @@ const Signup = () => {
           {/* Mobile Logo */}
           <div className="lg:hidden mb-8">
             <Link to="/" className="font-bold text-2xl tracking-widest uppercase">
-              LUXE<span className="text-yellow-500">.</span>
+              LookFashion<span className="text-yellow-500">.</span>
             </Link>
           </div>
 
