@@ -6,14 +6,14 @@ const ReviewsTab = () => {
   const reviews = [
     {
       id: 1,
-      product: { id: 'p1', name: 'Luxe Cotton Oversized T-Shirt', image: 'https://via.placeholder.com/100' },
+      product: { id: 'p1', name: 'Luxe Cotton Oversized T-Shirt', image: 'https://placehold.co/100x100' },
       rating: 5,
       date: '2023-10-15',
       content: 'Absolutely love the fit and the material is incredibly soft. Would definitely buy in other colors.',
     },
     {
       id: 2,
-      product: { id: 'p2', name: 'Classic Denim Jacket', image: 'https://via.placeholder.com/100' },
+      product: { id: 'p2', name: 'Classic Denim Jacket', image: 'https://placehold.co/100x100' },
       rating: 4,
       date: '2023-09-22',
       content: 'Great jacket, good quality denim. Runs slightly large but perfect for layering.',
@@ -94,7 +94,7 @@ const ReviewsTab = () => {
         <div className="flex items-center justify-between bg-white p-4 rounded-lg border border-amber-200">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden">
-              <img src="https://via.placeholder.com/50" alt="Product" className="w-full h-full object-cover" />
+              <img src="https://placehold.co/50x50" alt="Product" className="w-full h-full object-cover" />
             </div>
             <div>
               <p className="text-sm font-bold">Minimalist Leather Wallet</p>

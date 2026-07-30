@@ -95,7 +95,7 @@ const WishlistTab = () => {
             
             <Link to={`/product/${product._id}`} className="block relative aspect-[4/5] overflow-hidden bg-gray-50">
               <img 
-                src={product.images?.[0]?.url || 'https://via.placeholder.com/400'} 
+                src={product.images?.[0]?.url || 'https://placehold.co/400x400'} 
                 alt={product.title} 
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
               />

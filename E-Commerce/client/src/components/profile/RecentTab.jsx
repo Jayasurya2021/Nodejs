@@ -5,10 +5,10 @@ import { motion } from 'framer-motion';
 const RecentTab = () => {
   // Mock data
   const recentProducts = [
-    { id: '1', name: 'Silk Blend Midi Dress', brand: 'LUXE', price: 120, oldPrice: 150, image: 'https://via.placeholder.com/300', inStock: true },
-    { id: '2', name: 'Cashmere V-Neck Sweater', brand: 'LUXE', price: 85, image: 'https://via.placeholder.com/300', inStock: true },
-    { id: '3', name: 'Leather Chelsea Boots', brand: 'LUXE', price: 195, oldPrice: 220, image: 'https://via.placeholder.com/300', inStock: false },
-    { id: '4', name: 'Tailored Wool Trousers', brand: 'LUXE', price: 110, image: 'https://via.placeholder.com/300', inStock: true },
+    { id: '1', name: 'Silk Blend Midi Dress', brand: 'LUXE', price: 120, oldPrice: 150, image: 'https://placehold.co/300x300', inStock: true },
+    { id: '2', name: 'Cashmere V-Neck Sweater', brand: 'LUXE', price: 85, image: 'https://placehold.co/300x300', inStock: true },
+    { id: '3', name: 'Leather Chelsea Boots', brand: 'LUXE', price: 195, oldPrice: 220, image: 'https://placehold.co/300x300', inStock: false },
+    { id: '4', name: 'Tailored Wool Trousers', brand: 'LUXE', price: 110, image: 'https://placehold.co/300x300', inStock: true },
   ];
 
   return (
