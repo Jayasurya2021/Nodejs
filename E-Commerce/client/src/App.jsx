@@ -7,7 +7,7 @@ import Layout from './layouts/Layout';
 import GuestRoute from './components/routes/GuestRoute';
 import ProtectedRoute from './components/routes/ProtectedRoute';
 import LoginModal from './components/LoginModal';
-import Loading from './components/Loading';
+
 
 // Helper for default exports
 const lazyImport = (path) => async () => {
@@ -91,9 +91,6 @@ const router = createBrowserRouter(
         <Route element={<ProtectedRoute allowedRoles={['buyer', 'admin']} />}>
           <Route path="cart" lazy={lazyImport(() => import('./pages/Cart'))} />
           <Route path="checkout" lazy={lazyImport(() => import('./pages/Checkout'))} />
-          <Route path="orders" lazy={lazyImport(() => import('./pages/Orders'))} />
-          <Route path="wishlist" lazy={lazyImport(() => import('./pages/Wishlist'))} />
-          <Route path="addresses" lazy={lazyImport(() => import('./pages/Addresses'))} />
           <Route path="order/:id" lazy={lazyImport(() => import('./pages/OrderDetails'))} />
         </Route>
 
@@ -125,7 +122,7 @@ const router = createBrowserRouter(
 
 function App() {
   const dispatch = useDispatch();
-  const { isCheckingAuth } = useSelector((state) => state.auth);
+  // No longer using isCheckingAuth to block render
 
   useEffect(() => {
     dispatch(checkAuth());

@@ -60,7 +60,7 @@ const Header = () => {
         return [
           { title: 'Home', path: '/' },
           { title: 'Shop', path: '/shop' },
-          { title: 'Orders', path: '/orders' },
+          { title: 'Orders', path: '/profile?tab=orders' },
           { title: 'Profile', path: '/profile' },
         ];
     }
@@ -119,7 +119,7 @@ const Header = () => {
                       if (!user || Object.keys(user).length === 0) {
                         dispatch({ type: 'ui/openLoginModal' });
                       } else {
-                        window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/wishlist' }));
+                        window.dispatchEvent(new CustomEvent('app-navigate', { detail: '/profile?tab=wishlist' }));
                       }
                     }}
                     className="relative hover:scale-110 transition-transform"
