@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const asyncHandler = require('./asyncHandler');
 const User = require('../models/userModel');
+const UserSession = require('../models/userSessionModel');
 
 // Protect routes
 const protect = asyncHandler(async (req, res, next) => {
@@ -13,6 +14,20 @@ const protect = asyncHandler(async (req, res, next) => {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.user = await User.findById(decoded.userId).select('-password');
+      
+      // Verify session if it exists in JWT payload
+      if (decoded.sessionId) {
+        const session = await UserSession.findOne({ sessionId: decoded.sessionId, isActive: true });
+        if (!session) {
+          res.status(401);
+          throw new Error('Not authorized, session expired or revoked');
+        }
+        req.sessionId = decoded.sessionId;
+
+        // Update lastActiveAt asynchronously to not block the request
+        UserSession.updateOne({ sessionId: decoded.sessionId }, { lastActiveAt: Date.now() }).exec();
+      }
+
       next();
     } catch (error) {
       console.error(error);

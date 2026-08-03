@@ -15,6 +15,7 @@
     "axios": "^1.18.1",
     "clsx": "^2.1.1",
     "colorthief": "^3.4.0",
+    "date-fns": "^4.4.0",
     "framer-motion": "^12.42.2",
     "gsap": "^3.15.0",
     "js-cookie": "^3.0.8",

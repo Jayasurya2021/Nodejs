@@ -11,7 +11,7 @@ const {
   deleteAddress,
   addPaymentMethod,
   updatePaymentMethod,
-  deletePaymentMethod,
+  deletePaymentMethod
 } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
 

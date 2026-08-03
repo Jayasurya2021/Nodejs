@@ -11,16 +11,25 @@ const PaymentTab = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
+
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [editingPaymentData, setEditingPaymentData] = useState(null);
 
   const paymentMethods = user?.paymentMethods || [];
 
   const handleAddSubmit = async (formData) => {
     try {
-      const { data } = await axios.post('/api/users/payment-methods', formData, { withCredentials: true });
-      dispatch(updatePaymentMethods(data.paymentMethods));
-      toast.success('Payment method saved successfully!');
+      if (editingPaymentData?._id) {
+        const { data } = await axios.put(`/api/users/payment-methods/${editingPaymentData._id}`, formData, { withCredentials: true });
+        dispatch(updatePaymentMethods(data.paymentMethods));
+        toast.success('Payment method updated successfully!');
+      } else {
+        const { data } = await axios.post('/api/users/payment-methods', formData, { withCredentials: true });
+        dispatch(updatePaymentMethods(data.paymentMethods));
+        toast.success('Payment method saved successfully!');
+      }
       setIsAddingNew(false);
+      setEditingPaymentData(null);
     } catch (error) {
       console.error(error);
       toast.error('Could not save payment method');
@@ -63,8 +72,12 @@ const PaymentTab = () => {
             className="bg-white border border-gray-100 rounded-xl p-6 shadow-sm"
           >
             <PaymentForm 
+              initialData={editingPaymentData}
               onSubmit={handleAddSubmit} 
-              onCancel={() => setIsAddingNew(false)}
+              onCancel={() => {
+                setIsAddingNew(false);
+                setEditingPaymentData(null);
+              }}
             />
           </motion.div>
         ) : (
@@ -84,6 +97,16 @@ const PaymentTab = () => {
               paymentMethods.map((method) => (
                 <div key={method._id} className="bg-white border border-gray-100 rounded-xl p-6 relative group hover:border-black transition-colors shadow-sm">
                   <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => {
+                        setEditingPaymentData(method);
+                        setIsAddingNew(true);
+                      }}
+                      className="p-2 bg-gray-50 text-gray-600 hover:text-black hover:bg-gray-200 rounded-full transition-colors"
+                      title="Edit Method"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </button>
                     <button 
                       onClick={() => handleDelete(method._id)}
                       className="p-2 bg-red-50 text-red-500 hover:bg-red-100 rounded-full transition-colors" 

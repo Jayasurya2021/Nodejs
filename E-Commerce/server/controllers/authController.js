@@ -9,6 +9,10 @@ const User = require('../models/userModel');
 const generateToken = require('../utils/generateToken');
 const { OAuth2Client } = require('google-auth-library');
 const axios = require('axios');
+const UAParser = require('ua-parser-js');
+const crypto = require('crypto');
+const geoip = require('geoip-lite');
+const UserSession = require('../models/userSessionModel');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -42,7 +46,39 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid email or password');
   }
 
-  generateToken(res, user._id);
+  // Session Tracking
+  const parser = new UAParser(req.headers['user-agent']);
+  const result = parser.getResult();
+  const browserName = result.browser.name || 'Unknown Browser';
+  const osName = result.os.name || 'Unknown OS';
+  const deviceName = result.device.model || result.device.vendor || result.os.name || 'Desktop / Laptop';
+  const userAgent = req.headers['user-agent'];
+  const ipAddress = req.ip || req.headers['x-forwarded-for'] || 'Unknown IP';
+  
+  const geo = geoip.lookup(ipAddress === '::1' ? '127.0.0.1' : ipAddress);
+  const country = geo ? geo.country : 'Unknown';
+  const city = geo ? geo.city : 'Unknown';
+  const state = geo ? geo.region : 'Unknown';
+
+  const sessionId = crypto.randomBytes(16).toString('hex');
+  
+  await UserSession.create({
+    userId: user._id,
+    sessionId,
+    deviceName,
+    browser: browserName,
+    os: osName,
+    userAgent,
+    ipAddress,
+    country,
+    state,
+    city,
+    loginAt: Date.now(),
+    lastActiveAt: Date.now(),
+    isActive: true
+  });
+
+  generateToken(res, user._id, sessionId);
 
   res.json({
     success: true,
@@ -87,7 +123,39 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid user data');
   }
 
-  generateToken(res, user._id);
+  // Session Tracking
+  const parser = new UAParser(req.headers['user-agent']);
+  const result = parser.getResult();
+  const browserName = result.browser.name || 'Unknown Browser';
+  const osName = result.os.name || 'Unknown OS';
+  const deviceName = result.device.model || result.device.vendor || result.os.name || 'Desktop / Laptop';
+  const userAgent = req.headers['user-agent'];
+  const ipAddress = req.ip || req.headers['x-forwarded-for'] || 'Unknown IP';
+  
+  const geo = geoip.lookup(ipAddress === '::1' ? '127.0.0.1' : ipAddress);
+  const country = geo ? geo.country : 'Unknown';
+  const city = geo ? geo.city : 'Unknown';
+  const state = geo ? geo.region : 'Unknown';
+
+  const sessionId = crypto.randomBytes(16).toString('hex');
+  
+  await UserSession.create({
+    userId: user._id,
+    sessionId,
+    deviceName,
+    browser: browserName,
+    os: osName,
+    userAgent,
+    ipAddress,
+    country,
+    state,
+    city,
+    loginAt: Date.now(),
+    lastActiveAt: Date.now(),
+    isActive: true
+  });
+
+  generateToken(res, user._id, sessionId);
 
   res.status(201).json({
     success: true,
@@ -190,7 +258,39 @@ const googleSignIn = asyncHandler(async (req, res) => {
   }
 
   // Issue the same HTTP-only JWT cookie used by local auth
-  generateToken(res, user._id);
+  // Session Tracking
+  const parser = new UAParser(req.headers['user-agent']);
+  const result = parser.getResult();
+  const browserName = result.browser.name || 'Unknown Browser';
+  const osName = result.os.name || 'Unknown OS';
+  const deviceName = result.device.model || result.device.vendor || result.os.name || 'Desktop / Laptop';
+  const userAgent = req.headers['user-agent'];
+  const ipAddress = req.ip || req.headers['x-forwarded-for'] || 'Unknown IP';
+  
+  const geo = geoip.lookup(ipAddress === '::1' ? '127.0.0.1' : ipAddress);
+  const country = geo ? geo.country : 'Unknown';
+  const city = geo ? geo.city : 'Unknown';
+  const state = geo ? geo.region : 'Unknown';
+
+  const sessionId = crypto.randomBytes(16).toString('hex');
+  
+  await UserSession.create({
+    userId: user._id,
+    sessionId,
+    deviceName,
+    browser: browserName,
+    os: osName,
+    userAgent,
+    ipAddress,
+    country,
+    state,
+    city,
+    loginAt: Date.now(),
+    lastActiveAt: Date.now(),
+    isActive: true
+  });
+
+  generateToken(res, user._id, sessionId);
 
   res.status(200).json({
     success: true,
@@ -208,10 +308,17 @@ const googleSignIn = asyncHandler(async (req, res) => {
 
 // ─── Profile ─────────────────────────────────────────────────────────────────
 
-// @desc    Logout — clear JWT cookie
+// @desc    Logout — clear JWT cookie and remove session
 // @route   POST /api/auth/logout
 // @access  Private
 const logoutUser = asyncHandler(async (req, res) => {
+  if (req.user && req.sessionId) {
+    await UserSession.findOneAndUpdate(
+      { sessionId: req.sessionId },
+      { isActive: false }
+    );
+  }
+
   res.clearCookie('token', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',

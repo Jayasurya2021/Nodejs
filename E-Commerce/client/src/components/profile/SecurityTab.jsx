@@ -1,5 +1,8 @@
-import { useState } from 'react';
-import { Shield, Smartphone, Laptop, AlertTriangle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Shield, Smartphone, Laptop, Tablet, Monitor, AlertTriangle } from 'lucide-react';
+import { format, formatDistanceToNow } from 'date-fns';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const SecurityTab = () => {
   const [passwordForm, setPasswordForm] = useState({
@@ -15,6 +18,47 @@ const SecurityTab = () => {
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
     alert('Password change requested');
+  };
+
+  const [sessions, setSessions] = useState([]);
+
+  const fetchSessions = async () => {
+    try {
+      const { data } = await axios.get('/api/security/sessions', { withCredentials: true });
+      if (Array.isArray(data)) {
+        setSessions(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch sessions', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchSessions();
+    const interval = setInterval(() => {
+      fetchSessions();
+    }, 30000); // refresh every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleRevokeSession = async (sessionId) => {
+    try {
+      await axios.delete(`/api/security/session/${sessionId}`, { withCredentials: true });
+      toast.success('Device logged out successfully');
+      fetchSessions();
+    } catch (error) {
+      toast.error('Could not log out device');
+    }
+  };
+
+  const handleRevokeAllOthers = async () => {
+    try {
+      await axios.delete('/api/security/logout-all', { withCredentials: true });
+      toast.success('All other devices logged out');
+      fetchSessions();
+    } catch (error) {
+      toast.error('Could not log out other devices');
+    }
   };
 
   return (
@@ -89,38 +133,68 @@ const SecurityTab = () => {
         <h2 className="text-lg font-bold tracking-wide mb-6">Login Devices</h2>
         
         <div className="space-y-4">
-          <div className="flex justify-between items-center p-4 border border-gray-100 rounded-lg bg-gray-50">
-            <div className="flex items-center gap-4">
-              <Laptop size={24} className="text-gray-400" />
-              <div>
-                <p className="text-sm font-bold">MacBook Pro - Chrome</p>
-                <p className="text-xs text-gray-500 mt-1">Mumbai, India • Active Now</p>
-              </div>
-            </div>
-            <span className="text-[10px] uppercase tracking-widest font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-100">
-              Current Device
-            </span>
-          </div>
-          
-          <div className="flex justify-between items-center p-4 border border-gray-100 rounded-lg">
-            <div className="flex items-center gap-4">
-              <Smartphone size={24} className="text-gray-400" />
-              <div>
-                <p className="text-sm font-bold">iPhone 13 - Safari</p>
-                <p className="text-xs text-gray-500 mt-1">Delhi, India • Last active: 2 hours ago</p>
-              </div>
-            </div>
-            <button className="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-700 transition-colors">
-              Log Out
-            </button>
-          </div>
+          {sessions.length === 0 ? (
+            <p className="text-sm text-gray-500 text-center py-4">No active login sessions found.</p>
+          ) : (
+            sessions.map((session) => {
+              const deviceStr = (session.deviceName || '').toLowerCase();
+              let DeviceIcon = Laptop;
+              if (deviceStr.includes('mobile') || deviceStr.includes('iphone') || deviceStr.includes('android')) DeviceIcon = Smartphone;
+              else if (deviceStr.includes('tablet') || deviceStr.includes('ipad')) DeviceIcon = Tablet;
+              else if (deviceStr.includes('desktop') || deviceStr.includes('pc') || deviceStr.includes('mac')) DeviceIcon = Monitor;
+
+              return (
+                <div 
+                  key={session.sessionId} 
+                  className={`flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-100 rounded-lg gap-4 ${session.isCurrentDevice ? 'bg-gray-50' : ''}`}
+                >
+                  <div className="flex items-start sm:items-center gap-4">
+                    <div className="mt-1 sm:mt-0 p-3 bg-gray-100 rounded-full text-gray-600">
+                      <DeviceIcon size={24} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold flex items-center gap-2">
+                        {session.deviceName} 
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {session.browser} • {session.os}
+                      </p>
+                      <div className="text-xs text-gray-500 mt-2 space-y-1">
+                        <p><span className="font-semibold">Location:</span> {session.city}, {session.state}, {session.country}</p>
+                        <p><span className="font-semibold">IP Address:</span> {session.ipAddress}</p>
+                        <p><span className="font-semibold">Last Active:</span> {session.isCurrentDevice ? 'Active Now' : `${formatDistanceToNow(new Date(session.lastActiveAt))} ago`}</p>
+                        <p><span className="font-semibold">Login Time:</span> {format(new Date(session.loginAt), 'dd MMM yyyy, h:mm a')}</p>
+                      </div>
+                    </div>
+                  </div>
+                  {session.isCurrentDevice ? (
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-full border border-green-100 whitespace-nowrap self-start sm:self-auto mt-2 sm:mt-0">
+                      Current Device
+                    </span>
+                  ) : (
+                    <button 
+                      onClick={() => handleRevokeSession(session.sessionId)}
+                      className="text-xs font-bold uppercase tracking-widest text-white bg-red-500 hover:bg-red-600 transition-colors px-4 py-2 rounded-md shadow-sm whitespace-nowrap self-start sm:self-auto mt-2 sm:mt-0"
+                    >
+                      Logout Device
+                    </button>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
         
-        <div className="mt-6 pt-6 border-t border-gray-100 flex justify-end">
-          <button className="text-xs font-bold uppercase tracking-widest border border-gray-200 px-6 py-2.5 rounded-md hover:border-black transition-colors">
-            Log Out All Other Devices
-          </button>
-        </div>
+        {sessions.length > 1 && (
+          <div className="mt-6 pt-6 border-t border-gray-100 flex justify-end">
+            <button 
+              onClick={handleRevokeAllOthers}
+              className="text-xs font-bold uppercase tracking-widest border border-gray-200 px-6 py-2.5 rounded-md hover:border-black transition-colors"
+            >
+              Log Out All Other Devices
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Delete Account */}

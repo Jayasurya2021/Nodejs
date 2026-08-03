@@ -1,24 +1,34 @@
+import { useState, useEffect } from 'react';
 import { Star, Edit3, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { formatDistanceToNow } from 'date-fns';
 
 const ReviewsTab = () => {
-  // Mock data
-  const reviews = [
-    {
-      id: 1,
-      product: { id: 'p1', name: 'LookFashion Cotton Oversized T-Shirt', image: 'https://placehold.co/100x100' },
-      rating: 5,
-      date: '2023-10-15',
-      content: 'Absolutely love the fit and the material is incredibly soft. Would definitely buy in other colors.',
-    },
-    {
-      id: 2,
-      product: { id: 'p2', name: 'Classic Denim Jacket', image: 'https://placehold.co/100x100' },
-      rating: 4,
-      date: '2023-09-22',
-      content: 'Great jacket, good quality denim. Runs slightly large but perfect for layering.',
+  const [reviews, setReviews] = useState([]);
+  const [pendingReviews, setPendingReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchReviewData = async () => {
+    try {
+      const [mineRes, pendingRes] = await Promise.all([
+        axios.get('/api/reviews/mine', { withCredentials: true }),
+        axios.get('/api/reviews/pending', { withCredentials: true })
+      ]);
+      setReviews(mineRes.data);
+      setPendingReviews(pendingRes.data);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to load reviews data');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchReviewData();
+  }, []);
 
   const renderStars = (rating) => {
     return (
@@ -53,18 +63,18 @@ const ReviewsTab = () => {
         ) : (
           <div className="divide-y divide-gray-100">
             {reviews.map((review) => (
-              <div key={review.id} className="p-6 flex flex-col md:flex-row gap-6 hover:bg-gray-50 transition-colors">
+              <div key={review._id} className="p-6 flex flex-col md:flex-row gap-6 hover:bg-gray-50 transition-colors">
                 <div className="w-20 h-20 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden bg-white">
-                  <img src={review.product.image} alt={review.product.name} className="w-full h-full object-cover" />
+                  <img src={review.product?.images?.[0] || 'https://placehold.co/100x100'} alt={review.product?.name} className="w-full h-full object-cover" />
                 </div>
                 
                 <div className="flex-grow">
                   <div className="flex justify-between items-start mb-2">
                     <div>
-                      <Link to={`/product/${review.product.id}`} className="font-bold text-sm hover:underline line-clamp-1">
-                        {review.product.name}
+                      <Link to={`/product/${review.product?._id}`} className="font-bold text-sm hover:underline line-clamp-1">
+                        {review.product?.name}
                       </Link>
-                      <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Reviewed on {new Date(review.date).toLocaleDateString()}</p>
+                      <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Reviewed on {new Date(review.createdAt).toLocaleDateString()}</p>
                     </div>
                     {renderStars(review.rating)}
                   </div>
@@ -88,24 +98,32 @@ const ReviewsTab = () => {
         )}
       </div>
 
-      {/* Pending Reviews Mock */}
-      <div className="bg-amber-50 rounded-xl border border-amber-100 p-6 shadow-sm">
-        <h3 className="text-sm font-bold tracking-wide mb-4 text-amber-800">Pending Reviews (1)</h3>
-        <div className="flex items-center justify-between bg-white p-4 rounded-lg border border-amber-200">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden">
-              <img src="https://placehold.co/50x50" alt="Product" className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <p className="text-sm font-bold">Minimalist Leather Wallet</p>
-              <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Delivered 2 days ago</p>
-            </div>
+      {/* Pending Reviews */}
+      {pendingReviews.length > 0 && (
+        <div className="bg-amber-50 rounded-xl border border-amber-100 p-6 shadow-sm">
+          <h3 className="text-sm font-bold tracking-wide mb-4 text-amber-800">Pending Reviews ({pendingReviews.length})</h3>
+          <div className="space-y-4">
+            {pendingReviews.map((item) => (
+              <div key={item.product._id} className="flex items-center justify-between bg-white p-4 rounded-lg border border-amber-200">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden">
+                    <img src={item.product.images?.[0] || 'https://placehold.co/50x50'} alt={item.product.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold">{item.product.name}</p>
+                    <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
+                      Delivered {formatDistanceToNow(new Date(item.deliveredAt))} ago
+                    </p>
+                  </div>
+                </div>
+                <button className="bg-white border border-black text-black px-4 py-2 text-[10px] font-bold uppercase tracking-widest rounded hover:bg-black hover:text-white transition-colors">
+                  Write Review
+                </button>
+              </div>
+            ))}
           </div>
-          <button className="bg-white border border-black text-black px-4 py-2 text-[10px] font-bold uppercase tracking-widest rounded hover:bg-black hover:text-white transition-colors">
-            Write Review
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 };

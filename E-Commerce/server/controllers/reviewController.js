@@ -130,9 +130,55 @@ const deleteReview = asyncHandler(async (req, res) => {
   res.json({ message: 'Review removed' });
 });
 
+// @desc    Get logged in user's reviews
+// @route   GET /api/reviews/mine
+// @access  Private
+const getMyReviews = asyncHandler(async (req, res) => {
+  const reviews = await Review.find({ user: req.user._id })
+    .populate('product', 'name images')
+    .sort({ createdAt: -1 });
+  res.json(reviews);
+});
+
+// @desc    Get pending reviews (products bought but not reviewed)
+// @route   GET /api/reviews/pending
+// @access  Private
+const getPendingReviews = asyncHandler(async (req, res) => {
+  // Find all products from user's paid orders
+  const orders = await Order.find({ user: req.user._id, isPaid: true }).populate('orderItems.product', 'name images');
+  
+  const purchasedProducts = new Map();
+  orders.forEach(order => {
+    order.orderItems.forEach(item => {
+      if (item.product && item.product._id) {
+        purchasedProducts.set(item.product._id.toString(), {
+          product: item.product,
+          deliveredAt: order.deliveredAt || order.paidAt || order.createdAt
+        });
+      }
+    });
+  });
+
+  // Get user's existing reviews
+  const existingReviews = await Review.find({ user: req.user._id });
+  const reviewedProductIds = new Set(existingReviews.map(r => r.product.toString()));
+
+  // Filter out products already reviewed
+  const pendingReviews = [];
+  purchasedProducts.forEach((value, productId) => {
+    if (!reviewedProductIds.has(productId)) {
+      pendingReviews.push(value);
+    }
+  });
+
+  res.json(pendingReviews);
+});
+
 module.exports = {
   getProductReviews,
   createReview,
   updateReview,
-  deleteReview
+  deleteReview,
+  getMyReviews,
+  getPendingReviews
 };

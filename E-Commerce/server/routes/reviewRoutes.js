@@ -4,12 +4,20 @@ const {
   getProductReviews,
   createReview,
   updateReview,
-  deleteReview
+  deleteReview,
+  getMyReviews,
+  getPendingReviews
 } = require('../controllers/reviewController');
 const { protect } = require('../middleware/authMiddleware');
 
 router.route('/')
   .post(protect, createReview);
+
+router.route('/mine')
+  .get(protect, getMyReviews);
+
+router.route('/pending')
+  .get(protect, getPendingReviews);
 
 router.route('/:id')
   .put(protect, updateReview)
