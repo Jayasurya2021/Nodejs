@@ -5,6 +5,7 @@ import { FiShoppingBag, FiUser, FiMenu, FiX, FiHeart } from 'react-icons/fi';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
 import SearchInput from '../components/Search/SearchInput';
+import Logo from '../components/Logo';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -75,7 +76,7 @@ const Header = () => {
             <div className="flex items-center gap-8 xl:gap-12 flex-shrink-0">
               {/* Logo */}
               <Link to={user?.role === 'seller' ? '/seller/dashboard' : user?.role === 'admin' ? '/admin/dashboard' : '/'} className="flex items-center">
-                <span className="font-black text-2xl tracking-[0.2em] uppercase">LookFashion.</span>
+                <Logo className="h-12 md:h-16 object-contain" />
               </Link>
 
               {/* Desktop Navigation */}
@@ -175,7 +176,7 @@ const Header = () => {
               className="fixed inset-y-0 right-0 w-[85%] max-w-sm bg-white z-50 p-6 md:hidden shadow-2xl flex flex-col overflow-y-auto"
             >
               <div className="flex justify-between items-center mb-10">
-                <span className="font-black text-2xl tracking-[0.2em] uppercase">LookFashion.</span>
+                <Logo className="h-12 object-contain" />
                 <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2 text-gray-500 hover:text-black transition-colors">
                   <FiX className="w-6 h-6" />
                 </button>
