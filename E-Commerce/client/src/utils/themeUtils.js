@@ -6,7 +6,7 @@ const syncFavicon = () => {
   
   const isDark = hasDarkClass || mediaQuery.matches;
   
-  const faviconPath = isDark ? '/favicon-light.ico' : '/favicon-dark.ico';
+  const faviconPath = isDark ? '/Logo-LookFashion-white.png' : '/Logo-LookFashion.png';
   
   // Find existing favicon or create a new one
   let link = document.querySelector("link[rel~='icon']");

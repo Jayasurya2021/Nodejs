@@ -71,12 +71,12 @@ const Header = () => {
         }`}
       >
         <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20 gap-4 lg:gap-8">
+          <div className="flex justify-between items-center h-24 gap-4 lg:gap-8">
             {/* Left Section: Logo & Nav */}
             <div className="flex items-center gap-8 xl:gap-12 flex-shrink-0">
               {/* Logo */}
               <Link to={user?.role === 'seller' ? '/seller/dashboard' : user?.role === 'admin' ? '/admin/dashboard' : '/'} className="flex items-center">
-                <Logo className="h-12 md:h-16 object-contain" />
+                <Logo className="h-16 md:h-24 w-auto object-contain" forceDark={true} />
               </Link>
 
               {/* Desktop Navigation */}
@@ -176,7 +176,7 @@ const Header = () => {
               className="fixed inset-y-0 right-0 w-[85%] max-w-sm bg-white z-50 p-6 md:hidden shadow-2xl flex flex-col overflow-y-auto"
             >
               <div className="flex justify-between items-center mb-10">
-                <Logo className="h-12 object-contain" />
+                <Logo className="h-16 w-auto object-contain" forceDark={true} />
                 <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 -mr-2 text-gray-500 hover:text-black transition-colors">
                   <FiX className="w-6 h-6" />
                 </button>

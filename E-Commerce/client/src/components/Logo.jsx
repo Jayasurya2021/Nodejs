@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { useTheme } from '../hooks/useTheme';
 
-const Logo = ({ className = "h-12 md:h-16 object-contain" }) => {
+const Logo = ({ className = "h-16 md:h-20 object-contain", forceDark = false }) => {
   const theme = useTheme();
   
   // Dark theme uses white logo, Light theme uses original logo
-  const logoSrc = theme === 'dark' ? '/Logo-LookFashion-white.png' : '/Logo-LookFashion.png';
+  // If forceDark is true, always use the original logo (for white backgrounds)
+  const logoSrc = (theme === 'dark' && !forceDark) ? '/Logo-LookFashion-white.png' : '/Logo-LookFashion.png';
 
   // Preload logos to prevent flickering
   useEffect(() => {
