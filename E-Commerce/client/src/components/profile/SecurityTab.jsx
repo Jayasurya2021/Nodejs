@@ -168,16 +168,30 @@ const SecurityTab = () => {
                     </div>
                   </div>
                   {session.isCurrentDevice ? (
-                    <span className="text-[10px] uppercase tracking-widest font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-full border border-green-100 whitespace-nowrap self-start sm:self-auto mt-2 sm:mt-0">
-                      Current Device
-                    </span>
+                    <div className="flex flex-col items-end gap-2 mt-2 sm:mt-0">
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-full border border-green-100 whitespace-nowrap">
+                        Current Device
+                      </span>
+                    </div>
                   ) : (
-                    <button 
-                      onClick={() => handleRevokeSession(session.sessionId)}
-                      className="text-xs font-bold uppercase tracking-widest text-white bg-red-500 hover:bg-red-600 transition-colors px-4 py-2 rounded-md shadow-sm whitespace-nowrap self-start sm:self-auto mt-2 sm:mt-0"
-                    >
-                      Logout Device
-                    </button>
+                    <div className="flex flex-col items-end gap-2 mt-2 sm:mt-0">
+                      <button 
+                        onClick={() => handleRevokeSession(session.sessionId)}
+                        className="text-[10px] font-bold uppercase tracking-widest text-white bg-red-500 hover:bg-red-600 transition-colors px-4 py-2 rounded-md shadow-sm whitespace-nowrap w-full sm:w-auto"
+                      >
+                        Logout Device
+                      </button>
+                      <button 
+                        onClick={() => {
+                          handleRevokeSession(session.sessionId);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                          toast.error('Device logged out. Please change your password immediately.', { duration: 5000 });
+                        }}
+                        className="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-black transition-colors whitespace-nowrap underline underline-offset-2"
+                      >
+                        Not You?
+                      </button>
+                    </div>
                   )}
                 </div>
               );

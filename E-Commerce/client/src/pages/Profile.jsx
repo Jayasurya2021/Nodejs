@@ -13,7 +13,6 @@ import PaymentTab from '../components/profile/PaymentTab';
 import NotificationTab from '../components/profile/NotificationTab';
 import SecurityTab from '../components/profile/SecurityTab';
 import ReviewsTab from '../components/profile/ReviewsTab';
-import RecentTab from '../components/profile/RecentTab';
 import SupportTab from '../components/profile/SupportTab';
 
 const ProfileDashboard = () => {
@@ -65,8 +64,6 @@ const ProfileDashboard = () => {
         return <SecurityTab />;
       case 'reviews':
         return <ReviewsTab />;
-      case 'recent':
-        return <RecentTab />;
       case 'support':
         return <SupportTab />;
       default:

@@ -65,14 +65,14 @@ const ReviewsTab = () => {
             {reviews.map((review) => (
               <div key={review._id} className="p-6 flex flex-col md:flex-row gap-6 hover:bg-gray-50 transition-colors">
                 <div className="w-20 h-20 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden bg-white">
-                  <img src={review.product?.images?.[0] || 'https://placehold.co/100x100'} alt={review.product?.name} className="w-full h-full object-cover" />
+                  <img src={review.product?.images?.[0]?.url || 'https://placehold.co/100x100'} alt={review.product?.title || 'Product'} className="w-full h-full object-cover" />
                 </div>
                 
                 <div className="flex-grow">
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <Link to={`/product/${review.product?._id}`} className="font-bold text-sm hover:underline line-clamp-1">
-                        {review.product?.name}
+                        {review.product?.title || 'Unknown Product'}
                       </Link>
                       <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Reviewed on {new Date(review.createdAt).toLocaleDateString()}</p>
                     </div>
@@ -80,7 +80,7 @@ const ReviewsTab = () => {
                   </div>
                   
                   <p className="text-sm text-gray-600 mt-3 line-clamp-3">
-                    "{review.content}"
+                    "{review.comment}"
                   </p>
                   
                   <div className="mt-4 flex gap-4">
@@ -107,10 +107,10 @@ const ReviewsTab = () => {
               <div key={item.product._id} className="flex items-center justify-between bg-white p-4 rounded-lg border border-amber-200">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden">
-                    <img src={item.product.images?.[0] || 'https://placehold.co/50x50'} alt={item.product.name} className="w-full h-full object-cover" />
+                    <img src={item.product.images?.[0]?.url || 'https://placehold.co/50x50'} alt={item.product.title || 'Product'} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold">{item.product.name}</p>
+                    <p className="text-sm font-bold">{item.product.title || 'Unknown Product'}</p>
                     <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
                       Delivered {formatDistanceToNow(new Date(item.deliveredAt))} ago
                     </p>

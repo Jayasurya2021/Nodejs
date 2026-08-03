@@ -135,7 +135,7 @@ const deleteReview = asyncHandler(async (req, res) => {
 // @access  Private
 const getMyReviews = asyncHandler(async (req, res) => {
   const reviews = await Review.find({ user: req.user._id })
-    .populate('product', 'name images')
+    .populate('product', 'title images')
     .sort({ createdAt: -1 });
   res.json(reviews);
 });
@@ -145,7 +145,7 @@ const getMyReviews = asyncHandler(async (req, res) => {
 // @access  Private
 const getPendingReviews = asyncHandler(async (req, res) => {
   // Find all products from user's paid orders
-  const orders = await Order.find({ user: req.user._id, isPaid: true }).populate('orderItems.product', 'name images');
+  const orders = await Order.find({ user: req.user._id, isPaid: true }).populate('orderItems.product', 'title images');
   
   const purchasedProducts = new Map();
   orders.forEach(order => {

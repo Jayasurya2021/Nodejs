@@ -24,7 +24,7 @@ const getSearchSuggestions = asyncHandler(async (req, res) => {
           { tags: regex },
           { searchKeywords: regex } // Includes AI generated keywords
         ],
-        status: 'active'
+        status: 'approved'
       }
     },
     {
@@ -59,7 +59,7 @@ const searchProducts = asyncHandler(async (req, res) => {
   // Use MongoDB Text Search index for highly optimized full-text search
   const filter = {
     $text: { $search: query },
-    status: 'active'
+    status: 'approved'
   };
 
   const count = await Product.countDocuments(filter);

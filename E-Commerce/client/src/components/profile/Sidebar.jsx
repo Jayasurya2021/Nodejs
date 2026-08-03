@@ -25,7 +25,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'security', label: 'Security', icon: Shield },
     { id: 'reviews', label: 'Reviews & Ratings', icon: Star },
-    { id: 'recent', label: 'Recently Viewed', icon: Clock },
     { id: 'support', label: 'Support', icon: HelpCircle },
   ];
 

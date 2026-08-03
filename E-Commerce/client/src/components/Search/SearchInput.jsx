@@ -54,8 +54,8 @@ const SearchInput = ({ isMobile = false }) => {
     }
   };
 
-  const handleSuggestionClick = (slug) => {
-    navigate(`/product/${slug}`);
+  const handleSuggestionClick = (keyword) => {
+    navigate(`/shop?search=${encodeURIComponent(keyword)}`);
     setIsFocused(false);
     setQuery('');
     setSuggestions([]);
@@ -110,22 +110,11 @@ const SearchInput = ({ isMobile = false }) => {
                 {suggestions.map((item) => (
                   <div
                     key={item._id}
-                    onClick={() => handleSuggestionClick(item.slug)}
-                    className="flex items-center gap-4 p-3 mx-2 my-1 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors"
+                    onClick={() => handleSuggestionClick(item.title)}
+                    className="flex items-center gap-3 p-3 mx-2 my-1 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                   >
-                    <img
-                      src={item.thumbnail?.url || item.images?.url || 'https://placehold.co/60x60'}
-                      alt={item.title}
-                      className="w-12 h-12 rounded-lg object-cover bg-gray-100"
-                    />
-                    <div className="flex-1 overflow-hidden">
-                      <h4 className="text-sm font-bold truncate text-gray-900">{item.title}</h4>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] uppercase tracking-widest text-gray-500 font-semibold">{item.brand}</span>
-                        <span className="text-gray-300 text-[10px]">•</span>
-                        <span className="text-[10px] uppercase tracking-widest text-gray-500">{item.category}</span>
-                      </div>
-                    </div>
+                    <FiSearch className="text-gray-400 w-4 h-4" />
+                    <span className="text-sm text-gray-700 truncate">{item.title}</span>
                   </div>
                 ))}
               </div>

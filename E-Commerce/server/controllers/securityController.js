@@ -1,5 +1,6 @@
 const asyncHandler = require('../middleware/asyncHandler');
 const UserSession = require('../models/userSessionModel');
+const UAParser = require('ua-parser-js');
 
 // @desc    Get all active sessions for the logged-in user
 // @route   GET /api/security/sessions
@@ -9,26 +10,54 @@ const getSessions = asyncHandler(async (req, res) => {
   const limit = Number(req.query.limit) || 20;
   const skip = (page - 1) * limit;
 
-  const sessions = await UserSession.find({ userId: req.user._id, isActive: true })
+  let sessions = await UserSession.find({ userId: req.user._id, isActive: true })
     .sort({ lastActiveAt: -1 })
     .skip(skip)
     .limit(limit);
 
+  // Fallback for legacy tokens if no active sessions exist
+  if (sessions.length === 0) {
+    const parser = new UAParser(req.headers['user-agent']);
+    const result = parser.getResult();
+    
+    const geoip = require('geoip-lite');
+    const ipAddress = req.ip || req.headers['x-forwarded-for'] || 'Unknown IP';
+    const geo = geoip.lookup(ipAddress === '::1' ? '127.0.0.1' : ipAddress);
+    
+    sessions = [{
+      _id: 'legacy-session',
+      sessionId: req.sessionId || 'legacy',
+      deviceName: result.device.model || result.device.vendor || result.os.name || 'Desktop / Laptop',
+      browser: result.browser.name || 'Unknown Browser',
+      os: result.os.name || 'Unknown OS',
+      ipAddress: ipAddress,
+      city: geo ? geo.city || 'Unknown' : 'Unknown',
+      state: geo ? geo.region || 'Unknown' : 'Unknown',
+      country: geo ? geo.country || 'Unknown' : 'Unknown',
+      loginAt: Date.now(),
+      lastActiveAt: Date.now()
+    }];
+  }
+
   // Map to match the frontend requirements
-  const mappedSessions = sessions.map(session => ({
-    _id: session._id,
-    sessionId: session.sessionId,
-    deviceName: session.deviceName,
-    browser: session.browser,
-    os: session.os,
-    ipAddress: session.ipAddress,
-    city: session.city,
-    state: session.state,
-    country: session.country,
-    loginAt: session.loginAt,
-    lastActiveAt: session.lastActiveAt,
-    isCurrentDevice: session.sessionId === req.sessionId
-  }));
+  const mappedSessions = sessions.map(session => {
+    // Check if session is a mongoose document, if so, we extract properties
+    const s = session._id === 'legacy-session' ? session : session.toObject();
+    return {
+      _id: s._id,
+      sessionId: s.sessionId,
+      deviceName: s.deviceName,
+      browser: s.browser,
+      os: s.os,
+      ipAddress: s.ipAddress,
+      city: s.city,
+      state: s.state,
+      country: s.country,
+      loginAt: s.loginAt,
+      lastActiveAt: s.lastActiveAt,
+      isCurrentDevice: s._id === 'legacy-session' || s.sessionId === req.sessionId
+    };
+  });
 
   res.json(mappedSessions);
 });
