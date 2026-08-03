@@ -121,6 +121,11 @@ export const authSlice = createSlice({
       if (state.user) {
         state.user.addresses = action.payload;
       }
+    },
+    updatePaymentMethods: (state, action) => {
+      if (state.user) {
+        state.user.paymentMethods = action.payload;
+      }
     }
   },
   extraReducers: (builder) => {
@@ -200,5 +205,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { reset, forceLogout, updateAddresses } = authSlice.actions;
+export const { reset, forceLogout, updateAddresses, updatePaymentMethods } = authSlice.actions;
 export default authSlice.reducer;

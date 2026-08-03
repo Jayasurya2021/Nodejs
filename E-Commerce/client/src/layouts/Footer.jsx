@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { FiInstagram, FiTwitter, FiFacebook, FiYoutube } from 'react-icons/fi';
-import Logo from '../components/Logo';
 
 const Footer = () => {
   return (
@@ -9,7 +8,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
           <div className="col-span-1 md:col-span-1">
-            <Logo className="h-16 md:h-24 w-auto object-contain mb-6" />
+            <img src="/Full-Logo-LookFashion.png" alt="LookFashion." className="h-24 md:h-36 w-auto object-contain mb-6" />
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               Redefining premium menswear. Crafted with precision, designed for the modern gentleman.
             </p>

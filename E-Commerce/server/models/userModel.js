@@ -15,6 +15,14 @@ const addressSchema = new mongoose.Schema({
   isDefault: { type: Boolean, default: false }
 });
 
+const paymentMethodSchema = new mongoose.Schema({
+  type: { type: String, required: true }, // e.g. visa, mastercard, upi
+  last4: { type: String }, // For cards
+  expiry: { type: String }, // For cards
+  name: { type: String, required: true }, // Name on card or UPI ID
+  isDefault: { type: Boolean, default: false }
+});
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -60,6 +68,7 @@ const userSchema = new mongoose.Schema({
     default: 'buyer'
   },
   addresses: [addressSchema],
+  paymentMethods: [paymentMethodSchema],
   cart: [{
     product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
     qty: { type: Number },

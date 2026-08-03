@@ -210,6 +210,107 @@ const deleteAddress = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Add a new payment method to user profile
+// @route   POST /api/users/payment-methods
+// @access  Private
+const addPaymentMethod = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    const { type, last4, expiry, name, isDefault } = req.body;
+    
+    // If this is set as default, remove default from others
+    if (isDefault) {
+      user.paymentMethods.forEach(pm => {
+        pm.isDefault = false;
+      });
+    }
+
+    const newPaymentMethod = {
+      type,
+      last4,
+      expiry,
+      name,
+      isDefault: isDefault || (user.paymentMethods.length === 0) // First one is default automatically
+    };
+    
+    user.paymentMethods.push(newPaymentMethod);
+    await user.save();
+    res.status(201).json({ success: true, message: 'Payment method saved successfully', paymentMethods: user.paymentMethods });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Delete an existing payment method in user profile
+// @route   DELETE /api/users/payment-methods/:id
+// @access  Private
+const deletePaymentMethod = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    const paymentMethodId = req.params.id;
+    const initialLength = user.paymentMethods.length;
+    user.paymentMethods = user.paymentMethods.filter(pm => pm._id.toString() !== paymentMethodId);
+    
+    if (user.paymentMethods.length < initialLength) {
+      // If we deleted the default one, make the first remaining one default
+      const hasDefault = user.paymentMethods.some(pm => pm.isDefault);
+      if (!hasDefault && user.paymentMethods.length > 0) {
+        user.paymentMethods[0].isDefault = true;
+      }
+
+      await user.save();
+      res.json({ success: true, message: 'Payment method deleted successfully', paymentMethods: user.paymentMethods });
+    } else {
+      res.status(404);
+      throw new Error('Payment method not found');
+    }
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Update an existing payment method in user profile
+// @route   PUT /api/users/payment-methods/:id
+// @access  Private
+const updatePaymentMethod = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    const paymentMethodId = req.params.id;
+    const pmIndex = user.paymentMethods.findIndex(pm => pm._id.toString() === paymentMethodId);
+    
+    if (pmIndex !== -1) {
+      const { type, last4, expiry, name, isDefault } = req.body;
+      
+      // If this is set as default, remove default from others
+      if (isDefault) {
+        user.paymentMethods.forEach(pm => {
+          pm.isDefault = false;
+        });
+      }
+
+      user.paymentMethods[pmIndex] = {
+        _id: user.paymentMethods[pmIndex]._id, // preserve id
+        type: type || user.paymentMethods[pmIndex].type,
+        last4: last4 || user.paymentMethods[pmIndex].last4,
+        expiry: expiry || user.paymentMethods[pmIndex].expiry,
+        name: name || user.paymentMethods[pmIndex].name,
+        isDefault: isDefault !== undefined ? isDefault : user.paymentMethods[pmIndex].isDefault
+      };
+      
+      await user.save();
+      res.json({ success: true, message: 'Payment method updated successfully', paymentMethods: user.paymentMethods });
+    } else {
+      res.status(404);
+      throw new Error('Payment method not found');
+    }
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
 module.exports = {
   syncCart,
   getCart,
@@ -219,4 +320,7 @@ module.exports = {
   addAddress,
   updateAddress,
   deleteAddress,
+  addPaymentMethod,
+  updatePaymentMethod,
+  deletePaymentMethod,
 };
