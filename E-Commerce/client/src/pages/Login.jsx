@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import { login, reset } from '../redux/slices/authSlice';
 import toast from 'react-hot-toast';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
-import { FaFacebookF, FaGoogle } from 'react-icons/fa';
+import { FaFacebookF } from 'react-icons/fa';
+import GoogleLoginButton from '../components/GoogleLoginButton';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -50,10 +51,6 @@ const Login = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch(login({ email, password }));
-  };
-
-  const handleGoogleLogin = () => {
-    toast.error('Google login not fully implemented in this demo');
   };
 
   return (
@@ -124,7 +121,7 @@ const Login = () => {
                 className="block w-full py-3 px-0 text-sm text-black bg-transparent border-0 border-b border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-black peer transition-colors"
                 placeholder=" "
               />
-              <label htmlFor="email" className="absolute text-xs uppercase tracking-widest text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-black peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-85 peer-focus:-translate-y-6">
+              <label htmlFor="email" className="absolute text-xs uppercase tracking-widest text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 z-10 pointer-events-none origin-[0] peer-focus:left-0 peer-focus:text-black peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-85 peer-focus:-translate-y-6">
                 Email Address
               </label>
             </div>
@@ -142,7 +139,7 @@ const Login = () => {
                   className="block w-full py-3 px-0 text-sm text-black bg-transparent border-0 border-b border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-black peer transition-colors"
                   placeholder=" "
                 />
-                <label htmlFor="password" className="absolute text-xs uppercase tracking-widest text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-black peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-85 peer-focus:-translate-y-6">
+                <label htmlFor="password" className="absolute text-xs uppercase tracking-widest text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 z-10 pointer-events-none origin-[0] peer-focus:left-0 peer-focus:text-black peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-85 peer-focus:-translate-y-6">
                   Password
                 </label>
               </div>
@@ -183,20 +180,19 @@ const Login = () => {
             </button>
           </form>
 
-          {/* Social Links */}
-          <div className="mt-12 flex flex-col items-center">
-            <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-6 relative before:content-[''] before:w-10 before:h-[1px] before:bg-gray-200 before:absolute before:right-full before:top-1/2 before:-translate-y-1/2 before:mr-4 after:content-[''] after:w-10 after:h-[1px] after:bg-gray-200 after:absolute after:left-full after:top-1/2 after:-translate-y-1/2 after:ml-4">
-              Or Connect With
-            </span>
-            <div className="flex gap-4">
-              <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-black hover:text-black hover:bg-gray-50 transition-all">
-                <FaFacebookF size={14} />
-              </button>
-              <button onClick={handleGoogleLogin} type="button" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-black hover:text-black hover:bg-gray-50 transition-all">
-                <FaGoogle size={14} />
-              </button>
+            {/* Social Links */}
+            <div className="mt-12 flex flex-col items-center w-full">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-6 relative before:content-[''] before:w-10 before:h-[1px] before:bg-gray-200 before:absolute before:right-full before:top-1/2 before:-translate-y-1/2 before:mr-4 after:content-[''] after:w-10 after:h-[1px] after:bg-gray-200 after:absolute after:left-full after:top-1/2 after:-translate-y-1/2 after:ml-4">
+                Or Connect With
+              </span>
+              <div className="w-full">
+                <GoogleLoginButton
+                  redirectTo={redirect || '/'}
+                  label="Sign In with Google"
+                  role="pending"
+                />
+              </div>
             </div>
-          </div>
 
         </div>
       </motion.div>
