@@ -19,8 +19,34 @@ const ProfileInfoTab = () => {
     language: 'English',
   });
 
+  const fetchLocationByPincode = async (pin) => {
+    if (pin.length === 6 && /^\d+$/.test(pin)) {
+      try {
+        const response = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+        const data = await response.json();
+        
+        if (data && data[0].Status === 'Success') {
+          const postOffice = data[0].PostOffice[0];
+          setFormData(prev => ({
+            ...prev,
+            country: postOffice.Country || 'India',
+            state: postOffice.State || '',
+            city: postOffice.District || postOffice.Block || ''
+          }));
+        }
+      } catch (error) {
+        console.error("Error fetching pincode data:", error);
+      }
+    }
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (name === 'pincode') {
+      fetchLocationByPincode(value);
+    }
   };
 
   const handleSubmit = (e) => {

@@ -32,7 +32,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: process.env.NODE_ENV === 'production'
     ? process.env.CLIENT_URL || 'https://your-production-domain.com'
-    : 'http://localhost:5173',
+    : 'http://localhost:5174',
   credentials: true
 }));
 
