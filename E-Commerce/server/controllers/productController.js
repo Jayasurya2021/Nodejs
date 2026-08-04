@@ -117,7 +117,7 @@ const createProduct = asyncHandler(async (req, res) => {
   const { 
     title, slug, shortDescription, description, 
     brand, category, subCategory, 
-    images, thumbnail, variants, specifications, features, tags 
+    images, thumbnail, variants, specifications, features, tags, returnPolicy 
   } = req.body;
 
   // Generate initial AI keywords
@@ -146,6 +146,7 @@ const createProduct = asyncHandler(async (req, res) => {
     features,
     tags,
     searchKeywords,
+    returnPolicy: returnPolicy || 'No Returns',
     seller: req.user._id,
     createdBy: req.user._id,
     status: 'approved' // Automatically approve products so they show up immediately
@@ -172,7 +173,7 @@ const updateProduct = asyncHandler(async (req, res) => {
       'title', 'slug', 'shortDescription', 'description', 
       'brand', 'category', 'subCategory', 
       'images', 'thumbnail', 'variants', 'specifications', 'features', 
-      'tags', 'status', 'isNewArrival', 'isTrending'
+      'tags', 'status', 'isNewArrival', 'isTrending', 'returnPolicy'
     ];
 
     fieldsToUpdate.forEach(field => {

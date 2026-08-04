@@ -221,12 +221,16 @@ const ProductScrollHero = ({ product, state, children }) => {
       {/* Delivery Info */}
       <motion.div variants={fadeUp} className="bg-gray-50 p-4 space-y-3 mb-6 mt-4">
         {[
-          { icon: FiCheck, text: "Free delivery on orders over ₹100" },
-          { icon: FiCheck, text: "Easy 30-day returns & exchanges" },
-          { icon: FiCheck, text: "Authenticity guaranteed" },
+          { icon: FiCheck, text: "Free delivery on orders over ₹100", color: "text-green-500" },
+          { 
+            icon: (!product.returnPolicy || product.returnPolicy === 'No Returns') ? FiX : FiCheck, 
+            text: (!product.returnPolicy || product.returnPolicy === 'No Returns') ? "No returns available for this product" : `${product.returnPolicy} & exchanges`,
+            color: (!product.returnPolicy || product.returnPolicy === 'No Returns') ? "text-red-500" : "text-green-500"
+          },
+          { icon: FiCheck, text: "Authenticity guaranteed", color: "text-green-500" },
         ].map((item, i) => (
           <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
-            <item.icon size={14} className="text-green-500 flex-shrink-0" strokeWidth={3} />
+            <item.icon size={14} className={`${item.color} flex-shrink-0`} strokeWidth={3} />
             <span>{item.text}</span>
           </div>
         ))}

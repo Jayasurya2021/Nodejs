@@ -115,6 +115,11 @@ const productSchema = new mongoose.Schema({
     enum: ['pending', 'approved', 'rejected', 'archived'],
     default: 'pending'
   },
+  returnPolicy: {
+    type: String,
+    enum: ['No Returns', '7 Days Return', '10 Days Return', '15 Days Return', '30 Days Return'],
+    default: 'No Returns'
+  },
   seller: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

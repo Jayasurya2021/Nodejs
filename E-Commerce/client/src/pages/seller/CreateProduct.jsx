@@ -14,7 +14,7 @@ const CreateProduct = () => {
   
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '', description: '', category: '', subCategory: '', brand: '', tags: '', features: '', shortDescription: '', slug: ''
+    title: '', description: '', category: '', subCategory: '', brand: '', tags: '', features: '', shortDescription: '', slug: '', returnPolicy: 'No Returns'
   });
   
   const [variants, setVariants] = useState([{
@@ -537,13 +537,28 @@ const CreateProduct = () => {
               </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Features (Comma separated)</label>
-              <input 
-                type="text" name="features" value={formData.features} onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all"
-                placeholder="e.g. Breathable fabric, Machine washable"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Features (Comma separated)</label>
+                <input 
+                  type="text" name="features" value={formData.features} onChange={handleChange}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all"
+                  placeholder="e.g. Breathable fabric, Machine washable"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Return Policy</label>
+                <select 
+                  name="returnPolicy" value={formData.returnPolicy} onChange={handleChange}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black transition-all cursor-pointer"
+                >
+                  <option value="No Returns">No Returns</option>
+                  <option value="7 Days Return">7 Days Return</option>
+                  <option value="10 Days Return">10 Days Return</option>
+                  <option value="15 Days Return">15 Days Return</option>
+                  <option value="30 Days Return">30 Days Return</option>
+                </select>
+              </div>
             </div>
 
             <div className="mb-6">
