@@ -89,7 +89,7 @@ const SupportTab = () => {
               }`}>
                 {option.action} <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </span>
-            </a>
+            </Component>
           );
         })}
       </div>
