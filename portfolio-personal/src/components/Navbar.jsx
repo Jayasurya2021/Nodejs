@@ -13,11 +13,14 @@ export default function Navbar() {
         <a href="/" className="text-2xl font-semibold tracking-tight magic-hover__square">
           A.B
         </a>
-        <div className="hidden md:flex gap-12">
-          <a href="#work" className="text-lg font-medium uppercase tracking-wider magic-hover__square">Work</a>
-          <a href="#services" className="text-lg font-medium uppercase tracking-wider magic-hover__square">Services</a>
-          <a href="#about" className="text-lg font-medium uppercase tracking-wider magic-hover__square">About</a>
-          <a href="#contact" className="text-lg font-medium uppercase tracking-wider magic-hover__square">Contact</a>
+        <div className="hidden lg:flex gap-6 xl:gap-8 flex-wrap justify-end">
+          <a href="#about" className="text-sm xl:text-base font-medium uppercase tracking-wider magic-hover__square">About</a>
+          <a href="#skills" className="text-sm xl:text-base font-medium uppercase tracking-wider magic-hover__square">Skills</a>
+          <a href="#work" className="text-sm xl:text-base font-medium uppercase tracking-wider magic-hover__square">Work</a>
+          <a href="#services" className="text-sm xl:text-base font-medium uppercase tracking-wider magic-hover__square">Services</a>
+          <a href="#experience" className="text-sm xl:text-base font-medium uppercase tracking-wider magic-hover__square">Experience</a>
+          <a href="#education" className="text-sm xl:text-base font-medium uppercase tracking-wider magic-hover__square">Education</a>
+          <a href="#contact" className="text-sm xl:text-base font-medium uppercase tracking-wider magic-hover__square">Contact</a>
         </div>
       </div>
     </motion.nav>
