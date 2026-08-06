@@ -1,14 +1,18 @@
 import { HelpCircle, MessageCircle, FileText, PhoneCall, ArrowRight, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { openChat } from '../../redux/slices/uiSlice';
 
 const SupportTab = () => {
+  const dispatch = useDispatch();
+
   const supportOptions = [
     {
       icon: MessageCircle,
       title: 'Chat Support',
       description: 'Chat with our support team for quick resolutions.',
       action: 'Start Chat',
-      link: '#',
+      onClick: () => dispatch(openChat()),
       primary: true
     },
     {
@@ -61,10 +65,12 @@ const SupportTab = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {supportOptions.map((option, idx) => {
           const Icon = option.icon;
+          const Component = option.onClick ? 'button' : 'a';
           return (
-            <a 
+            <Component 
               key={idx}
               href={option.link}
+              onClick={option.onClick}
               className={`p-6 rounded-xl border transition-all duration-300 group ${
                 option.primary 
                   ? 'bg-white border-black shadow-md hover:shadow-xl' 

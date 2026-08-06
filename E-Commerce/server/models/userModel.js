@@ -67,6 +67,14 @@ const userSchema = new mongoose.Schema({
     enum: ['buyer', 'seller', 'admin', 'pending'],
     default: 'buyer'
   },
+  phone: { type: String },
+  gender: { type: String, enum: ['male', 'female', 'other', ''] },
+  dob: { type: Date },
+  language: { type: String, default: 'English' },
+  country: { type: String },
+  state: { type: String },
+  city: { type: String },
+  pincode: { type: String },
   addresses: [addressSchema],
   paymentMethods: [paymentMethodSchema],
   cart: [{

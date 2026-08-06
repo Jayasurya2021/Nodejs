@@ -1,23 +1,42 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { User, Mail, Phone, Map, Globe, Camera } from 'lucide-react';
+import { updateProfile } from '../../redux/slices/authSlice';
+import toast from 'react-hot-toast';
 
 const ProfileInfoTab = () => {
-  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { user, isLoading } = useSelector((state) => state.auth);
   
-  // Static state for now
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    phone: '',
-    gender: '',
-    dob: '',
-    country: '',
-    state: '',
-    city: '',
-    pincode: '',
-    language: 'English',
+    phone: user?.phone || '',
+    gender: user?.gender || '',
+    dob: user?.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+    country: user?.country || '',
+    state: user?.state || '',
+    city: user?.city || '',
+    pincode: user?.pincode || '',
+    language: user?.language || 'English',
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        gender: user.gender || '',
+        dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+        country: user.country || '',
+        state: user.state || '',
+        city: user.city || '',
+        pincode: user.pincode || '',
+        language: user.language || 'English',
+      });
+    }
+  }, [user]);
 
   const fetchLocationByPincode = async (pin) => {
     if (pin.length === 6 && /^\d+$/.test(pin)) {
@@ -49,10 +68,14 @@ const ProfileInfoTab = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate save
-    alert('Profile information saved!');
+    try {
+      await dispatch(updateProfile(formData)).unwrap();
+      toast.success('Profile information saved!');
+    } catch (error) {
+      toast.error(error || 'Failed to save profile information');
+    }
   };
 
   return (

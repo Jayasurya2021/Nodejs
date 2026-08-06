@@ -346,6 +346,14 @@ const getUserProfile = asyncHandler(async (req, res) => {
       email: user.email,
       role: user.role,
       profileImage: user.profileImage,
+      phone: user.phone,
+      gender: user.gender,
+      dob: user.dob,
+      language: user.language,
+      country: user.country,
+      state: user.state,
+      city: user.city,
+      pincode: user.pincode,
       addresses: user.addresses
     }
   });
@@ -364,6 +372,15 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
   user.name  = req.body.name  || user.name;
   user.email = req.body.email || user.email;
+  
+  if (req.body.phone !== undefined) user.phone = req.body.phone;
+  if (req.body.gender !== undefined) user.gender = req.body.gender;
+  if (req.body.dob !== undefined) user.dob = req.body.dob;
+  if (req.body.language !== undefined) user.language = req.body.language;
+  if (req.body.country !== undefined) user.country = req.body.country;
+  if (req.body.state !== undefined) user.state = req.body.state;
+  if (req.body.city !== undefined) user.city = req.body.city;
+  if (req.body.pincode !== undefined) user.pincode = req.body.pincode;
 
   // Only update password if explicitly provided
   if (req.body.password) {
@@ -379,7 +396,15 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       role: updatedUser.role,
-      profileImage: updatedUser.profileImage
+      profileImage: updatedUser.profileImage,
+      phone: updatedUser.phone,
+      gender: updatedUser.gender,
+      dob: updatedUser.dob,
+      language: updatedUser.language,
+      country: updatedUser.country,
+      state: updatedUser.state,
+      city: updatedUser.city,
+      pincode: updatedUser.pincode
     }
   });
 });

@@ -307,7 +307,7 @@ const ProductScrollHero = ({ product, state, children }) => {
                 transition={{ duration: 0.4 }}
                 src={displayImages[activeImageIndex]?.url || product.thumbnail?.url || 'https://via.placeholder.com/600x800'}
                 alt={product.title}
-                className={`w-full h-full object-cover transition-transform duration-500 origin-center ${isZoomed ? 'hover:scale-150 cursor-zoom-out' : 'cursor-zoom-in'}`}
+                className={`w-full h-full object-contain transition-transform duration-500 origin-center bg-gray-50 ${isZoomed ? 'hover:scale-150 cursor-zoom-out' : 'cursor-zoom-in'}`}
                 onClick={() => setIsZoomed(!isZoomed)}
               />
             </AnimatePresence>
@@ -360,7 +360,7 @@ const ProductScrollHero = ({ product, state, children }) => {
               exit={{ opacity: 0 }}
               src={displayImages[activeImageIndex]?.url || product.thumbnail?.url || 'https://via.placeholder.com/600x800'}
               alt={product.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain bg-gray-50"
             />
           </AnimatePresence>
           {displayImages.length > 1 && (

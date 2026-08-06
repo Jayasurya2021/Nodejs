@@ -7,6 +7,7 @@ import Layout from './layouts/Layout';
 import GuestRoute from './components/routes/GuestRoute';
 import ProtectedRoute from './components/routes/ProtectedRoute';
 import LoginModal from './components/LoginModal';
+import ChatWidget from './components/ChatWidget';
 
 
 // Helper for default exports
@@ -42,6 +43,7 @@ const GlobalEventListener = () => {
   return (
     <>
       <LoginModal />
+      <ChatWidget />
       <Outlet />
     </>
   );
@@ -111,6 +113,7 @@ const router = createBrowserRouter(
           <Route path="admin/orders" lazy={lazyImport(() => import('./pages/admin/OrdersList'))} />
           <Route path="admin/products" lazy={lazyImport(() => import('./pages/seller/ManageProducts'))} />
           <Route path="admin/product/:id/edit" lazy={lazyImport(() => import('./pages/admin/ProductEdit'))} />
+          <Route path="admin/chat" lazy={lazyImport(() => import('./pages/admin/AdminChat'))} />
         </Route>
 
         {/* Fallback 404 Route */}
