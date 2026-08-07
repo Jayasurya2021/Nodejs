@@ -281,7 +281,7 @@ const ProductScrollHero = ({ product, state, children }) => {
                 <img 
                   src={displayImages[activeImageIndex]?.url || product.thumbnail?.url} 
                   alt={product.title} 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div className="hidden sm:block">
@@ -340,7 +340,7 @@ const ProductScrollHero = ({ product, state, children }) => {
                   transition={{ duration: 0.5, ease: "easeOut" }}
                   src={displayImages[activeImageIndex]?.url || product.thumbnail?.url || 'https://via.placeholder.com/800x1000'}
                   alt={product.title}
-                  className={`w-full h-full object-cover transition-transform duration-700 origin-center ${isZoomed ? 'hover:scale-150 cursor-zoom-out' : 'cursor-zoom-in hover:scale-105'}`}
+                  className={`w-full h-full object-contain transition-transform duration-700 origin-center ${isZoomed ? 'hover:scale-150 cursor-zoom-out' : 'cursor-zoom-in hover:scale-105'}`}
                   onClick={() => setIsZoomed(!isZoomed)}
                 />
               </AnimatePresence>
@@ -364,7 +364,7 @@ const ProductScrollHero = ({ product, state, children }) => {
                         : 'opacity-50 hover:opacity-100 hover:ring-1 hover:ring-gray-300'
                     }`}
                   >
-                    <img src={image.url} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover" />
+                    <img src={image.url} alt={`Thumbnail ${idx}`} className="w-full h-full object-contain" />
                   </button>
                 ))}
               </motion.div>
@@ -393,7 +393,7 @@ const ProductScrollHero = ({ product, state, children }) => {
               transition={{ duration: 0.5 }}
               src={displayImages[activeImageIndex]?.url || product.thumbnail?.url || 'https://via.placeholder.com/800x1000'}
               alt={product.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </AnimatePresence>
           
