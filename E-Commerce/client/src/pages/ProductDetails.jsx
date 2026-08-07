@@ -14,12 +14,16 @@ import ProductScrollHero from '../components/ProductScrollHero';
 const Accordion = ({ title, children, defaultOpen = false }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-gray-100 py-4">
-      <button onClick={() => setIsOpen(!isOpen)} className="flex justify-between items-center w-full text-left">
-        <h3 className="text-xs font-black uppercase tracking-widest text-gray-900">{title}</h3>
-        <div className="text-gray-400">
-          {isOpen ? <FiMinus size={14} /> : <FiPlus size={14} />}
-        </div>
+    <div className="border-b border-gray-100 py-5">
+      <button onClick={() => setIsOpen(!isOpen)} className="flex justify-between items-center w-full text-left group">
+        <h3 className="text-sm font-bold uppercase tracking-widest text-gray-900 group-hover:text-black transition-colors">{title}</h3>
+        <motion.div 
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          className="text-gray-400 group-hover:text-black transition-colors"
+        >
+          {isOpen ? <FiMinus size={16} /> : <FiPlus size={16} />}
+        </motion.div>
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -27,9 +31,10 @@ const Accordion = ({ title, children, defaultOpen = false }) => {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
             className="overflow-hidden"
           >
-            <div className="pt-4">
+            <div className="pt-5">
               {children}
             </div>
           </motion.div>
@@ -282,13 +287,13 @@ const ProductDetails = () => {
       <ProductScrollHero product={product} state={heroState}>
         {/* Description & Specs Accordions */}
         <div className="pt-6">
-          <Accordion title="Description" defaultOpen={false}>
+          <Accordion title="Description" defaultOpen={true}>
             <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">{product.description}</p>
           </Accordion>
 
           {product.features?.length > 0 && (
             <Accordion title="Details & Features">
-              <ul className="space-y-2 text-sm text-gray-600 pl-4 list-disc marker:text-gray-300">
+              <ul className="space-y-3 text-sm text-gray-600 pl-5 list-disc marker:text-gray-300">
                 {product.features.map((feature, i) => (
                   <li key={i}>{feature}</li>
                 ))}
@@ -300,7 +305,7 @@ const ProductDetails = () => {
             <Accordion title="Specifications">
               <div className="text-sm border-t border-gray-100">
                 {product.specifications.map((spec, i) => (
-                  <div key={i} className="flex py-3 border-b border-gray-100">
+                  <div key={i} className="flex py-4 border-b border-gray-100 group hover:bg-gray-50 transition-colors -mx-4 px-4">
                     <span className="w-1/3 font-semibold text-gray-900 uppercase text-xs tracking-widest">{spec.key}</span>
                     <span className="w-2/3 text-gray-600">{spec.value}</span>
                   </div>
@@ -371,12 +376,12 @@ const ProductDetails = () => {
                       <span className="text-sm font-semibold">{star}</span>
                       <FiStar size={12} className="text-amber-400 fill-amber-400" />
                     </div>
-                    <div className="flex-1 bg-gray-200 h-2.5 rounded-full overflow-hidden">
+                    <div className="flex-1 bg-gray-100 h-2 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         whileInView={{ width: `${percentage}%` }}
                         viewport={{ once: true }}
-                        transition={{ duration: 1, delay: 0.2 }}
+                        transition={{ type: "spring", stiffness: 50, damping: 15, delay: 0.1 }}
                         className="h-full bg-amber-400 rounded-full"
                       />
                     </div>
@@ -410,31 +415,39 @@ const ProductDetails = () => {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: i * 0.05 }}
-                    className="bg-white border border-gray-100 p-6 hover:border-gray-300 transition-colors"
+                    transition={{ type: "spring", stiffness: 300, damping: 25, delay: i * 0.05 }}
+                    whileHover={{ y: -2, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.05)" }}
+                    className="bg-white border border-gray-100 rounded-xl p-6 transition-all duration-300"
                   >
                     <div className="flex flex-col md:flex-row gap-4">
                       <div className="flex-1">
                         <div className="flex flex-wrap items-center gap-3 mb-3">
-                          <StarRating rating={review.rating} size={14} />
-                          <span className="text-xs text-gray-400 ml-auto">
+                          <div className="bg-gray-50 px-2 py-1 rounded-md flex items-center gap-1">
+                            <StarRating rating={review.rating} size={12} />
+                          </div>
+                          <span className="text-xs text-gray-400 ml-auto font-medium">
                             {new Date(review.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                           </span>
                         </div>
-                        <h4 className="font-black text-sm mb-2">{review.title}</h4>
-                        <p className="text-gray-500 text-sm leading-relaxed mb-3">{review.comment}</p>
+                        <h4 className="font-bold text-gray-900 mb-2">{review.title}</h4>
+                        <p className="text-gray-600 text-sm leading-relaxed mb-4">{review.comment}</p>
                         
                         {review.images?.length > 0 && (
-                          <div className="flex gap-2 mt-3 overflow-x-auto pb-2">
+                          <div className="flex gap-3 mt-4 overflow-x-auto pb-2 no-scrollbar">
                             {review.images.map((img, index) => (
-                              <img key={index} src={img.url} alt="Review" className="w-16 h-16 object-cover bg-gray-100" />
+                              <div key={index} className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 border border-gray-100">
+                                <img src={img.url} alt="Review" className="w-full h-full object-cover bg-gray-50 hover:scale-110 transition-transform duration-300 cursor-zoom-in" />
+                              </div>
                             ))}
                           </div>
                         )}
                         
-                        <div className="flex items-center gap-2 pt-4 border-t border-gray-50 text-xs">
-                          <span className="font-bold">{review.user?.name || review.name}</span>
-                          {review.verified && <span className="text-green-600 font-bold uppercase tracking-widest flex items-center gap-1"><FiCheck size={10}/> Verified</span>}
+                        <div className="flex items-center gap-2 pt-4 mt-2 border-t border-gray-50 text-xs">
+                          <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-bold">
+                            {(review.user?.name || review.name || 'U').charAt(0).toUpperCase()}
+                          </div>
+                          <span className="font-bold text-gray-700">{review.user?.name || review.name}</span>
+                          {review.verified && <span className="text-green-600 font-bold uppercase tracking-widest flex items-center gap-1 ml-2 bg-green-50 px-2 py-1 rounded"><FiCheck size={10} strokeWidth={3}/> Verified Buyer</span>}
                         </div>
                       </div>
                     </div>
