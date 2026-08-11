@@ -1,6 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-clin-blue: #1E3A8A;
+  --color-clin-light: #E0E7FF;
+  --color-clin-gray: #F3F4F6;
+  --color-clin-dark: #111827;
+}
 
 body {
   margin: 0;
