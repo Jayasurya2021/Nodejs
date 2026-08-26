@@ -1,122 +1,48 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
 
-function App() {
-  const [count, setCount] = useState(0)
+import Dashboard from './pages/Dashboard';
+import Applications from './pages/Applications';
+import AddApplication from './pages/AddApplication';
+import ApplicationDetails from './pages/ApplicationDetails';
+import EditApplication from './pages/EditApplication';
+import DailyTracker from './pages/DailyTracker';
+import Interviews from './pages/Interviews';
+import Wishlist from './pages/Wishlist';
+import Analytics from './pages/Analytics';
+import Settings from './pages/Settings';
+
+const App = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex transition-colors">
+      {/* Sidebar Navigation */}
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="ticks"></div>
+      {/* Main Content Area */}
+      <div className="flex-1 lg:pl-64 flex flex-col min-w-0 min-h-screen">
+        <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/applications" element={<Applications />} />
+            <Route path="/applications/:id" element={<ApplicationDetails />} />
+            <Route path="/applications/:id/edit" element={<EditApplication />} />
+            <Route path="/add-application" element={<AddApplication />} />
+            <Route path="/daily-tracker" element={<DailyTracker />} />
+            <Route path="/interviews" element={<Interviews />} />
+            <Route path="/wishlist" element={<Wishlist />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+        </main>
+      </div>
+    </div>
+  );
+};
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
-
-export default App
+export default App;
