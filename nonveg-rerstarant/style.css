@@ -1,5 +1,5 @@
 /* ==========================================================================
-   REAL MEAT - 100% PURE LIGHT THEME (SUPER CLEAN ORDER CUSTOMIZATION MODAL UI)
+   REAL MEAT - 100% PURE LIGHT THEME (SUPER CLEAN SEPARATED PAGES STYLES)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -733,7 +733,197 @@ input, select, textarea { font-family: inherit; color: inherit; }
 .qty-btn:hover { background: rgba(0, 0, 0, 0.2); }
 .qty-num { padding: 0 8px; color: #fff; font-weight: 900; font-size: 0.95rem; }
 
-/* 6. SUPER CLEAN & BEAUTIFUL ORDER CUSTOMIZATION MODAL UI */
+/* 6. DEDICATED AUTH PAGES (LOGIN.HTML & REGISTER.HTML) */
+.auth-page-body {
+  background: linear-gradient(135deg, #faf7f4 0%, #fdf6ee 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+}
+
+.auth-card-container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-home-link {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--primary);
+  transition: var(--transition);
+}
+.back-home-link:hover {
+  transform: translateX(-3px);
+}
+
+.auth-form-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-title-group {
+  margin-bottom: 26px;
+  text-align: center;
+}
+.auth-title-group h2 {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+.auth-title-group p {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 24px 0;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.auth-divider::before, .auth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-color);
+}
+.auth-divider span {
+  padding: 0 12px;
+}
+
+.social-login-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.social-btn {
+  padding: 10px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: var(--transition);
+}
+.social-btn:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.auth-footer-text {
+  text-align: center;
+  font-size: 0.86rem;
+  color: #64748b;
+  font-weight: 600;
+}
+.auth-footer-text a {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+/* 7. DEDICATED STANDALONE PRODUCT DETAILS PAGE (PRODUCT.HTML) */
+.product-page-body {
+  background-color: var(--bg-main);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.standalone-page-header {
+  background: #ffffff;
+  border-bottom: 1.5px solid var(--border-color);
+  padding: 16px 30px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.standalone-header-container {
+  max-width: 1380px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.standalone-product-main {
+  max-width: 1100px;
+  margin: 40px auto 80px;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.standalone-hero-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 36px;
+  padding: 30px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 36px;
+}
+
+.standalone-img-box {
+  width: 100%;
+  height: 380px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.standalone-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.standalone-details-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.standalone-price-bar {
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* CUSTOMIZATION MODAL UI */
 .custom-dish-card-header {
   position: relative;
   width: 100%;
@@ -934,7 +1124,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
   .full-slide-content { padding-left: 36px; }
   .overlay-header { padding: 16px 20px; }
   .header-nav-links { display: none; }
-  .product-detail-hero { grid-template-columns: 1fr; }
+  .standalone-hero-card { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
