@@ -957,6 +957,7 @@ function addToCart(dish, qty = 1, options = null) {
   StorageManager.saveCart(state.cart);
   renderAll();
   showToast(`Added ${dish.name} to Cart!`);
+  toggleCartDrawer(true);
 }
 
 function updateCartQty(dishId, change) {
