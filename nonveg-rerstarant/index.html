@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carnivore Feast - 100% Pure Non-Veg Restaurant & Delivery</title>
+  <meta name="description" content="Order sizzling Hyderabadi Biryani, Tandoori Chicken, Juicy Kebabs, Spicy Curries, Seafood & Gourmet Burgers. 100% Pure Non-Veg Specialist with fast delivery." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 1. TOP ANNOUNCEMENT PROMO TICKER -->
+  <div class="top-announcement">
+    <span class="badge">🔥 SPECIAL OFFER</span>
+    <span>Use Code <strong>NONVEG50</strong> to get 50% OFF up to ₹150 on your first order!</span>
+    <span style="opacity: 0.6;">|</span>
+    <span>Free Delivery on orders above ₹500!</span>
+  </div>
+
+  <!-- 2. MAIN SWIGGY-STYLE HEADER -->
+  <header class="main-header">
+    <div class="header-container">
+      
+      <!-- Brand Logo -->
+      <div class="brand-wrapper">
+        <a href="#" class="brand-logo">
+          <div class="logo-icon">🍖</div>
+          <div class="logo-text">
+            <span class="title">CARNIVORE <span>FEAST</span></span>
+            <span class="subtitle">🔴 100% PURE NON-VEG</span>
+          </div>
+        </a>
+
+        <!-- Location Selector -->
+        <div class="location-widget" onclick="openAddressModal()">
+          <span class="loc-icon">📍</span>
+          <div class="loc-info">
+            <span class="loc-label">DELIVER TO</span>
+            <span class="loc-val" id="headerLocText">Select Delivery Address</span>
+          </div>
+          <span class="loc-arrow">▼</span>
+        </div>
+      </div>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <!-- Live Search -->
+        <div class="search-bar-header">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="headerSearchInput" placeholder="Search biryani, kebabs, chicken..." />
+        </div>
+
+        <!-- Orders History Link -->
+        <button class="nav-btn" onclick="openOrdersHistoryModal()" title="View Order History">
+          <span>📜</span>
+          <span>My Orders</span>
+        </button>
+
+        <!-- Cart Drawer Toggle -->
+        <button class="nav-btn nav-btn-cart" id="headerCartBtn">
+          <span>🛒</span>
+          <span>Cart</span>
+          <span class="cart-count-badge" id="headerCartCount">0</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- 3. TEMPTING HERO BANNER CAROUSEL -->
+  <section class="hero-section">
+    <div class="carousel-container">
+      <div class="carousel-slides" id="carouselSlides">
+        
+        <!-- Slide 1 -->
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1400&q=80');">
+          <div class="slide-content">
+            <span class="slide-tag">🔥 CHEF'S SIGNATURE</span>
+            <h1 class="slide-title">Royal Hyderabadi <span>Mutton Biryani</span></h1>
+            <p class="slide-desc">Slow dum-cooked tender mutton marinated in rich spices & saffron basmati rice.</p>
+            <button class="hero-cta-btn" onclick="handleAddClick('nv-101')">
+              Order Now - ₹380 <span style="font-size: 1.1rem;">➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=1400&q=80');">
+          <div class="slide-content">
+            <span class="slide-tag">🌶️ SIZZLING TANDOOR</span>
+            <h1 class="slide-title">Charcoal Grilled <span>Fiery Tandoori</span></h1>
+            <p class="slide-desc">Juicy whole chicken marinated in red spicy hung curd, charred over clay oven.</p>
+            <button class="hero-cta-btn" onclick="handleAddClick('nv-102')">
+              Order Tandoori Feast <span style="font-size: 1.1rem;">➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1400&q=80');">
+          <div class="slide-content">
+            <span class="slide-tag">🍔 MONSTER BURGER</span>
+            <h1 class="slide-title">Double Bacon & <span>Juicy Chicken</span></h1>
+            <p class="slide-desc">Loaded with crispy bacon, melted cheddar cheese & secret honey BBQ sauce.</p>
+            <button class="hero-cta-btn" onclick="handleAddClick('nv-103')">
+              Grab Monster Burger <span style="font-size: 1.1rem;">➔</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Controls -->
+      <button class="carousel-btn prev" id="prevSlideBtn">❮</button>
+      <button class="carousel-btn next" id="nextSlideBtn">❯</button>
+      <div class="carousel-indicators" id="carouselIndicators"></div>
+    </div>
+  </section>
+
+  <!-- 4. CATEGORIES HORIZONTAL SCROLL -->
+  <section class="categories-section">
+    <div class="section-header">
+      <h2 class="section-title">Explore Non-Veg Categories 🍗</h2>
+    </div>
+
+    <div class="category-scroll">
+      <div class="cat-card active" data-cat="all">
+        <div class="cat-icon-wrap">🔥</div>
+        <span class="cat-name">All Items</span>
+      </div>
+      <div class="cat-card" data-cat="biryani">
+        <div class="cat-icon-wrap">🍲</div>
+        <span class="cat-name">Biryani Dum</span>
+      </div>
+      <div class="cat-card" data-cat="kebabs">
+        <div class="cat-icon-wrap">🍢</div>
+        <span class="cat-name">Tandoori & Kebabs</span>
+      </div>
+      <div class="cat-card" data-cat="burgers">
+        <div class="cat-icon-wrap">🍔</div>
+        <span class="cat-name">Burgers & Wraps</span>
+      </div>
+      <div class="cat-card" data-cat="curries">
+        <div class="cat-icon-wrap">🥘</div>
+        <span class="cat-name">Rich Curries</span>
+      </div>
+      <div class="cat-card" data-cat="seafood">
+        <div class="cat-icon-wrap">🦐</div>
+        <span class="cat-name">Fresh Seafood</span>
+      </div>
+      <div class="cat-card" data-cat="bbq">
+        <div class="cat-icon-wrap">🥩</div>
+        <span class="cat-name">BBQ & Ribs</span>
+      </div>
+      <div class="cat-card" data-cat="starters">
+        <div class="cat-icon-wrap">🍗</div>
+        <span class="cat-name">Starters & Wings</span>
+      </div>
+      <div class="cat-card" data-cat="combos">
+        <div class="cat-icon-wrap">👑</div>
+        <span class="cat-name">Royal Combos</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. FILTER & SORT CONTROLS BAR -->
+  <section class="controls-section">
+    <div class="controls-bar">
+      
+      <div class="filter-pills">
+        <button class="filter-pill active" data-filter="all">All Dishes</button>
+        <button class="filter-pill" data-filter="bestseller">🔥 Bestsellers</button>
+        <button class="filter-pill" data-filter="top-rated">⭐ Top Rated (4.8+)</button>
+        <button class="filter-pill" data-filter="spicy">🌶️ Extra Spicy</button>
+        <button class="filter-pill" data-filter="fast">⚡ Fast Prep (&lt;20m)</button>
+      </div>
+
+      <div class="pure-nonveg-badge-banner">
+        <span class="non-veg-badge"></span>
+        <span>100% Pure Non-Veg Guaranteed</span>
+      </div>
+
+      <div class="sort-wrapper">
+        <label for="sortSelect">Sort By:</label>
+        <select id="sortSelect">
+          <option value="relevance">Relevance</option>
+          <option value="rating">Customer Rating</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+        </select>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 6. MAIN MENU GRID -->
+  <main class="menu-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="font-size: 1.4rem;">Menu Selection</h2>
+      <span id="dishCountLabel" style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;"></span>
+    </div>
+
+    <div class="dish-grid" id="dishGrid">
+      <!-- Dynamic Dish Cards Injected via JS -->
+    </div>
+  </main>
+
+  <!-- 7. SLIDE-OUT CART DRAWER -->
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3>🛒 Your Non-Veg Feast Cart</h3>
+      <button class="close-drawer-btn" id="closeCartDrawerBtn">✕</button>
+    </div>
+
+    <div class="cart-body">
+      <!-- Empty State -->
+      <div class="cart-empty-state" id="cartEmptyState" style="display: none;">
+        <span class="icon">🍗</span>
+        <h3>Your Cart is Empty</h3>
+        <p>Looks like you haven't added any juicy biryani or kebabs yet!</p>
+      </div>
+
+      <!-- Active Cart Content -->
+      <div id="cartContentArea" style="display: flex; flex-direction: column; gap: 16px; width: 100%;">
+        <div class="cart-items-list" id="cartItemsList"></div>
+
+        <!-- Promo Coupon Input -->
+        <div class="promo-box">
+          <div class="promo-input-group">
+            <input type="text" id="couponCodeInput" placeholder="Enter Coupon (e.g. NONVEG50)" />
+            <button class="apply-coupon-btn" onclick="applyCouponCode()">Apply</button>
+          </div>
+          <div id="appliedCouponTag"></div>
+        </div>
+
+        <!-- Delivery Tip Selector -->
+        <div class="tip-box">
+          <div class="tip-title">🚴 Driver Tip (Thank your delivery partner)</div>
+          <div class="tip-options">
+            <button class="tip-btn active" data-tip="20" onclick="setDeliveryTip(20)">₹20</button>
+            <button class="tip-btn" data-tip="30" onclick="setDeliveryTip(30)">₹30</button>
+            <button class="tip-btn" data-tip="50" onclick="setDeliveryTip(50)">₹50</button>
+          </div>
+        </div>
+
+        <!-- Bill Breakdown -->
+        <div class="bill-summary">
+          <div class="bill-row">
+            <span>Item Subtotal</span>
+            <span id="billSubtotal">₹0</span>
+          </div>
+          <div class="bill-row">
+            <span>Delivery Partner Fee</span>
+            <span id="billDelivery">₹40</span>
+          </div>
+          <div class="bill-row">
+            <span>Taxes & Packaging (5%)</span>
+            <span>₹25</span>
+          </div>
+          <div class="bill-row discount">
+            <span>Discount Applied</span>
+            <span id="billDiscount">-₹0</span>
+          </div>
+          <div class="bill-row total">
+            <span>Grand Total</span>
+            <span id="billGrandTotal">₹0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-footer">
+      <button class="checkout-btn" onclick="openCheckoutModal()">
+        <span>Proceed to Checkout</span>
+        <span id="checkoutBtnTotal">₹0 ➔</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- 8. MODALS -->
+
+  <!-- A. Customization Modal -->
+  <div class="modal-wrapper" id="customModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Customize Your Dish 🌶️</h4>
+        <button class="close-modal-btn" onclick="closeCustomizationModal()">✕</button>
+      </div>
+      <div class="modal-body" id="customModalBody">
+        <!-- Dynamic Options Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- B. Delivery Address Modal -->
+  <div class="modal-wrapper" id="addressModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Select Delivery Location 📍</h4>
+        <button class="close-modal-btn" onclick="document.getElementById('addressModal').classList.remove('active')">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="addressForm" onsubmit="saveAddressFromModal(event)">
+          <div class="form-group">
+            <label>Street Address & House / Flat No.</label>
+            <input type="text" id="inputStreet" placeholder="e.g. Flat 402, Royal Palms, Street 12" required />
+          </div>
+          <div class="form-group">
+            <label>City / Locality</label>
+            <input type="text" id="inputCity" placeholder="e.g. Downtown" required />
+          </div>
+          <div class="form-group">
+            <label>Nearby Landmark (Optional)</label>
+            <input type="text" id="inputLandmark" placeholder="e.g. Near Central Park" />
+          </div>
+          <button type="submit" class="hero-cta-btn" style="width: 100%; justify-content: center; margin-top: 10px;">
+            Save & Update Address
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- C. Checkout & Payment Modal -->
+  <div class="modal-wrapper" id="checkoutModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Checkout & Place Order 🛍️</h4>
+        <button class="close-modal-btn" onclick="closeCheckoutModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <form onsubmit="handlePlaceOrder(event)">
+          <h5 style="color: var(--accent-gold); margin-bottom: 12px; font-size: 0.95rem;">Delivery Information</h5>
+          <div class="form-group">
+            <label>Delivery Address</label>
+            <input type="text" id="checkoutStreet" required />
+          </div>
+          <div style="display: flex; gap: 12px;">
+            <div class="form-group" style="flex: 1;">
+              <label>City</label>
+              <input type="text" id="checkoutCity" required />
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label>Landmark</label>
+              <input type="text" id="checkoutLandmark" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Phone Number for Delivery Updates</label>
+            <input type="tel" id="checkoutPhone" placeholder="+91 98765 43210" required />
+          </div>
+
+          <h5 style="color: var(--accent-gold); margin: 20px 0 12px; font-size: 0.95rem;">Select Payment Method</h5>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+            <label class="option-label">
+              <span>💵 Cash on Delivery (COD)</span>
+              <input type="radio" name="payMethod" value="Cash on Delivery" checked />
+            </label>
+            <label class="option-label">
+              <span>⚡ UPI / GPay / PhonePe (Simulated)</span>
+              <input type="radio" name="payMethod" value="UPI Instant" />
+            </label>
+            <label class="option-label">
+              <span>💳 Credit / Debit Card</span>
+              <input type="radio" name="payMethod" value="Card Payment" />
+            </label>
+          </div>
+
+          <button type="submit" class="hero-cta-btn" style="width: 100%; justify-content: center;">
+            🔥 Confirm & Place Order Now
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- D. Live Order Tracker Modal -->
+  <div class="modal-wrapper" id="trackerModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Order Progress 🚴</h4>
+        <button class="close-modal-btn" onclick="closeTrackerModal()">✕</button>
+      </div>
+      <div class="modal-body" id="trackerModalBody">
+        <!-- Dynamic Stepper via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- E. Past Orders History Modal -->
+  <div class="modal-wrapper" id="ordersHistoryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>My Past Feast Orders 📜</h4>
+        <button class="close-modal-btn" onclick="document.getElementById('ordersHistoryModal').classList.remove('active')">✕</button>
+      </div>
+      <div class="modal-body" id="ordersHistoryBody">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. TOAST CONTAINERS -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- 10. FOOTER -->
+  <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-col">
+        <div class="brand-logo" style="margin-bottom: 14px;">
+          <div class="logo-icon">🍖</div>
+          <div class="logo-text">
+            <span class="title">CARNIVORE <span>FEAST</span></span>
+            <span class="subtitle">🔴 100% PURE NON-VEG</span>
+          </div>
+        </div>
+        <p>The ultimate destination for authentic non-veg lovers. Serving Hyderabadi Dum Biryanis, Clay Tandoori Kebabs, Gourmet Chicken Burgers, and Seafood Delicacies cooked with 100% fresh premium ingredients.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="#" onclick="state.activeCategory='biryani'; renderMenuGrid();">Hyderabadi Dum Biryani</a></li>
+          <li><a href="#" onclick="state.activeCategory='kebabs'; renderMenuGrid();">Charcoal Tandoori & Kebabs</a></li>
+          <li><a href="#" onclick="state.activeCategory='burgers'; renderMenuGrid();">Gourmet Bacon & Burgers</a></li>
+          <li><a href="#" onclick="state.activeCategory='seafood'; renderMenuGrid();">Spicy Tiger Prawns & Seafood</a></li>
+          <li><a href="#" onclick="openOrdersHistoryModal();">Track & Manage Orders</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Hygiene & Quality Assurance</h4>
+        <p>✔ 100% Fresh Halal & Hand-picked Meat<br/>
+           ✔ Prepared in 5-Star Hygienic Kitchens<br/>
+           ✔ Zero Preservatives & Artificial Colors<br/>
+           ✔ Temperature Controlled Express Delivery</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Carnivore Feast Pure Non-Veg Restaurant. Built with Pure HTML, CSS, JS & LocalStorage Persistence.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
