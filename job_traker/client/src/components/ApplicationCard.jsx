@@ -92,7 +92,7 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
   ];
 
   return (
-    <div className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-xl hover:border-indigo-500/40 transition-all duration-300 flex flex-col justify-between">
+    <div className="group relative bg-white border border-slate-200/80 hover:border-indigo-400/80 rounded-2xl p-5 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
       <div>
         {/* Top Header */}
         <div className="flex items-start justify-between gap-3 mb-4">
@@ -103,23 +103,23 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
                 src={companyLogo}
                 alt={companyName}
                 onError={() => setImgError(true)}
-                className="w-12 h-12 rounded-xl object-contain bg-slate-50 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 shadow-xs"
+                className="w-12 h-12 rounded-xl object-contain bg-slate-50 p-1 border border-slate-200 shadow-2xs"
               />
             ) : (
               <div
                 className={`w-12 h-12 rounded-xl ${getAvatarBg(
                   companyName
-                )} text-white font-bold text-lg flex items-center justify-center shadow-md shadow-indigo-500/10`}
+                )} text-white font-extrabold text-lg flex items-center justify-center shadow-md shadow-indigo-600/15`}
               >
                 {initials}
               </div>
             )}
 
             <div>
-              <h4 className="font-bold text-slate-900 dark:text-slate-100 text-base leading-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+              <h4 className="font-extrabold text-slate-900 text-base leading-tight group-hover:text-indigo-600 transition-colors">
                 {jobRole}
               </h4>
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mt-0.5">
+              <p className="text-sm font-semibold text-slate-500 mt-0.5">
                 {companyName}
               </p>
             </div>
@@ -129,15 +129,15 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
           <div className="relative">
             <button
               onClick={() => setShowStatusDropdown(!showStatusDropdown)}
-              className="flex items-center gap-1 focus:outline-none"
+              className="flex items-center gap-1 focus:outline-none cursor-pointer"
             >
               <StatusBadge status={status} />
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" />
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 hover:text-slate-600" />
             </button>
 
             {showStatusDropdown && (
-              <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-30 py-1.5 animate-in fade-in zoom-in-95">
-                <p className="px-3 py-1 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+              <div className="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl z-30 py-1.5 animate-in fade-in zoom-in-95">
+                <p className="px-3 py-1 text-[10px] uppercase font-extrabold text-slate-400 tracking-wider">
                   Change Status
                 </p>
                 {statuses.map((st) => (
@@ -147,8 +147,8 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
                       onStatusChange && onStatusChange(_id, st);
                       setShowStatusDropdown(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 text-xs font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors flex items-center justify-between ${
-                      st === status ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-700 dark:text-slate-300'
+                    className={`w-full text-left px-3 py-1.5 text-xs font-medium hover:bg-indigo-50/70 transition-colors flex items-center justify-between cursor-pointer ${
+                      st === status ? 'text-indigo-600 font-bold' : 'text-slate-700'
                     }`}
                   >
                     {st}
@@ -161,28 +161,28 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
         </div>
 
         {/* Info Grid */}
-        <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-slate-600 dark:text-slate-400 my-3">
+        <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-slate-600 my-3">
           <div className="flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="truncate">{location || 'Remote'}</span>
+            <span className="truncate font-medium">{location || 'Remote'}</span>
           </div>
 
           <div className="flex items-center gap-1.5">
             <Briefcase className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] font-medium">
+            <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-700">
               {workType}
             </span>
           </div>
 
           <div className="flex items-center gap-1.5">
             <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span>Applied: {formattedAppliedDate}</span>
+            <span className="font-medium">Applied: {formattedAppliedDate}</span>
           </div>
 
           {salary && (
             <div className="flex items-center gap-1.5">
               <DollarSign className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-              <span className="font-semibold text-emerald-600 dark:text-emerald-400 truncate">
+              <span className="font-bold text-emerald-600 truncate">
                 {salary}
               </span>
             </div>
@@ -191,29 +191,29 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
 
         {/* Upcoming Interview Tag */}
         {formattedInterviewDate && (
-          <div className="mt-3 p-2 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800/50 flex items-center gap-2 text-xs text-purple-700 dark:text-purple-300 font-medium">
-            <Clock className="w-3.5 h-3.5 text-purple-500 animate-pulse shrink-0" />
+          <div className="mt-3 p-2 rounded-xl bg-purple-50 border border-purple-200 flex items-center gap-2 text-xs text-purple-700 font-semibold">
+            <Clock className="w-3.5 h-3.5 text-purple-600 animate-pulse shrink-0" />
             <span className="truncate">Interview: {formattedInterviewDate}</span>
           </div>
         )}
 
         {/* Notes Preview */}
         {notes && (
-          <p className="mt-3 text-xs text-slate-500 dark:text-slate-400 line-clamp-2 italic bg-slate-50 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+          <p className="mt-3 text-xs text-slate-600 line-clamp-2 italic bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 font-serif">
             "{notes}"
           </p>
         )}
       </div>
 
       {/* Card Actions Footer */}
-      <div className="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+      <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
         <div className="flex items-center gap-1">
           {jobUrl && (
             <a
               href={jobUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors"
               title="Visit Job Listing"
             >
               <ExternalLink className="w-4 h-4" />
@@ -224,7 +224,7 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
         <div className="flex items-center gap-1">
           <Link
             to={`/applications/${_id}`}
-            className="p-1.5 text-slate-500 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-1 text-xs font-medium"
+            className="p-1.5 text-slate-600 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors flex items-center gap-1 text-xs font-bold"
             title="View Details"
           >
             <Eye className="w-4 h-4" />
@@ -233,7 +233,7 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
 
           <Link
             to={`/applications/${_id}/edit`}
-            className="p-1.5 text-slate-500 hover:text-amber-600 dark:hover:text-amber-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-slate-500 hover:text-amber-600 rounded-lg hover:bg-amber-50 transition-colors"
             title="Edit Application"
           >
             <Edit2 className="w-4 h-4" />
@@ -241,7 +241,7 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
 
           <button
             onClick={() => onDelete && onDelete(_id, companyName, jobRole)}
-            className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
             title="Delete Application"
           >
             <Trash2 className="w-4 h-4" />
@@ -253,3 +253,4 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
 };
 
 export default ApplicationCard;
+

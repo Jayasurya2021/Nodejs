@@ -81,13 +81,13 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="p-8 max-w-xl mx-auto text-center bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-2xl my-12">
+      <div className="p-8 max-w-xl mx-auto text-center bg-rose-50 border border-rose-200 rounded-3xl my-12 shadow-xs">
         <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-3" />
-        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Server Connection Error</h3>
-        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{error}</p>
+        <h3 className="text-lg font-extrabold text-slate-900">Server Connection Error</h3>
+        <p className="text-sm text-slate-600 mt-1 font-medium">{error}</p>
         <button
           onClick={fetchDashboardData}
-          className="mt-4 px-5 py-2 rounded-xl bg-rose-600 text-white text-sm font-semibold hover:bg-rose-700 transition-colors"
+          className="mt-4 px-5 py-2.5 rounded-xl bg-rose-600 text-white text-sm font-bold hover:bg-rose-700 transition-all cursor-pointer shadow-xs"
         >
           Retry Loading
         </button>
@@ -110,26 +110,26 @@ const Dashboard = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Top Banner & Large CTA */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-900 via-indigo-800 to-purple-900 rounded-3xl p-6 md:p-8 text-white shadow-xl">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-700 via-indigo-600 to-purple-700 rounded-3xl p-6 md:p-8 text-white shadow-xl">
+        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-2xl space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-indigo-200 text-xs font-semibold backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-white text-xs font-bold backdrop-blur-md border border-white/20">
               <Sparkles className="w-3.5 h-3.5" />
               SaaS Job Application Tracker
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight leading-tight">
               Track your applications, land your dream role.
             </h1>
-            <p className="text-indigo-200 text-sm">
+            <p className="text-indigo-100 text-sm font-medium">
               Keep full control over your job hunt: observe active interviews, follow-ups, and daily stats in real-time.
             </p>
           </div>
 
           <button
             onClick={() => navigate('/add-application')}
-            className="w-full md:w-auto px-6 py-3.5 rounded-2xl bg-white hover:bg-indigo-50 text-indigo-900 font-extrabold text-base shadow-xl hover:shadow-2xl hover:scale-[1.03] transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
+            className="w-full md:w-auto px-6 py-3.5 rounded-2xl bg-white hover:bg-indigo-50 text-indigo-900 font-extrabold text-sm shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
           >
             <PlusCircle className="w-5 h-5 text-indigo-600" />
             + Add Job Application
@@ -192,15 +192,15 @@ const Dashboard = () => {
       {/* Grid: Upcoming Interviews & Status Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Upcoming Interviews Widget */}
-        <div className="lg:col-span-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+        <div className="lg:col-span-1 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base flex items-center gap-2">
-              <Clock className="w-5 h-5 text-purple-500" />
+            <h3 className="font-extrabold text-slate-900 text-base flex items-center gap-2">
+              <Clock className="w-5 h-5 text-purple-600" />
               Upcoming Interviews
             </h3>
             <button
               onClick={() => navigate('/interviews')}
-              className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
             >
               View All <ArrowRight className="w-3 h-3" />
             </button>
@@ -212,19 +212,19 @@ const Dashboard = () => {
                 <div
                   key={app._id}
                   onClick={() => navigate(`/applications/${app._id}`)}
-                  className="p-3.5 rounded-xl bg-purple-50/50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800/50 hover:border-purple-400 transition-all cursor-pointer"
+                  className="p-3.5 rounded-2xl bg-purple-50/70 border border-purple-200/80 hover:border-purple-400 transition-all cursor-pointer shadow-2xs hover:shadow-xs"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="font-bold text-slate-900 dark:text-slate-100 text-sm">
+                    <h4 className="font-extrabold text-slate-900 text-sm">
                       {app.jobRole}
                     </h4>
                     <StatusBadge status={app.status} size="small" />
                   </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-0.5">
+                  <p className="text-xs text-slate-600 font-semibold mt-0.5">
                     {app.companyName}
                   </p>
-                  <div className="flex items-center gap-1.5 text-xs text-purple-600 dark:text-purple-300 mt-2 font-semibold">
-                    <Calendar className="w-3.5 h-3.5" />
+                  <div className="flex items-center gap-1.5 text-xs text-purple-700 mt-2 font-bold">
+                    <Calendar className="w-3.5 h-3.5 text-purple-600" />
                     {new Date(app.interviewDate).toLocaleString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -236,16 +236,16 @@ const Dashboard = () => {
               ))}
             </div>
           ) : (
-            <div className="py-8 text-center text-slate-400 dark:text-slate-500 text-xs">
+            <div className="py-8 text-center text-slate-400 text-xs font-medium">
               No upcoming interviews scheduled right now.
             </div>
           )}
         </div>
 
         {/* Status Pipeline Statistics Bar */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
-          <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-indigo-500" />
+        <div className="lg:col-span-2 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs">
+          <h3 className="font-extrabold text-slate-900 text-base mb-4 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-indigo-600" />
             Application Status Breakdown
           </h3>
 
@@ -254,10 +254,10 @@ const Dashboard = () => {
               <div
                 key={st}
                 onClick={() => navigate(`/applications?status=${encodeURIComponent(st)}`)}
-                className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 hover:border-indigo-400 transition-colors cursor-pointer"
+                className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 hover:border-indigo-300 hover:bg-indigo-50/30 transition-all cursor-pointer"
               >
                 <StatusBadge status={st} size="small" />
-                <p className="text-2xl font-extrabold text-slate-900 dark:text-slate-100 mt-2">
+                <p className="text-2xl font-black text-slate-900 mt-2.5">
                   {count}
                 </p>
               </div>
@@ -270,17 +270,17 @@ const Dashboard = () => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+            <h3 className="text-xl font-extrabold text-slate-900">
               Recent Job Applications
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 font-medium">
               Latest jobs you added to your tracker
             </p>
           </div>
 
           <button
             onClick={() => navigate('/applications')}
-            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+            className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
           >
             View All Applications <ArrowRight className="w-3.5 h-3.5" />
           </button>
@@ -298,15 +298,15 @@ const Dashboard = () => {
             ))}
           </div>
         ) : (
-          <div className="p-12 text-center bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 rounded-3xl space-y-3">
+          <div className="p-12 text-center bg-white border border-dashed border-slate-300 rounded-3xl space-y-3">
             <Briefcase className="w-12 h-12 text-slate-400 mx-auto" />
-            <h4 className="font-bold text-slate-700 dark:text-slate-300">No applications found</h4>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            <h4 className="font-extrabold text-slate-800">No applications found</h4>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto font-medium">
               Get started by tracking your first job application today!
             </p>
             <button
               onClick={() => navigate('/add-application')}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm shadow-md"
+              className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shadow-md shadow-indigo-600/20 cursor-pointer"
             >
               + Add Job Application
             </button>
@@ -320,3 +320,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

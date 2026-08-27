@@ -82,18 +82,23 @@ const Applications = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
-            Job Applications
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Manage, filter, and track all your target jobs and interviews ({applications.length} items)
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Job Applications
+            </h1>
+            <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold">
+              {applications.length}
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+            Manage, filter, and track all your target jobs and interview pipelines
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={fetchApplications}
-            className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+            className="p-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
             title="Refresh List"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -101,7 +106,7 @@ const Applications = () => {
 
           <button
             onClick={() => navigate('/add-application')}
-            className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md shadow-indigo-600/20 transition-all flex items-center gap-2"
+            className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
           >
             <Plus className="w-4 h-4" />
             + Add Application
@@ -139,19 +144,19 @@ const Applications = () => {
           ))}
         </div>
       ) : (
-        <div className="p-12 text-center bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 rounded-3xl space-y-4 my-6">
+        <div className="p-12 text-center bg-white border border-dashed border-slate-300 rounded-3xl space-y-4 my-6 shadow-xs">
           <Briefcase className="w-12 h-12 text-slate-400 mx-auto" />
           <div>
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+            <h3 className="text-lg font-extrabold text-slate-800">
               No matching applications found
             </h3>
-            <p className="text-xs text-slate-500 max-w-md mx-auto mt-1">
+            <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 font-medium">
               Try adjusting your search query, status, or work type filters to discover more results.
             </p>
           </div>
           <button
             onClick={handleResetFilters}
-            className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold hover:bg-slate-200 transition-colors"
+            className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold hover:bg-slate-200 transition-colors cursor-pointer"
           >
             Clear All Filters
           </button>
@@ -164,3 +169,4 @@ const Applications = () => {
 };
 
 export default Applications;
+

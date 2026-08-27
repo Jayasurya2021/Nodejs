@@ -19,7 +19,7 @@ const StatusTimeline = ({ currentStatus, onSelectStatus }) => {
     <div className="w-full py-4 overflow-x-auto">
       <div className="min-w-[640px] flex items-center justify-between relative px-4">
         {/* Background Connector Line */}
-        <div className="absolute left-8 right-8 top-5 h-1 bg-slate-200 dark:bg-slate-800 -z-0" />
+        <div className="absolute left-8 right-8 top-5 h-1 bg-slate-200 -z-0" />
 
         {/* Highlighted Active Progress Line */}
         {!isRejected && currentIndex >= 0 && (
@@ -45,10 +45,10 @@ const StatusTimeline = ({ currentStatus, onSelectStatus }) => {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 ${
                   isCurrent
-                    ? 'bg-indigo-600 text-white ring-4 ring-indigo-500/30 scale-110 shadow-lg shadow-indigo-500/20'
+                    ? 'bg-indigo-600 text-white ring-4 ring-indigo-500/20 scale-110 shadow-lg shadow-indigo-600/20'
                     : isPassed
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 text-slate-500 dark:text-slate-400 group-hover:border-indigo-400'
+                    ? 'bg-emerald-500 text-white shadow-xs'
+                    : 'bg-white border-2 border-slate-300 text-slate-500 group-hover:border-indigo-400'
                 }`}
               >
                 {isPassed ? (
@@ -62,10 +62,10 @@ const StatusTimeline = ({ currentStatus, onSelectStatus }) => {
               <span
                 className={`mt-2.5 text-xs font-medium text-center transition-colors max-w-[80px] ${
                   isCurrent
-                    ? 'text-indigo-600 dark:text-indigo-400 font-bold'
+                    ? 'text-indigo-600 font-extrabold'
                     : isPassed
-                    ? 'text-emerald-600 dark:text-emerald-400'
-                    : 'text-slate-500 dark:text-slate-400'
+                    ? 'text-emerald-700 font-bold'
+                    : 'text-slate-500'
                 }`}
               >
                 {stage}
@@ -80,10 +80,10 @@ const StatusTimeline = ({ currentStatus, onSelectStatus }) => {
             className="flex flex-col items-center relative z-10 cursor-pointer"
             onClick={() => onSelectStatus && onSelectStatus('Rejected')}
           >
-            <div className="w-10 h-10 rounded-full bg-rose-600 text-white flex items-center justify-center ring-4 ring-rose-500/30 scale-110 shadow-lg">
+            <div className="w-10 h-10 rounded-full bg-rose-600 text-white flex items-center justify-center ring-4 ring-rose-500/20 scale-110 shadow-md">
               <XCircle className="w-5 h-5 stroke-[2.5]" />
             </div>
-            <span className="mt-2.5 text-xs font-bold text-rose-500">
+            <span className="mt-2.5 text-xs font-extrabold text-rose-600">
               Rejected
             </span>
           </div>
@@ -94,3 +94,4 @@ const StatusTimeline = ({ currentStatus, onSelectStatus }) => {
 };
 
 export default StatusTimeline;
+

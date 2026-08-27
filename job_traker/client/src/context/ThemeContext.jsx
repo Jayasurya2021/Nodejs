@@ -1,24 +1,18 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('job_tracker_theme') || 'dark';
-  });
+  const theme = 'light';
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    localStorage.setItem('job_tracker_theme', theme);
-  }, [theme]);
+    root.classList.remove('dark');
+    localStorage.setItem('job_tracker_theme', 'light');
+  }, []);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+    // Light mode locked
   };
 
   return (
@@ -29,3 +23,4 @@ export const ThemeProvider = ({ children }) => {
 };
 
 export const useTheme = () => useContext(ThemeContext);
+
