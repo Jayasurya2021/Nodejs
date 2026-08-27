@@ -3,7 +3,7 @@ import { UserContext } from './userProvider'
 
 function Profile() {
 
-    const {name } = useContext(UserContext)
+  const { name } = useContext(UserContext)
 
   return (
     <div>
