@@ -24,11 +24,11 @@ import { applicationAPI } from '../services/api';
 // Helper to generate logo background
 const getAvatarBg = (name = '') => {
   const colors = [
-    'bg-[#2b2621]',
-    'bg-[#c4b49f]',
-    'bg-[#5c5247]',
-    'bg-[#8c7a6b]',
-    'bg-[#4a3f35]',
+    'bg-[#1f3144]',
+    'bg-[#4a708b]',
+    'bg-[#35526c]',
+    'bg-[#2b4156]',
+    'bg-[#172533]',
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -287,38 +287,38 @@ const AddApplication = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-300">
       {/* Header Bar */}
-      <div className="flex items-center justify-between pb-4 border-b border-[#d9d2c9]">
+      <div className="flex items-center justify-between pb-4 border-b border-[#d8cebd]">
         <div>
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1 text-xs font-bold text-[#5c5247] hover:text-[#2b2621] transition-colors mb-1 cursor-pointer"
+            className="inline-flex items-center gap-1 text-xs font-bold text-[#4a708b] hover:text-[#1f3144] transition-colors mb-1 cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to Dashboard
           </button>
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-[#c4b49f] text-[#2b2621]">
-              <Sparkles className="w-5 h-5" />
+            <div className="p-2 rounded-xl bg-[#1f3144] text-[#efe6d5]">
+              <Sparkles className="w-5 h-5 text-amber-300" />
             </div>
-            <h1 className="text-2xl font-black text-[#2b2621] tracking-tight">
+            <h1 className="text-2xl font-black text-[#1f3144] tracking-tight">
               Smart Instant Job Tracker
             </h1>
           </div>
-          <p className="text-xs text-[#5c5247] font-medium mt-1">
+          <p className="text-xs text-[#4a708b] font-medium mt-1">
             Upload a job screenshot image or paste a job URL to automatically extract details & track in 1 click!
           </p>
         </div>
       </div>
 
       {/* Ingestion Hub Options Tabs */}
-      <div className="bg-[#faf9f6] border border-[#d9d2c9] rounded-3xl p-6 shadow-xs space-y-6">
-        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#efe9e3] border border-[#d9d2c9]">
+      <div className="bg-white border border-[#d8cebd] rounded-3xl p-6 shadow-xs space-y-6">
+        <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#f4f0e6] border border-[#d8cebd]">
           <button
             onClick={() => setActiveTab('url')}
             className={`flex-1 py-3 px-4 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer ${
               activeTab === 'url'
-                ? 'bg-[#2b2621] text-[#efe9e3] shadow-md shadow-[#2b2621]/20'
-                : 'text-[#5c5247] hover:text-[#2b2621]'
+                ? 'bg-[#1f3144] text-[#efe6d5] shadow-md shadow-[#1f3144]/20'
+                : 'text-[#4a708b] hover:text-[#1f3144]'
             }`}
           >
             <LinkIcon className="w-4 h-4" />
@@ -329,8 +329,8 @@ const AddApplication = () => {
             onClick={() => setActiveTab('image')}
             className={`flex-1 py-3 px-4 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer ${
               activeTab === 'image'
-                ? 'bg-[#2b2621] text-[#efe9e3] shadow-md shadow-[#2b2621]/20'
-                : 'text-[#5c5247] hover:text-[#2b2621]'
+                ? 'bg-[#1f3144] text-[#efe6d5] shadow-md shadow-[#1f3144]/20'
+                : 'text-[#4a708b] hover:text-[#1f3144]'
             }`}
           >
             <ImageIcon className="w-4 h-4" />
@@ -341,8 +341,8 @@ const AddApplication = () => {
             onClick={() => setActiveTab('text')}
             className={`flex-1 py-3 px-4 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 transition-all cursor-pointer ${
               activeTab === 'text'
-                ? 'bg-[#2b2621] text-[#efe9e3] shadow-md shadow-[#2b2621]/20'
-                : 'text-[#5c5247] hover:text-[#2b2621]'
+                ? 'bg-[#1f3144] text-[#efe6d5] shadow-md shadow-[#1f3144]/20'
+                : 'text-[#4a708b] hover:text-[#1f3144]'
             }`}
           >
             <FileText className="w-4 h-4" />
@@ -353,26 +353,26 @@ const AddApplication = () => {
         {/* Tab 1: URL Parser Input */}
         {activeTab === 'url' && (
           <div className="space-y-4">
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#5c5247]">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#4a708b]">
               Paste LinkedIn, Indeed, Glassdoor or Company Job Posting Link
             </label>
 
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1">
-                <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5c5247]" />
+                <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a708b]" />
                 <input
                   type="url"
                   placeholder="https://www.linkedin.com/jobs/view/..."
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3 rounded-2xl bg-[#efe9e3]/60 border border-[#d9d2c9] text-xs text-[#2b2621] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#c4b49f]/30 focus:border-[#c4b49f] font-semibold transition-all"
+                  className="w-full pl-11 pr-4 py-3 rounded-2xl bg-[#f4f0e6]/60 border border-[#d8cebd] text-xs text-[#1f3144] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#4a708b]/30 focus:border-[#4a708b] font-semibold transition-all"
                 />
               </div>
 
               <button
                 onClick={() => analyzeUrlInput()}
                 disabled={isAnalyzing}
-                className="px-6 py-3 rounded-2xl bg-[#2b2621] hover:bg-[#1a1714] text-[#faf9f6] font-bold text-xs shadow-md shadow-[#2b2621]/20 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
+                className="px-6 py-3 rounded-2xl bg-[#1f3144] hover:bg-[#142230] text-[#efe6d5] font-bold text-xs shadow-md shadow-[#1f3144]/20 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
               >
                 <Zap className="w-4 h-4 text-amber-300" />
                 {isAnalyzing ? 'Extracting...' : '✨ Extract & Analyze Job'}
@@ -381,13 +381,13 @@ const AddApplication = () => {
 
             {/* Quick Sample Preset Buttons */}
             <div className="flex items-center gap-2 pt-2 text-xs">
-              <span className="text-[#5c5247] font-bold">Try Sample Links:</span>
+              <span className="text-[#4a708b] font-bold">Try Sample Links:</span>
               <button
                 onClick={() => {
                   setUrlInput('https://stripe.com/jobs/full-stack-engineer');
                   analyzeUrlInput('https://stripe.com/jobs/full-stack-engineer');
                 }}
-                className="px-2.5 py-1 rounded-lg bg-[#c4b49f]/20 hover:bg-[#c4b49f] text-[#2b2621] font-bold transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-lg bg-[#8eb0c0]/20 hover:bg-[#8eb0c0] hover:text-[#1f3144] text-[#1f3144] font-bold transition-colors cursor-pointer"
               >
                 Stripe Job
               </button>
@@ -396,7 +396,7 @@ const AddApplication = () => {
                   setUrlInput('https://careers.google.com/jobs/senior-frontend-engineer');
                   analyzeUrlInput('https://careers.google.com/jobs/senior-frontend-engineer');
                 }}
-                className="px-2.5 py-1 rounded-lg bg-[#c4b49f]/20 hover:bg-[#c4b49f] text-[#2b2621] font-bold transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-lg bg-[#8eb0c0]/20 hover:bg-[#8eb0c0] hover:text-[#1f3144] text-[#1f3144] font-bold transition-colors cursor-pointer"
               >
                 Google Job
               </button>
@@ -405,7 +405,7 @@ const AddApplication = () => {
                   setUrlInput('https://careers.microsoft.com/jobs/product-designer');
                   analyzeUrlInput('https://careers.microsoft.com/jobs/product-designer');
                 }}
-                className="px-2.5 py-1 rounded-lg bg-[#c4b49f]/20 hover:bg-[#c4b49f] text-[#2b2621] font-bold transition-colors cursor-pointer"
+                className="px-2.5 py-1 rounded-lg bg-[#8eb0c0]/20 hover:bg-[#8eb0c0] hover:text-[#1f3144] text-[#1f3144] font-bold transition-colors cursor-pointer"
               >
                 Microsoft Job
               </button>
@@ -419,17 +419,17 @@ const AddApplication = () => {
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
-              className="border-2 border-dashed border-[#c4b49f] hover:border-[#2b2621] bg-[#efe9e3]/50 rounded-3xl p-8 text-center transition-all flex flex-col items-center justify-center space-y-3 cursor-pointer"
+              className="border-2 border-dashed border-[#8eb0c0] hover:border-[#1f3144] bg-[#efe6d5]/40 rounded-3xl p-8 text-center transition-all flex flex-col items-center justify-center space-y-3 cursor-pointer"
             >
               {imagePreview ? (
                 <div className="space-y-3">
                   <img
                     src={imagePreview}
                     alt="Job Screenshot"
-                    className="max-h-48 rounded-2xl border border-[#d9d2c9] shadow-md mx-auto object-contain"
+                    className="max-h-48 rounded-2xl border border-[#d8cebd] shadow-md mx-auto object-contain"
                   />
                   <div className="flex items-center justify-center gap-2">
-                    <span className="text-xs font-bold text-[#2b2621]">
+                    <span className="text-xs font-bold text-[#1f3144]">
                       {imageFile ? imageFile.name : 'Job_Screenshot.png'}
                     </span>
                     <button
@@ -448,18 +448,18 @@ const AddApplication = () => {
                 </div>
               ) : (
                 <>
-                  <div className="w-14 h-14 rounded-2xl bg-[#c4b49f] text-[#2b2621] flex items-center justify-center shadow-inner">
+                  <div className="w-14 h-14 rounded-2xl bg-[#1f3144] text-[#efe6d5] flex items-center justify-center shadow-inner">
                     <UploadCloud className="w-7 h-7" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-extrabold text-[#2b2621]">
+                    <h3 className="text-sm font-extrabold text-[#1f3144]">
                       Drag & Drop Job Screenshot Image Here
                     </h3>
-                    <p className="text-xs text-[#5c5247] font-medium mt-1">
+                    <p className="text-xs text-[#4a708b] font-medium mt-1">
                       Upload .PNG, .JPG, or .WEBP job posting screenshots from LinkedIn, Indeed, etc.
                     </p>
                   </div>
-                  <label className="px-4 py-2.5 rounded-xl bg-[#2b2621] hover:bg-[#1a1714] text-[#faf9f6] font-bold text-xs shadow-md cursor-pointer inline-flex items-center gap-2">
+                  <label className="px-4 py-2.5 rounded-xl bg-[#1f3144] hover:bg-[#142230] text-[#efe6d5] font-bold text-xs shadow-md cursor-pointer inline-flex items-center gap-2">
                     <ImageIcon className="w-4 h-4" />
                     <span>Browse Image File</span>
                     <input
@@ -478,7 +478,7 @@ const AddApplication = () => {
         {/* Tab 3: Paste Job Description Text */}
         {activeTab === 'text' && (
           <div className="space-y-4">
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#5c5247]">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#4a708b]">
               Paste Copy-Pasted Job Description Text
             </label>
 
@@ -487,13 +487,13 @@ const AddApplication = () => {
               placeholder="Paste raw job posting text here (e.g. 'We are hiring a Senior Frontend Developer at Stripe in San Francisco...')..."
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
-              className="w-full p-4 rounded-2xl bg-[#efe9e3]/60 border border-[#d9d2c9] text-xs text-[#2b2621] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#c4b49f]/30 focus:border-[#c4b49f] font-semibold transition-all"
+              className="w-full p-4 rounded-2xl bg-[#f4f0e6]/60 border border-[#d8cebd] text-xs text-[#1f3144] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#4a708b]/30 focus:border-[#4a708b] font-semibold transition-all"
             />
 
             <button
               onClick={() => analyzeTextInput()}
               disabled={isAnalyzing}
-              className="w-full py-3 rounded-2xl bg-[#2b2621] hover:bg-[#1a1714] text-[#faf9f6] font-bold text-xs shadow-md shadow-[#2b2621]/20 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
+              className="w-full py-3 rounded-2xl bg-[#1f3144] hover:bg-[#142230] text-[#efe6d5] font-bold text-xs shadow-md shadow-[#1f3144]/20 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
             >
               <Zap className="w-4 h-4 text-amber-300" />
               {isAnalyzing ? 'Parsing Text...' : '✨ Parse Job Text & Extract Details'}
@@ -504,12 +504,12 @@ const AddApplication = () => {
 
       {/* Analyzing Loading Spinner Animation */}
       {isAnalyzing && (
-        <div className="p-8 text-center bg-[#faf9f6] border border-[#d9d2c9] rounded-3xl space-y-3 shadow-xs animate-pulse">
-          <div className="w-10 h-10 border-4 border-[#2b2621] border-t-transparent rounded-full animate-spin mx-auto" />
-          <h3 className="text-sm font-extrabold text-[#2b2621]">
+        <div className="p-8 text-center bg-white border border-[#d8cebd] rounded-3xl space-y-3 shadow-xs animate-pulse">
+          <div className="w-10 h-10 border-4 border-[#1f3144] border-t-transparent rounded-full animate-spin mx-auto" />
+          <h3 className="text-sm font-extrabold text-[#1f3144]">
             ✨ AI Parsing Company, Role, Salary & Description...
           </h3>
-          <p className="text-xs text-[#5c5247] font-medium">
+          <p className="text-xs text-[#4a708b] font-medium">
             Analyzing text structure, compensation ranges, and location criteria
           </p>
         </div>
@@ -517,9 +517,9 @@ const AddApplication = () => {
 
       {/* Extracted Job Card & 1-Click Track Button */}
       {extractedData && !isAnalyzing && (
-        <div className="bg-[#faf9f6] border border-[#d9d2c9] rounded-3xl p-6 sm:p-8 shadow-md space-y-6 animate-in slide-in-from-bottom-4 duration-300">
+        <div className="bg-white border border-[#d8cebd] rounded-3xl p-6 sm:p-8 shadow-md space-y-6 animate-in slide-in-from-bottom-4 duration-300">
           {/* Header Card Status */}
-          <div className="flex items-center justify-between pb-4 border-b border-[#d9d2c9]">
+          <div className="flex items-center justify-between pb-4 border-b border-[#d8cebd]">
             <div className="flex items-center gap-3">
               {extractedData.companyLogo ? (
                 <img
@@ -531,20 +531,20 @@ const AddApplication = () => {
                 <div
                   className={`w-12 h-12 rounded-2xl ${getAvatarBg(
                     extractedData.companyName
-                  )} text-[#faf9f6] font-bold text-lg flex items-center justify-center shadow-xs`}
+                  )} text-[#efe6d5] font-bold text-lg flex items-center justify-center shadow-xs`}
                 >
                   {extractedData.companyName ? extractedData.companyName[0] : 'J'}
                 </div>
               )}
               <div>
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#efe9e3] border border-[#d9d2c9] text-[#2b2621] text-[10px] font-extrabold">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#f4f0e6] border border-[#d8cebd] text-[#1f3144] text-[10px] font-extrabold">
                   <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                   AI Extracted • 98% High Confidence
                 </div>
-                <h2 className="text-xl font-black text-[#2b2621] tracking-tight mt-0.5">
+                <h2 className="text-xl font-black text-[#1f3144] tracking-tight mt-0.5">
                   {extractedData.jobRole}
                 </h2>
-                <p className="text-xs font-black text-[#5c5247]">
+                <p className="text-xs font-black text-[#4a708b]">
                   {extractedData.companyName}
                 </p>
               </div>
@@ -554,7 +554,7 @@ const AddApplication = () => {
             <button
               onClick={handleSaveApplication}
               disabled={isSubmitting}
-              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#2b2621] via-[#3a332c] to-[#c4b49f] text-[#faf9f6] font-black text-sm shadow-lg shadow-[#2b2621]/20 flex items-center gap-2 transition-all hover:scale-[1.02] cursor-pointer disabled:opacity-50"
+              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#1f3144] via-[#2d465e] to-[#4a708b] text-[#efe6d5] font-black text-sm shadow-lg shadow-[#1f3144]/20 flex items-center gap-2 transition-all hover:scale-[1.02] cursor-pointer disabled:opacity-50"
             >
               <Sparkles className="w-4 h-4 text-amber-300" />
               {isSubmitting ? 'Adding...' : '✨ Add & Track Job Application'}
@@ -564,69 +564,69 @@ const AddApplication = () => {
           {/* Quick Editable Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             <div>
-              <label className="block font-bold text-[#5c5247] mb-1">Company Name</label>
+              <label className="block font-bold text-[#4a708b] mb-1">Company Name</label>
               <div className="relative">
-                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5c5247]" />
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a708b]" />
                 <input
                   type="text"
                   name="companyName"
                   value={extractedData.companyName}
                   onChange={handleFieldChange}
-                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#efe9e3]/60 border border-[#d9d2c9] font-black text-[#2b2621]"
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] font-black text-[#1f3144]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-bold text-[#5c5247] mb-1">Job Role / Title</label>
+              <label className="block font-bold text-[#4a708b] mb-1">Job Role / Title</label>
               <div className="relative">
-                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5c5247]" />
+                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a708b]" />
                 <input
                   type="text"
                   name="jobRole"
                   value={extractedData.jobRole}
                   onChange={handleFieldChange}
-                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#efe9e3]/60 border border-[#d9d2c9] font-black text-[#2b2621]"
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] font-black text-[#1f3144]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-bold text-[#5c5247] mb-1">Salary Range</label>
+              <label className="block font-bold text-[#4a708b] mb-1">Salary Range</label>
               <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5c5247]" />
+                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a708b]" />
                 <input
                   type="text"
                   name="salary"
                   value={extractedData.salary}
                   onChange={handleFieldChange}
-                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#efe9e3]/60 border border-[#d9d2c9] font-bold text-[#2b2621]"
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] font-bold text-[#1f3144]"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block font-bold text-[#5c5247] mb-1">Location & Work Type</label>
+              <label className="block font-bold text-[#4a708b] mb-1">Location & Work Type</label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5c5247]" />
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a708b]" />
                 <input
                   type="text"
                   name="location"
                   value={extractedData.location}
                   onChange={handleFieldChange}
-                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#efe9e3]/60 border border-[#d9d2c9] font-bold text-[#2b2621]"
+                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] font-bold text-[#1f3144]"
                 />
               </div>
             </div>
 
             <div className="md:col-span-2">
-              <label className="block font-bold text-[#5c5247] mb-1">Extracted Description Snippet</label>
+              <label className="block font-bold text-[#4a708b] mb-1">Extracted Description Snippet</label>
               <textarea
                 rows="3"
                 name="jobDescription"
                 value={extractedData.jobDescription}
                 onChange={handleFieldChange}
-                className="w-full p-3 rounded-xl bg-[#efe9e3]/60 border border-[#d9d2c9] font-medium text-slate-800 text-xs"
+                className="w-full p-3 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] font-medium text-slate-800 text-xs"
               />
             </div>
           </div>
@@ -635,21 +635,21 @@ const AddApplication = () => {
           <div>
             <button
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="text-xs font-black text-[#2b2621] hover:text-[#c4b49f] flex items-center gap-1 cursor-pointer"
+              className="text-xs font-black text-[#1f3144] hover:text-[#4a708b] flex items-center gap-1 cursor-pointer"
             >
               {showAdvanced ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               {showAdvanced ? 'Hide Extra Fields' : 'Fine-Tune All Fields (Optional)'}
             </button>
 
             {showAdvanced && (
-              <div className="mt-4 pt-4 border-t border-[#d9d2c9] grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div className="mt-4 pt-4 border-t border-[#d8cebd] grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="block font-bold text-[#5c5247] mb-1">Application Status</label>
+                  <label className="block font-bold text-[#4a708b] mb-1">Application Status</label>
                   <select
                     name="status"
                     value={extractedData.status}
                     onChange={handleFieldChange}
-                    className="w-full p-2 rounded-xl bg-[#efe9e3]/60 border border-[#d9d2c9] font-bold text-[#2b2621]"
+                    className="w-full p-2 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] font-bold text-[#1f3144]"
                   >
                     <option value="Wishlist">Wishlist</option>
                     <option value="Applied">Applied</option>
@@ -661,13 +661,13 @@ const AddApplication = () => {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-[#5c5247] mb-1">Applied Date</label>
+                  <label className="block font-bold text-[#4a708b] mb-1">Applied Date</label>
                   <input
                     type="date"
                     name="appliedDate"
                     value={extractedData.appliedDate}
                     onChange={handleFieldChange}
-                    className="w-full p-2 rounded-xl bg-[#efe9e3]/60 border border-[#d9d2c9] font-bold text-[#2b2621]"
+                    className="w-full p-2 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] font-bold text-[#1f3144]"
                   />
                 </div>
               </div>
@@ -686,6 +686,7 @@ const AddApplication = () => {
 };
 
 export default AddApplication;
+
 
 
 
