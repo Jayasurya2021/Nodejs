@@ -56,20 +56,20 @@ const Wishlist = () => {
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="flex items-center justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-            <Bookmark className="w-4 h-4" /> Bookmarks
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <Bookmark className="w-4 h-4 text-indigo-600" /> Bookmarks
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             Job Wishlist ({wishlist.length})
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
             Saved job postings you intend to customize resumes for and submit
           </p>
         </div>
 
         <button
           onClick={() => navigate('/add-application')}
-          className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-md flex items-center gap-1.5"
+          className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 flex items-center gap-1.5 cursor-pointer hover:scale-[1.01]"
         >
           <Plus className="w-4 h-4" /> Save New Wishlist Job
         </button>
@@ -91,12 +91,12 @@ const Wishlist = () => {
           ))}
         </div>
       ) : (
-        <div className="p-12 text-center bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 rounded-3xl space-y-3">
+        <div className="p-12 text-center bg-white border border-dashed border-slate-300 rounded-3xl space-y-3 shadow-xs">
           <Bookmark className="w-12 h-12 text-slate-400 mx-auto" />
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+          <h3 className="text-lg font-extrabold text-slate-800">
             Your wishlist is empty
           </h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+          <p className="text-xs text-slate-500 max-w-sm mx-auto font-medium">
             Save interesting job openings as Wishlist items before applying!
           </p>
         </div>
@@ -108,3 +108,4 @@ const Wishlist = () => {
 };
 
 export default Wishlist;
+

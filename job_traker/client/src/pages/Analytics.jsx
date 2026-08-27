@@ -19,14 +19,14 @@ import StatsCard from '../components/StatsCard';
 import { applicationAPI } from '../services/api';
 
 const COLORS = [
-  '#6366f1', // Wishlist / Indigo
-  '#3b82f6', // Applied / Blue
-  '#06b6d4', // Screening / Cyan
-  '#a855f7', // Interview / Purple
-  '#6366f1', // Technical Round
-  '#f59e0b', // Final Round / Amber
-  '#10b981', // Offer / Emerald
-  '#f43f5e', // Rejected / Rose
+  '#6366f1', // Indigo
+  '#3b82f6', // Blue
+  '#06b6d4', // Cyan
+  '#a855f7', // Purple
+  '#818cf8', // Technical
+  '#f59e0b', // Amber
+  '#10b981', // Emerald
+  '#f43f5e', // Rose
 ];
 
 const Analytics = () => {
@@ -79,13 +79,13 @@ const Analytics = () => {
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Header */}
       <div>
-        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-1">
+        <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">
           <BarChart3 className="w-4 h-4" /> Application Performance Insights
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
           Analytics & Conversion Metrics
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
           Visualize your job hunt efficiency, interview progression, and offer rates
         </p>
       </div>
@@ -125,8 +125,8 @@ const Analytics = () => {
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Activity Timeline Chart */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
-          <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base mb-4">
+        <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs">
+          <h3 className="font-extrabold text-slate-900 text-base mb-4">
             Daily Application Timeline (Last 14 Days)
           </h3>
           <div className="h-72 w-full">
@@ -134,20 +134,22 @@ const Analytics = () => {
               <AreaChart data={dailyActivity}>
                 <defs>
                   <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4} />
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#6366f1" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
-                <XAxis dataKey="label" stroke="#94a3b8" fontSize={11} />
-                <YAxis stroke="#94a3b8" fontSize={11} allowDecimals={false} />
+                <CartesianGrid strokeDasharray="3 3" opacity={0.3} stroke="#e2e8f0" />
+                <XAxis dataKey="label" stroke="#64748b" fontSize={11} fontWeight={600} />
+                <YAxis stroke="#64748b" fontSize={11} fontWeight={600} allowDecimals={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1e293b',
-                    borderColor: '#334155',
+                    backgroundColor: '#ffffff',
+                    borderColor: '#cbd5e1',
                     borderRadius: '0.75rem',
-                    color: '#fff',
+                    color: '#0f172a',
                     fontSize: '12px',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                    fontWeight: '600',
                   }}
                 />
                 <Area
@@ -165,8 +167,8 @@ const Analytics = () => {
         </div>
 
         {/* Applications by Status Donut Chart */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
-          <h3 className="font-bold text-slate-900 dark:text-slate-100 text-base mb-4">
+        <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs">
+          <h3 className="font-extrabold text-slate-900 text-base mb-4">
             Applications by Pipeline Stage
           </h3>
           {statusPieData.length > 0 ? (
@@ -188,21 +190,23 @@ const Analytics = () => {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#1e293b',
-                      borderColor: '#334155',
+                      backgroundColor: '#ffffff',
+                      borderColor: '#cbd5e1',
                       borderRadius: '0.75rem',
-                      color: '#fff',
+                      color: '#0f172a',
                       fontSize: '12px',
+                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                      fontWeight: '600',
                     }}
                   />
                   <Legend
-                    wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }}
+                    wrapperStyle={{ fontSize: '11px', paddingTop: '10px', fontWeight: '600' }}
                   />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="h-72 flex items-center justify-center text-xs text-slate-400">
+            <div className="h-72 flex items-center justify-center text-xs text-slate-400 font-medium">
               No status distribution data available.
             </div>
           )}
@@ -213,3 +217,4 @@ const Analytics = () => {
 };
 
 export default Analytics;
+

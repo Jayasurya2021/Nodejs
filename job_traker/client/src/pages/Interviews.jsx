@@ -62,13 +62,13 @@ const Interviews = () => {
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="flex items-center justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 mb-1">
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-purple-600 mb-1">
             <Video className="w-4 h-4" /> Interview Center
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             Scheduled Interviews ({interviews.length})
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
             All screening sessions, technical rounds, and final interviews in one hub
           </p>
         </div>
@@ -90,12 +90,12 @@ const Interviews = () => {
           ))}
         </div>
       ) : (
-        <div className="p-12 text-center bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 rounded-3xl space-y-3">
-          <Clock className="w-12 h-12 text-purple-400 mx-auto" />
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200">
+        <div className="p-12 text-center bg-white border border-dashed border-slate-300 rounded-3xl space-y-3 shadow-xs">
+          <Clock className="w-12 h-12 text-purple-500 mx-auto" />
+          <h3 className="text-lg font-extrabold text-slate-800">
             No active interviews scheduled yet
           </h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+          <p className="text-xs text-slate-500 max-w-sm mx-auto font-medium">
             When you update an application to Interview, Technical Round, or Final Round status, it will automatically appear here!
           </p>
         </div>
@@ -107,3 +107,4 @@ const Interviews = () => {
 };
 
 export default Interviews;
+

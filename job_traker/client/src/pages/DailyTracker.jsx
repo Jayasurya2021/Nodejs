@@ -81,13 +81,13 @@ const DailyTracker = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
       {/* Header Banner */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-sm">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+      <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
           <div>
-            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-1">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600 mb-1">
               <CalendarCheck className="w-4 h-4" /> Daily Activity Tracker
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900">
               {new Date().toLocaleDateString('en-US', {
                 weekday: 'long',
                 month: 'long',
@@ -103,10 +103,10 @@ const DailyTracker = () => {
               <button
                 key={f}
                 onClick={() => setDateFilter(f)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   dateFilter === f
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
                 {filterLabels[f]}
@@ -117,42 +117,42 @@ const DailyTracker = () => {
 
         {/* Custom Date Input if selected */}
         {dateFilter === 'custom' && (
-          <div className="mt-4 flex items-center gap-3 bg-slate-50 dark:bg-slate-800/80 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 max-w-sm">
+          <div className="mt-4 flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200 max-w-sm">
             <CalendarIcon className="w-4 h-4 text-slate-400" />
             <input
               type="date"
               value={customDate}
               onChange={(e) => setCustomDate(e.target.value)}
-              className="bg-transparent text-sm font-semibold text-slate-900 dark:text-slate-100 focus:outline-none"
+              className="bg-transparent text-sm font-bold text-slate-900 focus:outline-none"
             />
           </div>
         )}
 
         {/* Daily Summary Stats Pill Box */}
         <div className="grid grid-cols-3 gap-4 mt-6">
-          <div className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-800/60 text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
+          <div className="p-4.5 rounded-2xl bg-indigo-50/70 border border-indigo-100 text-center shadow-2xs">
+            <p className="text-xs font-extrabold uppercase tracking-wider text-indigo-600">
               Applications
             </p>
-            <p className="text-2xl sm:text-3xl font-extrabold text-indigo-900 dark:text-indigo-100 mt-1">
+            <p className="text-2xl sm:text-3xl font-black text-indigo-900 mt-1">
               {applications.length}
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/40 border border-purple-100 dark:border-purple-800/60 text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400">
+          <div className="p-4.5 rounded-2xl bg-purple-50/70 border border-purple-100 text-center shadow-2xs">
+            <p className="text-xs font-extrabold uppercase tracking-wider text-purple-600">
               Interviews
             </p>
-            <p className="text-2xl sm:text-3xl font-extrabold text-purple-900 dark:text-purple-100 mt-1">
+            <p className="text-2xl sm:text-3xl font-black text-purple-900 mt-1">
               {interviewCount}
             </p>
           </div>
 
-          <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-100 dark:border-emerald-800/60 text-center">
-            <p className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+          <div className="p-4.5 rounded-2xl bg-emerald-50/70 border border-emerald-100 text-center shadow-2xs">
+            <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-600">
               Offers
             </p>
-            <p className="text-2xl sm:text-3xl font-extrabold text-emerald-900 dark:text-emerald-100 mt-1">
+            <p className="text-2xl sm:text-3xl font-black text-emerald-900 mt-1">
               {offerCount}
             </p>
           </div>
@@ -162,12 +162,12 @@ const DailyTracker = () => {
       {/* Applications List for Selected Date */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+          <h2 className="text-lg font-extrabold text-slate-900">
             Activity Log ({applications.length})
           </h2>
           <button
             onClick={() => navigate('/add-application')}
-            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-sm flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 flex items-center gap-1.5 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" /> Log New Application
           </button>
@@ -189,11 +189,11 @@ const DailyTracker = () => {
             ))}
           </div>
         ) : (
-          <div className="p-12 text-center bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-800 rounded-3xl space-y-2">
-            <p className="font-semibold text-slate-700 dark:text-slate-300">
+          <div className="p-12 text-center bg-white border border-dashed border-slate-300 rounded-3xl space-y-2 shadow-xs">
+            <p className="font-extrabold text-slate-700">
               No application activity recorded for this period.
             </p>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 font-medium">
               Select another filter or add job applications submitted on this day.
             </p>
           </div>
@@ -206,3 +206,4 @@ const DailyTracker = () => {
 };
 
 export default DailyTracker;
+
