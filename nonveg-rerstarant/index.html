@@ -3,164 +3,129 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Carnivore Feast - Authentic Non-Veg Restaurant</title>
-  <meta name="description" content="Authentic Non-Veg Restaurant serving Crispy Chicken Cuts, Royal Dum Biryani, BBQ Ribs & Tandoori Kebabs." />
+  <title>Carnivore Feast - 100% Pure Non-Veg Restaurant & Delivery</title>
+  <meta name="description" content="Order sizzling Hyderabadi Dum Biryani, Tandoori Chicken, Juicy Kebabs, Spicy Curries & Seafood. 100% Pure Non-Veg Specialist." />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- 1. TOP ANNOUNCEMENT BAR -->
+  <!-- 1. TOP ANNOUNCEMENT PROMO TICKER -->
   <div class="top-announcement">
     <span class="badge">🔥 SPECIAL OFFER</span>
-    <span>Use code <strong>NONVEG50</strong> to get 50% OFF up to ₹150 on your first order!</span>
-    <span style="opacity: 0.5;">|</span>
-    <span>🚚 Free Express Delivery on orders above ₹500!</span>
+    <span>Use Code <strong>NONVEG50</strong> to get 50% OFF up to ₹150 on your first order!</span>
+    <span style="opacity: 0.6;">|</span>
+    <span>Free Express Delivery on orders above ₹500!</span>
   </div>
 
-  <!-- 2. HERO WRAPPER WITH FLOATING WHITE NAV BAR & BBQ RIB BANNER -->
-  <div class="hero-wrapper">
-    
-    <!-- Floating White Header Navbar -->
-    <div class="header-floating-container">
-      <nav class="nav-pill-bar">
-        
-        <!-- Brand Logo Left -->
-        <a href="#" class="brand-logo-wrap">
-          <div class="logo-skewer-icon">🍖</div>
-          <div class="brand-text-block">
-            <span class="brand-main-title">CARNIVORE FEAST</span>
-            <span class="brand-sub-title">AUTHENTIC NON-VEG RESTAURANT</span>
+  <!-- 2. MAIN SWIGGY-STYLE HEADER -->
+  <header class="main-header">
+    <div class="header-container">
+      
+      <!-- Brand Logo -->
+      <div class="brand-wrapper">
+        <a href="#" class="brand-logo">
+          <div class="logo-icon">🍖</div>
+          <div class="logo-text">
+            <span class="title">CARNIVORE <span>FEAST</span></span>
+            <span class="subtitle">🔴 100% PURE NON-VEG</span>
           </div>
         </a>
 
-        <!-- Center Links -->
-        <ul class="nav-menu-links">
-          <li><a href="#" class="active">HOME</a></li>
-          <li><a href="#menu-heading">MENU</a></li>
-          <li><a href="#" onclick="openOrdersHistoryModal()">MY ORDERS</a></li>
-          <li><a href="#" onclick="openAddressModal()">LOCATION</a></li>
-          <li><a href="#footer-section">CONTACT</a></li>
-        </ul>
-
-        <!-- Right Widgets -->
-        <div class="header-right-widgets">
-          <!-- Delivery Address Pill -->
-          <div class="address-pill" onclick="openAddressModal()">
-            <span>📍</span>
-            <span id="headerLocText">42 Gourmet Avenue, Sector 5, Downtown</span>
+        <!-- Location Selector -->
+        <div class="location-widget" onclick="openAddressModal()">
+          <span class="loc-icon">📍</span>
+          <div class="loc-info">
+            <span class="loc-label">DELIVER TO</span>
+            <span class="loc-val" id="headerLocText">Select Delivery Address</span>
           </div>
-
-          <!-- Theme Toggle -->
-          <button class="icon-btn-round" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Theme Mode">
-            <span id="themeToggleIcon">☀️</span>
-          </button>
-
-          <!-- Dark Green Cart Button -->
-          <button class="dark-cart-btn" id="headerCartBtn">
-            <span>🛒 Cart</span>
-            <span class="cart-circle-badge" id="headerCartCount">0</span>
-          </button>
+          <span class="loc-arrow">▼</span>
         </div>
-
-      </nav>
-    </div>
-
-    <!-- Hero Main Content Area -->
-    <div class="hero-content-area">
-      
-      <!-- Left Column Text Content -->
-      <div class="hero-left-col">
-        <div class="script-tagline">Authentic. Bold. Delicious.</div>
-        <h1 class="hero-title-carnivore">CARNIVORE</h1>
-        <h1 class="hero-title-feast">FEAST <span class="leaf-icon">🌿</span></h1>
-        
-        <div class="subtitle-line-badge">AUTHENTIC NON-VEG RESTAURANT</div>
-        
-        <p class="hero-description-text">
-          Savor crispy seasoned chicken cutlets, smoky grilled mutton ribs & hand-crafted dips cooked with authentic royal spices.
-        </p>
-
-        <!-- Buttons Group -->
-        <div class="hero-buttons-group">
-          <button class="orange-pill-btn" onclick="document.getElementById('menu-heading').scrollIntoView({behavior: 'smooth'})">
-            ORDER NOW <span>➔</span>
-          </button>
-          <button class="dark-outline-btn" onclick="document.getElementById('menu-heading').scrollIntoView({behavior: 'smooth'})">
-            EXPLORE MENU <span>🍴</span>
-          </button>
-        </div>
-
-        <!-- Trust Badges Bar -->
-        <div class="feature-badges-bar">
-          <div class="feature-badge-item">
-            <div class="feature-icon-circle">🌱</div>
-            <div class="feature-badge-text">
-              <span class="top">Fresh</span>
-              <span class="bottom">Ingredients</span>
-            </div>
-          </div>
-
-          <div class="feature-badge-item">
-            <div class="feature-icon-circle">🥘</div>
-            <div class="feature-badge-text">
-              <span class="top">Authentic</span>
-              <span class="bottom">Spices</span>
-            </div>
-          </div>
-
-          <div class="feature-badge-item">
-            <div class="feature-icon-circle">🛡️</div>
-            <div class="feature-badge-text">
-              <span class="top">Hygienic</span>
-              <span class="bottom">Kitchen</span>
-            </div>
-          </div>
-
-          <div class="feature-badge-item">
-            <div class="feature-icon-circle">🛵</div>
-            <div class="feature-badge-text">
-              <span class="top">Fast</span>
-              <span class="bottom">Delivery</span>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- Right Column Food Image -->
-      <div class="hero-right-col">
-        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80" alt="Smokey BBQ Ribs & Tomatoes" class="hero-food-img" />
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <!-- Live Search -->
+        <div class="search-bar-header">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="headerSearchInput" placeholder="Search biryani, kebabs, chicken..." />
+        </div>
+
+        <!-- Light / Dark Theme Switcher Button -->
+        <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Light / Dark Theme">
+          <span id="themeToggleIcon">☀️</span>
+        </button>
+
+        <!-- Orders History Link -->
+        <button class="nav-btn" onclick="openOrdersHistoryModal()" title="View Order History">
+          <span>📜</span>
+          <span>My Orders</span>
+        </button>
+
+        <!-- Cart Drawer Toggle -->
+        <button class="nav-btn nav-btn-cart" id="headerCartBtn">
+          <span>🛒</span>
+          <span>Cart</span>
+          <span class="cart-count-badge" id="headerCartCount">0</span>
+        </button>
       </div>
 
     </div>
+  </header>
 
-  </div>
-
-  <!-- 3. CRAVING BANNER CARD BELOW HERO -->
-  <section class="craving-banner-section">
-    <div class="craving-card">
-      <div class="craving-left">
-        <span class="scooter-img">🛵</span>
-        <div>
-          <div class="craving-title">Craving something <span>delicious?</span></div>
-          <div class="craving-sub">We deliver hot, fresh and fast right to your doorstep.</div>
+  <!-- 3. TEMPTING HERO BANNER CAROUSEL (RESTORED SWIGGY SLIDER) -->
+  <section class="hero-section">
+    <div class="carousel-container">
+      <div class="carousel-slides" id="carouselSlides">
+        
+        <!-- Slide 1 -->
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1400&q=80');">
+          <div class="slide-content">
+            <span class="slide-tag">🔥 CHEF'S SIGNATURE</span>
+            <h1 class="slide-title">Royal Hyderabadi <span>Mutton Biryani</span></h1>
+            <p class="slide-desc">Slow dum-cooked tender mutton marinated in rich spices & saffron basmati rice.</p>
+            <button class="hero-cta-btn" onclick="handleAddClick('nv-101')">
+              Order Now - ₹380 <span style="font-size: 1.1rem;">➔</span>
+            </button>
+          </div>
         </div>
+
+        <!-- Slide 2 -->
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=1400&q=80');">
+          <div class="slide-content">
+            <span class="slide-tag">🌶️ SIZZLING TANDOOR</span>
+            <h1 class="slide-title">Charcoal Grilled <span>Fiery Tandoori</span></h1>
+            <p class="slide-desc">Juicy whole chicken marinated in red spicy hung curd, charred over clay oven.</p>
+            <button class="hero-cta-btn" onclick="handleAddClick('nv-102')">
+              Order Tandoori Feast <span style="font-size: 1.1rem;">➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1400&q=80');">
+          <div class="slide-content">
+            <span class="slide-tag">🍔 MONSTER BURGER</span>
+            <h1 class="slide-title">Double Bacon & <span>Juicy Chicken</span></h1>
+            <p class="slide-desc">Loaded with crispy bacon, melted cheddar cheese & secret honey BBQ sauce.</p>
+            <button class="hero-cta-btn" onclick="handleAddClick('nv-103')">
+              Grab Monster Burger <span style="font-size: 1.1rem;">➔</span>
+            </button>
+          </div>
+        </div>
+
       </div>
 
-      <button class="order-green-btn" onclick="document.getElementById('menu-heading').scrollIntoView({behavior: 'smooth'})">
-        ORDER NOW <span>➔</span>
-      </button>
+      <!-- Controls -->
+      <button class="carousel-btn prev" id="prevSlideBtn">❮</button>
+      <button class="carousel-btn next" id="nextSlideBtn">❯</button>
+      <div class="carousel-indicators" id="carouselIndicators"></div>
     </div>
   </section>
 
-  <!-- 4. CATEGORIES HORIZONTAL SCROLL & LIGHT MENU BELOW -->
-  <section class="categories-section" id="menu-heading">
+  <!-- 4. CATEGORIES HORIZONTAL SCROLL -->
+  <section class="categories-section">
     <div class="section-header">
       <h2 class="section-title">Explore Non-Veg Categories 🍗</h2>
-      <div class="search-bar-header">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="headerSearchInput" placeholder="Search biryani, kebabs, chicken..." />
-      </div>
     </div>
 
     <div class="category-scroll">
@@ -351,7 +316,7 @@
             <label>Nearby Landmark (Optional)</label>
             <input type="text" id="inputLandmark" placeholder="e.g. Near Central Park" />
           </div>
-          <button type="submit" class="orange-pill-btn" style="width: 100%; justify-content: center; margin-top: 10px;">
+          <button type="submit" class="hero-cta-btn" style="width: 100%; justify-content: center; margin-top: 10px;">
             Save & Update Address
           </button>
         </form>
@@ -367,7 +332,7 @@
       </div>
       <div class="modal-body">
         <form onsubmit="handlePlaceOrder(event)">
-          <h5 style="color: #ff6b35; margin-bottom: 12px; font-size: 0.98rem; font-weight: 800;">Delivery Address</h5>
+          <h5 style="color: var(--primary); margin-bottom: 12px; font-size: 0.98rem; font-weight: 800;">Delivery Address</h5>
           <div class="form-group">
             <label>Full Address</label>
             <input type="text" id="checkoutStreet" required />
@@ -387,7 +352,7 @@
             <input type="tel" id="checkoutPhone" placeholder="+91 98765 43210" required />
           </div>
 
-          <h5 style="color: #ff6b35; margin: 20px 0 12px; font-size: 0.98rem; font-weight: 800;">Select Payment Method</h5>
+          <h5 style="color: var(--primary); margin: 20px 0 12px; font-size: 0.98rem; font-weight: 800;">Select Payment Method</h5>
           <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px;">
             <label class="option-label">
               <span>💵 Cash on Delivery (COD)</span>
@@ -403,7 +368,7 @@
             </label>
           </div>
 
-          <button type="submit" class="orange-pill-btn" style="width: 100%; justify-content: center;">
+          <button type="submit" class="hero-cta-btn" style="width: 100%; justify-content: center;">
             🔥 Confirm & Place Order Now
           </button>
         </form>
@@ -438,14 +403,14 @@
   <footer class="main-footer" id="footer-section">
     <div class="footer-container">
       <div class="footer-col">
-        <div class="brand-logo-wrap" style="display: flex; margin-bottom: 16px;">
-          <div class="logo-skewer-icon">🍖</div>
-          <div class="brand-text-block">
-            <span class="brand-main-title">CARNIVORE FEAST</span>
-            <span class="brand-sub-title">AUTHENTIC NON-VEG RESTAURANT</span>
+        <div class="brand-logo" style="margin-bottom: 16px;">
+          <div class="logo-icon">🍖</div>
+          <div class="logo-text">
+            <span class="title">CARNIVORE <span>FEAST</span></span>
+            <span class="subtitle">🔴 100% PURE NON-VEG</span>
           </div>
         </div>
-        <p>The ultimate destination for non-veg gourmets. Serving Hyderabadi Dum Biryanis, Clay Tandoori Kebabs, Crispy Cutlets & Fresh Seafood prepared with 100% fresh premium ingredients.</p>
+        <p>The ultimate destination for non-veg gourmets. Serving Hyderabadi Dum Biryanis, Clay Tandoori Kebabs, Gourmet Burgers & Fresh Seafood prepared with 100% fresh premium ingredients.</p>
       </div>
 
       <div class="footer-col">
