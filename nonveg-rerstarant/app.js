@@ -1,5 +1,5 @@
 /* ==========================================================================
-   REAL MEAT - 100% PURE LIGHT THEME (SUPER CLEAN SEPARATED PAGES APP JS)
+   REAL MEAT - 100% PURE LIGHT THEME (SUPER CLEAN SEPARATE AUTH & RICH REVIEWS JS)
    ========================================================================== */
 
 // --- 1. COMPREHENSIVE NON-VEG DISH DATABASE ---
@@ -530,7 +530,6 @@ function initStandaloneProductPage() {
 
   const reviews = StorageManager.getReviews(dish.id);
 
-  // ALWAYS FETCH 4 TO 6 RELEVANT CARDS!
   let relevantDishes = DISHES_DATA.filter(d => d.category === dish.category && d.id !== dish.id);
   if (relevantDishes.length < 4) {
     const additionalDishes = DISHES_DATA.filter(d => d.id !== dish.id && !relevantDishes.some(rd => rd.id === d.id));
@@ -578,47 +577,98 @@ function initStandaloneProductPage() {
       </div>
     </div>
 
-    <!-- Verified Customer Reviews Section -->
-    <div class="reviews-section">
-      <div class="reviews-title">
-        <span>Verified Customer Reviews (${reviews.length}) ⭐</span>
-        <span style="font-size: 0.92rem; color: var(--primary); font-weight: 800;">Average Rating: ${dish.rating} / 5</span>
-      </div>
+    <!-- RICH 2-COLUMN VERIFIED CUSTOMER REVIEWS DASHBOARD -->
+    <div class="reviews-section-card">
+      <div class="reviews-dashboard-grid">
+        
+        <!-- Left Column: Rating Breakdown Dashboard -->
+        <div class="rating-overview-card">
+          <div class="big-score-badge">${dish.rating}</div>
+          <div class="gold-stars-row">★★★★★</div>
+          <div class="total-reviews-sub">Based on ${dish.ratingCount}+ Verified Diners</div>
 
-      <div class="add-review-box">
-        <h5 style="margin-bottom: 8px; font-size: 0.98rem; font-weight: 800;">Write a Customer Review</h5>
-        <div class="star-rating-selector" id="starSelector">
-          <span onclick="setReviewRating(1)">★</span>
-          <span onclick="setReviewRating(2)">★</span>
-          <span onclick="setReviewRating(3)">★</span>
-          <span onclick="setReviewRating(4)">★</span>
-          <span onclick="setReviewRating(5)" class="active">★</span>
-        </div>
-        <form onsubmit="handleReviewSubmit(event, '${dish.id}')">
-          <div style="display: flex; gap: 12px; margin-bottom: 10px;">
-            <input type="text" id="reviewerName" placeholder="Your Name" required style="flex:1; padding: 10px 14px; border:1.5px solid var(--border-color); border-radius:8px;" />
-          </div>
-          <textarea id="reviewerComment" placeholder="Share your experience with this dish..." required rows="3" style="width:100%; padding:10px 14px; border:1.5px solid var(--border-color); border-radius:8px; margin-bottom: 12px;"></textarea>
-          <button type="submit" class="add-orange-pill-btn" style="font-size: 0.9rem; padding: 10px 24px;">
-            Submit Customer Review
-          </button>
-        </form>
-      </div>
-
-      <div class="reviews-list">
-        ${reviews.map(r => `
-          <div class="review-card">
-            <div class="review-header">
-              <span class="reviewer-name">👤 ${r.name} <span style="font-size: 0.75rem; color: #10b981; margin-left: 6px;">✔ Verified Buyer</span></span>
-              <span class="review-stars">★ ${r.rating}.0</span>
+          <div class="rating-bars-container">
+            <div class="rating-bar-row">
+              <span class="bar-label">5 Star</span>
+              <div class="bar-bg"><div class="bar-fill" style="width: 88%;"></div></div>
+              <span class="bar-percent">88%</span>
             </div>
-            <p class="review-comment">"${r.comment}"</p>
+            <div class="rating-bar-row">
+              <span class="bar-label">4 Star</span>
+              <div class="bar-bg"><div class="bar-fill" style="width: 9%;"></div></div>
+              <span class="bar-percent">9%</span>
+            </div>
+            <div class="rating-bar-row">
+              <span class="bar-label">3 Star</span>
+              <div class="bar-bg"><div class="bar-fill" style="width: 2%;"></div></div>
+              <span class="bar-percent">2%</span>
+            </div>
+            <div class="rating-bar-row">
+              <span class="bar-label">2 Star</span>
+              <div class="bar-bg"><div class="bar-fill" style="width: 1%;"></div></div>
+              <span class="bar-percent">1%</span>
+            </div>
+            <div class="rating-bar-row">
+              <span class="bar-label">1 Star</span>
+              <div class="bar-bg"><div class="bar-fill" style="width: 0%;"></div></div>
+              <span class="bar-percent">0%</span>
+            </div>
           </div>
-        `).join('')}
+        </div>
+
+        <!-- Right Column: Write Review & Customer Review Cards -->
+        <div class="reviews-feed-container">
+          
+          <!-- Write Review Interactive Form Card -->
+          <div class="write-review-card">
+            <h4>Write a Diner Review ✍️</h4>
+            <div class="interactive-star-selector" id="starSelector">
+              <span onclick="setReviewRating(1)">★</span>
+              <span onclick="setReviewRating(2)">★</span>
+              <span onclick="setReviewRating(3)">★</span>
+              <span onclick="setReviewRating(4)">★</span>
+              <span onclick="setReviewRating(5)" class="active">★</span>
+            </div>
+            <form onsubmit="handleReviewSubmit(event, '${dish.id}')">
+              <div class="form-group" style="margin-bottom: 12px;">
+                <input type="text" id="reviewerName" placeholder="Your Name (e.g. John Doe)" required />
+              </div>
+              <div class="form-group" style="margin-bottom: 16px;">
+                <textarea id="reviewerComment" placeholder="Share your juicy experience with this dish..." required rows="3"></textarea>
+              </div>
+              <button type="submit" class="palmshore-cta-btn" style="padding: 12px 28px; font-size: 0.92rem;">
+                Submit Customer Review ➔
+              </button>
+            </form>
+          </div>
+
+          <!-- Customer Review Cards List -->
+          <div class="review-cards-list">
+            <h4 style="font-size: 1.15rem; font-weight: 900; color: #1e293b; margin-bottom: 16px;">Recent Customer Feedback (${reviews.length})</h4>
+            ${reviews.map(r => `
+              <div class="modern-review-card">
+                <div class="review-card-top">
+                  <div class="reviewer-avatar">👤</div>
+                  <div>
+                    <div class="reviewer-name-row">
+                      <span class="r-name">${r.name}</span>
+                      <span class="verified-badge">✔ Verified Diner</span>
+                    </div>
+                    <div class="r-date">${r.date}</div>
+                  </div>
+                  <div class="review-score-pill">★ ${r.rating}.0</div>
+                </div>
+                <p class="review-body-text">"${r.comment}"</p>
+              </div>
+            `).join('')}
+          </div>
+
+        </div>
+
       </div>
     </div>
 
-    <!-- More Relevant Dishes Section (Proper 4-Card Grid) -->
+    <!-- More Relevant Dishes Section (4-Card Grid) -->
     <div class="relevant-products-section">
       <h4 style="font-size: 1.35rem; font-weight: 900; color: #1e293b; margin-bottom: 18px;">More Relevant Dishes You May Also Like 🍗</h4>
       <div class="relevant-grid-cards">
@@ -785,14 +835,87 @@ function handleReviewSubmit(e, dishId) {
   }
 }
 
-// --- 9. USER HEADER STATE ---
+// --- 9. SEPARATE AUTH BUTTONS & USER PROFILE DROPDOWN MENU HANDLERS ---
 function updateUserHeaderState() {
-  const btnText = document.getElementById('userAuthText');
+  const container = document.getElementById('headerAuthContainer');
+  if (!container) return;
+
   const user = StorageManager.getUser();
-  if (user && btnText) {
-    btnText.innerText = user.name;
-  } else if (btnText) {
-    btnText.innerText = 'Login / Register';
+
+  if (user) {
+    container.innerHTML = `
+      <div class="user-dropdown-container">
+        <button class="header-user-btn" onclick="toggleUserDropdown(event)">
+          <span>👤</span>
+          <span>${user.name}</span>
+          <span class="arrow-icon">▾</span>
+        </button>
+
+        <div class="user-dropdown-card" id="userDropdownCard">
+          <div class="user-info-box">
+            <div class="user-info-name">👤 ${user.name}</div>
+            <div class="user-info-email">${user.email || 'Verified Customer'}</div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" onclick="openOrdersHistoryModal(); closeUserDropdown();">
+            <span>📜</span> My Past Orders
+          </button>
+          <button class="dropdown-item" onclick="openAddressModal(); closeUserDropdown();">
+            <span>📍</span> Saved Address
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout-btn" onclick="handleLogout()">
+            <span>🚪</span> Logout Account
+          </button>
+        </div>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <div class="auth-buttons-group">
+        <a href="login.html" class="header-auth-btn login-btn">
+          <span>🔑</span> Login
+        </a>
+        <a href="register.html" class="header-auth-btn register-btn">
+          <span>✨</span> Register
+        </a>
+      </div>
+    `;
+  }
+}
+
+function toggleUserDropdown(e) {
+  e.stopPropagation();
+  const dropdown = document.getElementById('userDropdownCard');
+  if (dropdown) {
+    dropdown.classList.toggle('active');
+  }
+}
+
+function closeUserDropdown() {
+  const dropdown = document.getElementById('userDropdownCard');
+  if (dropdown) {
+    dropdown.classList.remove('active');
+  }
+}
+
+function handleLogout() {
+  closeUserDropdown();
+  const user = StorageManager.getUser();
+  StorageManager.clearUser();
+  state.user = null;
+  updateUserHeaderState();
+  showToast(`Logged out ${user ? user.name : ''}. Come back soon! 👋`);
+}
+
+function checkAuthPageAutoRedirect() {
+  const path = window.location.pathname;
+  const isAuthPage = path.includes('login.html') || path.includes('register.html');
+  const user = StorageManager.getUser();
+
+  if (isAuthPage && user) {
+    alert(`You are already logged in as ${user.name}! Redirecting to menu...`);
+    window.location.href = 'index.html';
   }
 }
 
@@ -1119,6 +1242,36 @@ function closeTrackerModal() {
   document.getElementById('trackerModal')?.classList.remove('active');
 }
 
+function openOrdersHistoryModal() {
+  const modal = document.getElementById('ordersHistoryModal');
+  const body = document.getElementById('ordersHistoryBody');
+  if (!modal || !body) return;
+
+  const orders = StorageManager.getOrders();
+  if (orders.length === 0) {
+    body.innerHTML = `
+      <div style="text-align:center; padding:30px; color:#64748b;">
+        <div style="font-size:2.5rem; margin-bottom:8px;">📜</div>
+        <p style="font-weight:700;">No past orders found yet!</p>
+      </div>
+    `;
+  } else {
+    body.innerHTML = orders.map(o => `
+      <div style="background:#faf7f4; border:1px solid #f0e6dd; border-radius:12px; padding:16px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:0.92rem; color:#1e293b;">
+          <span>Order #${o.orderId}</span>
+          <span style="color:var(--primary);">₹${o.grandTotal}</span>
+        </div>
+        <div style="font-size:0.8rem; color:#64748b; margin-top:4px;">${o.timestamp} • ${o.payMethod}</div>
+        <div style="font-size:0.84rem; font-weight:600; color:#334155; margin-top:8px;">
+          ${o.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
+        </div>
+      </div>
+    `).join('');
+  }
+  modal.classList.add('active');
+}
+
 // --- 13. FAVORITES & ADDRESS ---
 function toggleFavorite(dishId) {
   const idx = state.favorites.indexOf(dishId);
@@ -1199,7 +1352,14 @@ function renderAll() {
   }
 }
 
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.user-dropdown-container')) {
+    closeUserDropdown();
+  }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
+  checkAuthPageAutoRedirect();
   initCarousel();
   renderAll();
 
