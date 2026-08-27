@@ -2,11 +2,12 @@
 
 @layer base {
   :root {
-    --bg-primary: #f8fafc;
+    --bg-primary: #f5f6fa;
     --bg-secondary: #ffffff;
     --text-primary: #0f172a;
-    --text-secondary: #475569;
+    --text-secondary: #64748b;
     --border-color: #e2e8f0;
+    --brand-primary: #7c3aed;
   }
 
   body {
@@ -30,17 +31,18 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
+  background: rgba(148, 163, 184, 0.3);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.6);
+  background: rgba(100, 116, 139, 0.5);
 }
 
-/* Glassmorphism helpers for Light Theme */
+/* Glassmorphism helpers */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
 
