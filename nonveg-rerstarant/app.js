@@ -1,5 +1,5 @@
 /* ==========================================================================
-   REAL MEAT - 100% PURE LIGHT THEME (EXACT BRAND LOGO & REVIEWS/AUTH APP JS)
+   REAL MEAT - 100% PURE LIGHT THEME (SUPER CLEAN ORDER CUSTOMIZATION APP JS)
    ========================================================================== */
 
 // --- 1. COMPREHENSIVE NON-VEG DISH DATABASE ---
@@ -519,7 +519,121 @@ function renderMenuGrid() {
   }).join('');
 }
 
-// --- 6. AUTHENTICATION MODAL HANDLERS ---
+// --- 6. SUPER CLEAN & BEAUTIFUL ORDER CUSTOMIZATION MODAL UI ---
+function openCustomizationModal(dish) {
+  state.customizingDish = dish;
+  state.selectedPortion = dish.portions ? dish.portions[0] : null;
+  state.selectedSpice = dish.spiceLevels ? dish.spiceLevels[0] : null;
+
+  const modal = document.getElementById('customModal');
+  const body = document.getElementById('customModalBody');
+  if (!modal || !body) return;
+
+  renderCustomizationModalContent();
+  modal.classList.add('active');
+}
+
+function renderCustomizationModalContent() {
+  const dish = state.customizingDish;
+  const body = document.getElementById('customModalBody');
+  if (!dish || !body) return;
+
+  let totalPrice = dish.price;
+  if (state.selectedPortion && state.selectedPortion.priceOffset) {
+    totalPrice += state.selectedPortion.priceOffset;
+  }
+
+  body.innerHTML = `
+    <!-- Top Image Card Header -->
+    <div class="custom-dish-card-header">
+      <img src="${dish.image}" alt="${dish.name}" />
+      <div class="custom-dish-header-overlay">
+        <div>
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <span class="non-veg-badge"></span>
+            <span style="font-size: 0.75rem; font-weight: 800; color: #ffb703; text-transform: uppercase;">100% PURE REAL MEAT</span>
+          </div>
+          <div class="custom-dish-title-lg">${dish.name}</div>
+        </div>
+        <div class="custom-dish-base-price">₹${dish.price}</div>
+      </div>
+    </div>
+
+    <!-- Portion Selection -->
+    ${dish.portions ? `
+      <div class="custom-option-group">
+        <div class="custom-option-title"><span>🍖</span> Choose Portion Size</div>
+        <div class="custom-radio-cards-grid">
+          ${dish.portions.map((p, idx) => {
+            const isSelected = state.selectedPortion && state.selectedPortion.name === p.name;
+            return `
+              <div class="custom-radio-card ${isSelected ? 'active' : ''}" onclick="selectPortionOption(${idx})">
+                <span>${p.name}</span>
+                <span>${p.priceOffset ? `+₹${p.priceOffset}` : 'Base'}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    ` : ''}
+
+    <!-- Spice Level Selection -->
+    ${dish.spiceLevels ? `
+      <div class="custom-option-group">
+        <div class="custom-option-title"><span>🌶️</span> Select Spice Level</div>
+        <div class="custom-spice-pills-row">
+          ${dish.spiceLevels.map((s) => {
+            const isSelected = state.selectedSpice === s;
+            return `
+              <div class="custom-spice-pill ${isSelected ? 'active' : ''}" onclick="selectSpiceOption('${s}')">
+                ${s}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    ` : ''}
+
+    <!-- Sticky Footer Bar -->
+    <div class="custom-sticky-footer-bar">
+      <div>
+        <div class="custom-total-label">Item Total</div>
+        <div class="custom-total-price">₹${totalPrice}</div>
+      </div>
+      <button class="add-orange-pill-btn" style="font-size: 1.02rem; padding: 12px 32px;" onclick="confirmCustomization()">
+        🔥 Add to Cart
+      </button>
+    </div>
+  `;
+}
+
+function selectPortionOption(index) {
+  if (state.customizingDish && state.customizingDish.portions) {
+    state.selectedPortion = state.customizingDish.portions[index];
+    renderCustomizationModalContent();
+  }
+}
+
+function selectSpiceOption(spiceName) {
+  state.selectedSpice = spiceName;
+  renderCustomizationModalContent();
+}
+
+function closeCustomizationModal() {
+  document.getElementById('customModal')?.classList.remove('active');
+}
+
+function confirmCustomization() {
+  if (!state.customizingDish) return;
+  const options = {
+    portion: state.selectedPortion,
+    spice: state.selectedSpice
+  };
+  addToCart(state.customizingDish, 1, options);
+  closeCustomizationModal();
+}
+
+// --- 7. AUTHENTICATION HANDLERS ---
 function openAuthModal() {
   const modal = document.getElementById('authModal');
   if (state.user) {
@@ -587,7 +701,7 @@ function updateUserHeaderState() {
   }
 }
 
-// --- 7. PRODUCT DETAIL & REVIEWS MODAL ---
+// --- 8. PRODUCT DETAIL & REVIEWS MODAL ---
 function openProductDetailModal(dishId) {
   const dish = DISHES_DATA.find(d => d.id === dishId);
   if (!dish) return;
@@ -624,7 +738,7 @@ function openProductDetailModal(dishId) {
             <div style="font-size: 0.8rem; color: #64748b; font-weight: 700;">Price Per Portion</div>
             <div style="font-size: 1.6rem; font-weight: 900; color: #1e293b;">₹${dish.price}</div>
           </div>
-          <button class="add-orange-pill-btn" style="font-size: 1rem; padding: 12px 30px;" onclick="handleAddClick('${dish.id}')">
+          <button class="add-orange-pill-btn" style="font-size: 1rem; padding: 12px 30px;" onclick="closeProductDetailModal(); handleAddClick('${dish.id}')">
             + Add to Order
           </button>
         </div>
@@ -638,7 +752,6 @@ function openProductDetailModal(dishId) {
         <span style="font-size: 0.9rem; color: var(--primary); font-weight: 800;">Average Rating: ${dish.rating} / 5</span>
       </div>
 
-      <!-- Add Review Form -->
       <div class="add-review-box">
         <h5 style="margin-bottom: 8px; font-size: 0.95rem;">Write a Customer Review</h5>
         <div class="star-rating-selector" id="starSelector">
@@ -659,7 +772,6 @@ function openProductDetailModal(dishId) {
         </form>
       </div>
 
-      <!-- Reviews List -->
       <div class="reviews-list">
         ${reviews.map(r => `
           <div class="review-card">
@@ -683,7 +795,7 @@ function openProductDetailModal(dishId) {
               <img src="${rel.image}" style="width:100%; height:110px; object-fit:cover; border-radius:10px; margin-bottom:8px;" />
               <div style="font-size:0.9rem; font-weight:800; color:#1e293b; margin-bottom:4px;">${rel.name}</div>
               <div style="font-size:0.8rem; color:var(--primary); font-weight:800; margin-bottom:8px;">★ ${rel.rating} • ₹${rel.price}</div>
-              <button class="add-orange-pill-btn" style="font-size:0.78rem; padding:5px 12px; width:100%;" onclick="handleAddClick('${rel.id}')">Add +</button>
+              <button class="add-orange-pill-btn" style="font-size:0.78rem; padding:5px 12px; width:100%;" onclick="closeProductDetailModal(); handleAddClick('${rel.id}')">Add +</button>
             </div>
           `).join('')}
         </div>
@@ -724,7 +836,7 @@ function handleReviewSubmit(e, dishId) {
   }
 }
 
-// --- 8. CART & CUSTOMIZATION HANDLERS ---
+// --- 9. CART HANDLERS ---
 function handleAddClick(dishId) {
   const dish = DISHES_DATA.find(d => d.id === dishId);
   if (!dish) return;
@@ -788,71 +900,7 @@ function updateCartKeyQty(cartKey, change) {
   }
 }
 
-function openCustomizationModal(dish) {
-  state.customizingDish = dish;
-  state.selectedPortion = dish.portions ? dish.portions[0] : null;
-  state.selectedSpice = dish.spiceLevels ? dish.spiceLevels[0] : null;
-
-  const modal = document.getElementById('customModal');
-  const body = document.getElementById('customModalBody');
-  if (!modal || !body) return;
-
-  body.innerHTML = `
-    <div class="custom-dish-banner">
-      <img src="${dish.image}" class="custom-dish-img" alt="${dish.name}" />
-      <div>
-        <h4 style="font-size: 1.15rem; color: var(--text-primary); font-weight: 800;">${dish.name}</h4>
-        <p style="font-size: 0.88rem; color: var(--primary); font-weight: 800;">Base Price: ₹${dish.price}</p>
-      </div>
-    </div>
-
-    ${dish.portions ? `
-      <div class="custom-group">
-        <h5 class="custom-group-title">Choose Portion Size</h5>
-        ${dish.portions.map((p, i) => `
-          <label class="option-label">
-            <span>${p.name} ${p.priceOffset ? `(+₹${p.priceOffset})` : ''}</span>
-            <input type="radio" name="portionOpt" value="${i}" ${i === 0 ? 'checked' : ''} onchange="state.selectedPortion = state.customizingDish.portions[${i}]" />
-          </label>
-        `).join('')}
-      </div>
-    ` : ''}
-
-    ${dish.spiceLevels ? `
-      <div class="custom-group">
-        <h5 class="custom-group-title">Select Spice Level</h5>
-        ${dish.spiceLevels.map((s, i) => `
-          <label class="option-label">
-            <span>${s}</span>
-            <input type="radio" name="spiceOpt" value="${i}" ${i === 0 ? 'checked' : ''} onchange="state.selectedSpice = state.customizingDish.spiceLevels[${i}]" />
-          </label>
-        `).join('')}
-      </div>
-    ` : ''}
-
-    <button class="palmshore-cta-btn" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="confirmCustomization()">
-      Confirm & Add to Cart
-    </button>
-  `;
-
-  modal.classList.add('active');
-}
-
-function closeCustomizationModal() {
-  document.getElementById('customModal')?.classList.remove('active');
-}
-
-function confirmCustomization() {
-  if (!state.customizingDish) return;
-  const options = {
-    portion: state.selectedPortion,
-    spice: state.selectedSpice
-  };
-  addToCart(state.customizingDish, 1, options);
-  closeCustomizationModal();
-}
-
-// --- 9. CART DRAWER & BILLING ---
+// --- 10. CART DRAWER & BILLING ---
 function renderCartDrawer() {
   const listEl = document.getElementById('cartItemsList');
   const countBadge = document.getElementById('headerCartCount');
@@ -977,7 +1025,7 @@ function setDeliveryTip(amount) {
   renderCartDrawer();
 }
 
-// --- 10. CHECKOUT & TRACKER ---
+// --- 11. CHECKOUT & TRACKER ---
 function openCheckoutModal() {
   if (state.cart.length === 0) {
     showToast('Your cart is empty!');
@@ -1114,7 +1162,7 @@ function closeTrackerModal() {
   document.getElementById('trackerModal')?.classList.remove('active');
 }
 
-// --- 11. FAVORITES & PAST ORDERS ---
+// --- 12. FAVORITES & PAST ORDERS ---
 function toggleFavorite(dishId) {
   const idx = state.favorites.indexOf(dishId);
   if (idx > -1) {
@@ -1204,7 +1252,7 @@ function saveAddressFromModal(e) {
   }
 }
 
-// --- 12. TOAST & INITIALIZATION ---
+// --- 13. TOAST & INITIALIZATION ---
 function showToast(msg) {
   const container = document.getElementById('toastContainer');
   if (!container) return;

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   REAL MEAT - 100% PURE LIGHT THEME (EXACT BRAND LOGO & REVIEWS/AUTH UI)
+   REAL MEAT - 100% PURE LIGHT THEME (SUPER CLEAN ORDER CUSTOMIZATION MODAL UI)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -24,7 +24,7 @@
   
   --text-primary: #1e293b;
   --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-muted: #64748b;
   
   --border-color: #f0e6dd;
   --border-active: #f95738;
@@ -121,49 +121,63 @@ input, select, textarea { font-family: inherit; color: inherit; }
   font-weight: 800;
 }
 
-/* 2. REAL MEAT BRAND LOGO BADGE (MATCHING USER SCREENSHOT) */
-.brand-logo-badge {
-  background: #ffffff;
-  padding: 10px 22px;
-  border-radius: var(--radius-md);
-  display: flex;
+/* 2. NAVBAR LOGO */
+.brand-logo-sleek {
+  display: inline-flex;
   align-items: center;
-  gap: 14px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  border: 1.5px solid var(--border-color);
-  position: relative;
+  gap: 12px;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-full);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: var(--transition);
 }
-.real-meat-logo-icon {
-  width: 44px;
-  height: 44px;
+.brand-logo-sleek:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+}
+
+.logo-icon-pill {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 2px solid var(--accent-green);
+  background: #f95738;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  background: rgba(46, 125, 50, 0.08);
-  box-shadow: 0 0 10px rgba(46, 125, 50, 0.2);
+  font-size: 1.2rem;
+  box-shadow: 0 4px 12px rgba(249, 87, 56, 0.4);
+  flex-shrink: 0;
 }
-.brand-logo-badge .badge-title {
-  font-size: 1.35rem;
+
+.logo-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-title {
+  font-size: 1.3rem;
   font-weight: 900;
-  color: #0f172a;
-  letter-spacing: 0.5px;
+  color: #ffffff;
+  letter-spacing: -0.3px;
   line-height: 1;
-  border-bottom: 2px solid var(--accent-green);
-  padding-bottom: 3px;
 }
-.brand-logo-badge .green-text {
-  color: var(--accent-green);
+.logo-title .accent-orange {
+  color: #f95738;
 }
-.brand-logo-badge .badge-sub {
-  font-size: 0.62rem;
+
+.logo-tagline {
+  font-size: 0.58rem;
   font-weight: 800;
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.85);
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 /* HERO SECTION */
@@ -719,142 +733,125 @@ input, select, textarea { font-family: inherit; color: inherit; }
 .qty-btn:hover { background: rgba(0, 0, 0, 0.2); }
 .qty-num { padding: 0 8px; color: #fff; font-weight: 900; font-size: 0.95rem; }
 
-/* 6. AUTHENTICATION & PRODUCT DETAIL MODAL STYLES */
-.auth-tabs {
-  display: flex;
-  background: var(--bg-secondary);
-  padding: 4px;
-  border-radius: var(--radius-full);
+/* 6. SUPER CLEAN & BEAUTIFUL ORDER CUSTOMIZATION MODAL UI */
+.custom-dish-card-header {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
   margin-bottom: 20px;
-}
-.auth-tab-btn {
-  flex: 1;
-  padding: 10px;
-  border-radius: var(--radius-full);
-  font-weight: 800;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  transition: var(--transition);
-}
-.auth-tab-btn.active {
-  background: #ffffff;
-  color: var(--primary);
   box-shadow: var(--shadow-sm);
 }
-
-.form-group {
-  margin-bottom: 16px;
-}
-.form-group label {
-  display: block;
-  font-size: 0.84rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 6px;
-}
-.form-group input, .form-group textarea {
+.custom-dish-card-header img {
   width: 100%;
-  padding: 11px 16px;
-  border: 1.5px solid var(--border-color);
-  border-radius: var(--radius-md);
-  font-size: 0.9rem;
-  font-weight: 600;
-  outline: none;
-  transition: var(--transition);
-}
-.form-group input:focus, .form-group textarea:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px var(--primary-glow);
-}
-
-/* PRODUCT DETAIL VIEW & REVIEWS LAYOUT */
-.product-detail-hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-  margin-bottom: 30px;
-}
-.product-detail-img {
-  width: 100%;
-  height: 280px;
+  height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
 }
-
-.reviews-section {
-  border-top: 1.5px solid var(--border-color);
-  padding-top: 24px;
-  margin-top: 24px;
+.custom-dish-header-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(15,23,42,0.88) 100%);
+  display: flex;
+  align-items: flex-end;
+  padding: 16px 20px;
+  color: #ffffff;
 }
-.reviews-title {
+.custom-dish-title-lg {
   font-size: 1.3rem;
   font-weight: 900;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  color: #ffffff;
+}
+.custom-dish-base-price {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffb703;
+  margin-left: auto;
 }
 
-.add-review-box {
-  background: var(--bg-secondary);
+.custom-option-group {
+  margin-bottom: 20px;
+}
+.custom-option-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.custom-radio-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.custom-radio-card {
+  background: #ffffff;
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 18px;
-  margin-bottom: 24px;
-}
-
-.star-rating-selector {
-  display: flex;
-  gap: 8px;
-  font-size: 1.6rem;
-  cursor: pointer;
-  margin-bottom: 12px;
-  color: #d1d5db;
-}
-.star-rating-selector .star-icon.active {
-  color: var(--primary);
-}
-
-.review-card {
-  background: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 14px 18px;
-  margin-bottom: 12px;
-  box-shadow: var(--shadow-sm);
-}
-.review-header {
+  padding: 12px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
-}
-.reviewer-name {
-  font-weight: 800;
-  font-size: 0.92rem;
-}
-.review-stars {
-  color: var(--primary);
+  cursor: pointer;
+  transition: var(--transition);
   font-size: 0.88rem;
-  font-weight: 800;
+  font-weight: 700;
 }
-.review-comment {
-  font-size: 0.86rem;
-  color: var(--text-secondary);
-  line-height: 1.45;
+.custom-radio-card:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.custom-radio-card.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  box-shadow: 0 4px 12px rgba(249, 87, 56, 0.15);
 }
 
-.relevant-products-section {
-  border-top: 1.5px solid var(--border-color);
-  padding-top: 24px;
-  margin-top: 24px;
+.custom-spice-pills-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
-.relevant-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-top: 14px;
+.custom-spice-pill {
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1e293b;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.custom-spice-pill:hover, .custom-spice-pill.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(249, 87, 56, 0.3);
+}
+
+.custom-sticky-footer-bar {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1.5px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.custom-total-label {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 700;
+}
+.custom-total-price {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #1e293b;
 }
 
 /* DRAWER, MODALS & FOOTER */
@@ -943,7 +940,5 @@ input, select, textarea { font-family: inherit; color: inherit; }
 @media (max-width: 768px) {
   .full-hero-section { height: 85vh; }
   .full-slide-title { font-size: 2.2rem; }
-  .brand-logo-badge { padding: 8px 14px; }
-  .brand-logo-badge .badge-title { font-size: 1.1rem; }
   .dish-grid { grid-template-columns: 1fr; }
 }

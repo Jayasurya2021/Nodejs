@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - REAL MEAT Pure Non-Veg Restaurant</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="auth-page-body">
+
+  <div class="auth-card-container">
+    
+    <!-- Top Back & Logo Bar -->
+    <div class="auth-header-bar">
+      <a href="index.html" class="back-home-link">← Back to Menu</a>
+      <a href="index.html" class="brand-logo-sleek" style="background: rgba(249, 87, 56, 0.08); border-color: rgba(249, 87, 56, 0.2);">
+        <div class="logo-icon-pill">🥩</div>
+        <div class="logo-text-group">
+          <span class="logo-title" style="color: #0f172a;">REAL <span class="accent-orange">MEAT</span></span>
+          <span class="logo-tagline" style="color: #64748b;">100% PURE NON-VEG</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Login Form Box -->
+    <div class="auth-form-card">
+      <div class="auth-title-group">
+        <h2>Welcome Back 🥩</h2>
+        <p>Sign in to access your orders, saved delivery address & favorite non-veg dishes.</p>
+      </div>
+
+      <form id="standaloneLoginForm" onsubmit="handleStandaloneLogin(event)">
+        <div class="form-group">
+          <label for="loginEmailInput">Email Address</label>
+          <input type="email" id="loginEmailInput" placeholder="name@example.com" required />
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label for="loginPassInput">Password</label>
+            <a href="#" style="font-size: 0.78rem; color: var(--primary); font-weight: 700;">Forgot Password?</a>
+          </div>
+          <input type="password" id="loginPassInput" placeholder="••••••••" required />
+        </div>
+
+        <button type="submit" class="palmshore-cta-btn" style="width: 100%; justify-content: center; margin-top: 10px; padding: 14px;">
+          Sign In to REAL MEAT ➔
+        </button>
+      </form>
+
+      <div class="auth-divider">
+        <span>OR CONTINUE WITH</span>
+      </div>
+
+      <div class="social-login-grid">
+        <button class="social-btn" onclick="simulatedSocialLogin('Google')">
+          <span>🌐</span> Google
+        </button>
+        <button class="social-btn" onclick="simulatedSocialLogin('Phone OTP')">
+          <span>📱</span> Phone OTP
+        </button>
+      </div>
+
+      <div class="auth-footer-text">
+        Don't have a REAL MEAT account yet? <a href="register.html">Create an Account</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function handleStandaloneLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmailInput').value;
+      const name = email.split('@')[0];
+      const user = { name: name.charAt(0).toUpperCase() + name.slice(1), email };
+      StorageManager.saveUser(user);
+      alert(`Welcome back, ${user.name}! Redirecting to menu...`);
+      window.location.href = 'index.html';
+    }
+
+    function simulatedSocialLogin(provider) {
+      const user = { name: 'Demo Gourmet User', email: 'user@realmeat.com' };
+      StorageManager.saveUser(user);
+      alert(`Signed in via ${provider}! Redirecting...`);
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>
