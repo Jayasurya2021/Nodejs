@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CARNIVORE FEAST - FULL PAGE DARK LUXURY NON-VEG RESTAURANT APP JS
+   CARNIVORE FEAST - FULL PAGE WHITE THEME & CLEAR HERO FOOD VISUALS APP JS
    ========================================================================== */
 
 // --- 1. COMPREHENSIVE NON-VEG DISH DATABASE ---
@@ -302,7 +302,7 @@ class StorageManager {
   static getFavorites() { return this.get('favorites', []); }
   static saveFavorites(favs) { this.set('favorites', favs); }
 
-  static getTheme() { return this.get('theme', 'dark'); }
+  static getTheme() { return this.get('theme', 'light'); }
   static saveTheme(theme) { this.set('theme', theme); }
 
   static getAddress() {
@@ -351,12 +351,12 @@ function applyTheme(theme) {
   StorageManager.saveTheme(theme);
   const icon = document.getElementById('themeToggleIcon');
   if (icon) {
-    icon.innerText = theme === 'dark' ? '☀️' : '🌙';
+    icon.innerText = theme === 'light' ? '🌙' : '☀️';
   }
 }
 
 function toggleTheme() {
-  const newTheme = state.theme === 'dark' ? 'light' : 'dark';
+  const newTheme = state.theme === 'light' ? 'dark' : 'light';
   applyTheme(newTheme);
   showToast(`Switched to ${newTheme.toUpperCase()} Theme!`);
 }
@@ -591,7 +591,7 @@ function openCustomizationModal(dish) {
       <img src="${dish.image}" class="custom-dish-img" alt="${dish.name}" />
       <div>
         <h4 style="font-size: 1.15rem; color: var(--text-primary); font-weight: 800;">${dish.name}</h4>
-        <p style="font-size: 0.88rem; color: var(--accent-gold); font-weight: 800;">Base Price: ₹${dish.price}</p>
+        <p style="font-size: 0.88rem; color: var(--primary); font-weight: 800;">Base Price: ₹${dish.price}</p>
       </div>
     </div>
 
@@ -873,7 +873,7 @@ function renderTrackerContent(order, container) {
   container.innerHTML = `
     <div class="tracking-header">
       <h3 style="font-size: 1.3rem;">Live Order Progress 🚴</h3>
-      <div class="order-id" style="color: var(--accent-gold); font-weight: 800; margin-top: 4px;">Order ID: #${order.orderId} • Total ₹${order.grandTotal}</div>
+      <div class="order-id" style="color: var(--primary); font-weight: 800; margin-top: 4px;">Order ID: #${order.orderId} • Total ₹${order.grandTotal}</div>
       <p style="font-size: 0.84rem; color: var(--text-secondary); margin-top: 4px;">Delivering to: ${order.address}</p>
     </div>
 
@@ -891,7 +891,7 @@ function renderTrackerContent(order, container) {
       }).join('')}
     </div>
 
-    <div style="margin-top: 24px; text-align: center;">
+    <div class="modal-footer" style="margin-top: 24px; text-align: center;">
       <button class="nav-btn" style="width: 100%; justify-content: center;" onclick="closeTrackerModal()">
         Close & Continue Browsing
       </button>
@@ -932,10 +932,10 @@ function openOrdersHistoryModal() {
     `;
   } else {
     body.innerHTML = orders.map(o => `
-      <div style="background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px;">
+      <div style="background: var(--bg-secondary); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px;">
         <div style="display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 6px;">
           <span>Order #${o.orderId}</span>
-          <span style="color: var(--accent-gold);">₹${o.grandTotal}</span>
+          <span style="color: var(--primary);">₹${o.grandTotal}</span>
         </div>
         <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 8px;">
           ${o.timestamp} • ${o.items.length} Items (${o.payMethod})

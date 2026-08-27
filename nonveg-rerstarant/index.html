@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,13 +17,13 @@
     <span>Free Express Delivery on orders above ₹500!</span>
   </div>
 
-  <!-- 2. PALMSHORE-STYLE FULL-SCREEN HERO SECTION -->
+  <!-- 2. FULL-SCREEN HERO SECTION WITH BRIGHT CLEAR FOOD IMAGES -->
   <section class="full-hero-section">
     
-    <!-- Transparent Overlay Navigation Header -->
+    <!-- Transparent / Glass Overlay Navigation Header -->
     <header class="overlay-header">
       
-      <!-- Top Left Palmshore-style Luxury Ivory Logo Badge -->
+      <!-- Top Left Luxury Logo Badge -->
       <a href="#" class="brand-logo-badge">
         <span class="badge-icon">🍖</span>
         <div class="badge-text">
@@ -51,7 +51,7 @@
 
         <!-- Theme Toggle Button -->
         <button class="loc-pill-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Light/Dark Theme">
-          <span id="themeToggleIcon">☀️</span>
+          <span id="themeToggleIcon">🌙</span>
         </button>
 
         <!-- Cart Button -->
@@ -63,24 +63,12 @@
 
     </header>
 
-    <!-- Fullscreen Carousel Slides -->
+    <!-- Fullscreen Carousel Slides (Images clearly visible!) -->
     <div class="full-carousel-container">
       <div class="full-carousel-slides" id="carouselSlides">
         
-        <!-- Slide 1 (Palmshore BBQ Ribs & Crispy Chicken Platter Style) -->
-        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1800&q=80');">
-          <div class="full-slide-content">
-            <div class="full-slide-subtitle">AUTHENTIC NON-VEG RESTAURANT</div>
-            <h1 class="full-slide-title">Carnivore <span>Feast</span></h1>
-            <p class="full-slide-desc">Savor crispy seasoned chicken cutlets, smoky grilled mutton ribs & hand-crafted dips cooked with authentic royal spices.</p>
-            <button class="palmshore-cta-btn" onclick="document.getElementById('menu-heading').scrollIntoView({behavior: 'smooth'})">
-              Order Now ➔
-            </button>
-          </div>
-        </div>
-
-        <!-- Slide 2 (Royal Mutton Biryani) -->
-        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1800&q=80');">
+        <!-- Slide 1 (Hyderabadi Dum Biryani - Bright & Clear!) -->
+        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1920&q=90');">
           <div class="full-slide-content">
             <div class="full-slide-subtitle">ROYAL HYDERABADI DUM BIRYANI</div>
             <h1 class="full-slide-title">Mutton <span>Handi Biryani</span></h1>
@@ -91,8 +79,20 @@
           </div>
         </div>
 
+        <!-- Slide 2 (Smokey BBQ Ribs & Wings) -->
+        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=90');">
+          <div class="full-slide-content">
+            <div class="full-slide-subtitle">AUTHENTIC NON-VEG RESTAURANT</div>
+            <h1 class="full-slide-title">Carnivore <span>Feast Platter</span></h1>
+            <p class="full-slide-desc">Savor crispy seasoned chicken cutlets, smoky grilled mutton ribs & hand-crafted dips cooked with authentic royal spices.</p>
+            <button class="palmshore-cta-btn" onclick="document.getElementById('menu-heading').scrollIntoView({behavior: 'smooth'})">
+              Order Now ➔
+            </button>
+          </div>
+        </div>
+
         <!-- Slide 3 (Fiery Tandoori Chicken) -->
-        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=1800&q=80');">
+        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=1920&q=90');">
           <div class="full-slide-content">
             <div class="full-slide-subtitle">CHARCOAL CLAY OVEN SPECIAL</div>
             <h1 class="full-slide-title">Fiery <span>Tandoori Chicken</span></h1>
@@ -105,7 +105,7 @@
 
       </div>
 
-      <!-- Controls -->
+      <!-- Carousel Controls -->
       <button class="full-carousel-btn prev" id="prevSlideBtn">❮</button>
       <button class="full-carousel-btn next" id="nextSlideBtn">❯</button>
       <div class="full-carousel-dots" id="carouselIndicators"></div>
@@ -113,12 +113,11 @@
 
   </section>
 
-  <!-- 3. CATEGORIES HORIZONTAL SCROLL -->
+  <!-- 3. CATEGORIES HORIZONTAL SCROLL (WHITE THEME) -->
   <section class="categories-section" id="menu-heading">
     <div class="section-header">
       <h2 class="section-title">Explore Non-Veg Categories 🍗</h2>
-      <!-- Search Bar -->
-      <div class="search-bar-header" style="width: 320px;">
+      <div class="search-bar-header">
         <span class="search-icon">🔍</span>
         <input type="text" id="headerSearchInput" placeholder="Search biryani, kebabs, chicken..." />
       </div>
@@ -194,7 +193,7 @@
     </div>
   </section>
 
-  <!-- 5. MAIN MENU GRID -->
+  <!-- 5. MAIN DISH GRID (PURE WHITE THEME) -->
   <main class="menu-section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;">
       <h2 style="font-size: 1.45rem;">Delicious Non-Veg Menu</h2>
@@ -328,7 +327,7 @@
       </div>
       <div class="modal-body">
         <form onsubmit="handlePlaceOrder(event)">
-          <h5 style="color: var(--accent-gold); margin-bottom: 12px; font-size: 0.98rem; font-weight: 800;">Delivery Address</h5>
+          <h5 style="color: var(--primary); margin-bottom: 12px; font-size: 0.98rem; font-weight: 800;">Delivery Address</h5>
           <div class="form-group">
             <label>Full Address</label>
             <input type="text" id="checkoutStreet" required />
@@ -348,7 +347,7 @@
             <input type="tel" id="checkoutPhone" placeholder="+91 98765 43210" required />
           </div>
 
-          <h5 style="color: var(--accent-gold); margin: 20px 0 12px; font-size: 0.98rem; font-weight: 800;">Select Payment Method</h5>
+          <h5 style="color: var(--primary); margin: 20px 0 12px; font-size: 0.98rem; font-weight: 800;">Select Payment Method</h5>
           <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px;">
             <label class="option-label">
               <span>💵 Cash on Delivery (COD)</span>
