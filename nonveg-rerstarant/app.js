@@ -529,7 +529,14 @@ function initStandaloneProductPage() {
   const dish = DISHES_DATA.find(d => d.id === dishId) || DISHES_DATA[0];
 
   const reviews = StorageManager.getReviews(dish.id);
-  const relevantDishes = DISHES_DATA.filter(d => d.category === dish.category && d.id !== dish.id).slice(0, 3);
+
+  // ALWAYS FETCH 4 TO 6 RELEVANT CARDS!
+  let relevantDishes = DISHES_DATA.filter(d => d.category === dish.category && d.id !== dish.id);
+  if (relevantDishes.length < 4) {
+    const additionalDishes = DISHES_DATA.filter(d => d.id !== dish.id && !relevantDishes.some(rd => rd.id === d.id));
+    relevantDishes = [...relevantDishes, ...additionalDishes];
+  }
+  relevantDishes = relevantDishes.slice(0, 4);
 
   document.title = `${dish.name} - REAL MEAT Pure Non-Veg Restaurant`;
 
@@ -611,22 +618,30 @@ function initStandaloneProductPage() {
       </div>
     </div>
 
-    <!-- More Relevant Products Section -->
-    ${relevantDishes.length > 0 ? `
-      <div class="relevant-products-section">
-        <h4 style="font-size: 1.3rem; font-weight: 900; color: #1e293b;">More Relevant Dishes You May Also Like 🍗</h4>
-        <div class="relevant-grid">
-          ${relevantDishes.map(rel => `
-            <div style="background:#ffffff; border:1.5px solid var(--border-color); border-radius:14px; padding:14px; display:flex; flex-direction:column; justify-space-between;">
-              <img src="${rel.image}" style="width:100%; height:130px; object-fit:cover; border-radius:10px; margin-bottom:10px;" />
-              <div style="font-size:0.95rem; font-weight:800; color:#1e293b; margin-bottom:4px;">${rel.name}</div>
-              <div style="font-size:0.85rem; color:var(--primary); font-weight:800; margin-bottom:10px;">★ ${rel.rating} • ₹${rel.price}</div>
-              <button class="add-orange-pill-btn" style="font-size:0.82rem; padding:7px 14px; width:100%;" onclick="window.location.href='product.html?id=${rel.id}'">View Dish & Reviews ➔</button>
+    <!-- More Relevant Dishes Section (Proper 4-Card Grid) -->
+    <div class="relevant-products-section">
+      <h4 style="font-size: 1.35rem; font-weight: 900; color: #1e293b; margin-bottom: 18px;">More Relevant Dishes You May Also Like 🍗</h4>
+      <div class="relevant-grid-cards">
+        ${relevantDishes.map(rel => `
+          <div class="relevant-card-item">
+            <div class="relevant-card-img-wrap" onclick="window.location.href='product.html?id=${rel.id}'">
+              <img src="${rel.image}" alt="${rel.name}" />
+              ${rel.isBestseller ? '<span class="relevant-badge">★ BESTSELLER</span>' : ''}
             </div>
-          `).join('')}
-        </div>
+            <div class="relevant-card-body">
+              <div class="relevant-card-title" onclick="window.location.href='product.html?id=${rel.id}'">${rel.name}</div>
+              <div class="relevant-card-meta">
+                <span style="color: var(--primary); font-weight: 800;">★ ${rel.rating}</span>
+                <span style="font-weight: 900; color: #1e293b;">₹${rel.price}</span>
+              </div>
+              <button class="add-orange-pill-btn" style="font-size:0.82rem; padding:8px 14px; width:100%;" onclick="window.location.href='product.html?id=${rel.id}'">
+                View Dish & Reviews ➔
+              </button>
+            </div>
+          </div>
+        `).join('')}
       </div>
-    ` : ''}
+    </div>
   `;
 
   renderCartDrawer();
