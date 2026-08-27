@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CARNIVORE FEAST - 100% PURE NON-VEG RESTAURANT & DELIVERY JAVASCRIPT
+   CARNIVORE FEAST - LIGHT THEME & APPETIZING NON-VEG RESTAURANT APP JS
    ========================================================================== */
 
 // --- 1. COMPREHENSIVE NON-VEG DISH DATABASE ---
@@ -302,6 +302,9 @@ class StorageManager {
   static getFavorites() { return this.get('favorites', []); }
   static saveFavorites(favs) { this.set('favorites', favs); }
 
+  static getTheme() { return this.get('theme', 'light'); }
+  static saveTheme(theme) { this.set('theme', theme); }
+
   static getAddress() {
     return this.get('address', {
       tag: 'Home',
@@ -325,6 +328,7 @@ class StorageManager {
 
 // --- 3. APPLICATION GLOBAL STATE ---
 let state = {
+  theme: StorageManager.getTheme(),
   cart: StorageManager.getCart(),
   favorites: StorageManager.getFavorites(),
   address: StorageManager.getAddress(),
@@ -340,7 +344,24 @@ let state = {
   selectedSpice: null
 };
 
-// --- 4. CAROUSEL BANNER LOGIC ---
+// --- 4. THEME SWITCHER LOGIC ---
+function applyTheme(theme) {
+  state.theme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  StorageManager.saveTheme(theme);
+  const icon = document.getElementById('themeToggleIcon');
+  if (icon) {
+    icon.innerText = theme === 'light' ? '🌙' : '☀️';
+  }
+}
+
+function toggleTheme() {
+  const newTheme = state.theme === 'light' ? 'dark' : 'light';
+  applyTheme(newTheme);
+  showToast(`Switched to ${newTheme.toUpperCase()} Theme!`);
+}
+
+// --- 5. CAROUSEL BANNER LOGIC ---
 function initCarousel() {
   const slides = document.querySelectorAll('.hero-slide');
   const slidesContainer = document.getElementById('carouselSlides');
@@ -350,7 +371,6 @@ function initCarousel() {
 
   if (!slidesContainer || slides.length === 0) return;
 
-  // Render dots
   indicatorsContainer.innerHTML = '';
   slides.forEach((_, idx) => {
     const dot = document.createElement('div');
@@ -373,22 +393,19 @@ function initCarousel() {
   prevBtn?.addEventListener('click', () => goToSlide(state.currentSlide - 1));
   nextBtn?.addEventListener('click', () => goToSlide(state.currentSlide + 1));
 
-  // Auto slide every 4.5 seconds
   setInterval(() => {
     goToSlide(state.currentSlide + 1);
   }, 4500);
 }
 
-// --- 5. RENDER & FILTER DISH MENU GRID ---
+// --- 6. FILTER & RENDER DISH GRID ---
 function filterAndSortDishes() {
   let filtered = [...DISHES_DATA];
 
-  // Category Filter
   if (state.activeCategory !== 'all') {
     filtered = filtered.filter(d => d.category === state.activeCategory);
   }
 
-  // Filter Pills
   if (state.activeFilter === 'bestseller') {
     filtered = filtered.filter(d => d.isBestseller);
   } else if (state.activeFilter === 'top-rated') {
@@ -399,7 +416,6 @@ function filterAndSortDishes() {
     filtered = filtered.filter(d => d.prepTime.includes('15') || d.prepTime.includes('20'));
   }
 
-  // Search Filter
   if (state.searchQuery.trim() !== '') {
     const q = state.searchQuery.toLowerCase();
     filtered = filtered.filter(d =>
@@ -409,7 +425,6 @@ function filterAndSortDishes() {
     );
   }
 
-  // Sorting
   if (state.sortBy === 'price-low') {
     filtered.sort((a, b) => a.price - b.price);
   } else if (state.sortBy === 'price-high') {
@@ -427,13 +442,13 @@ function renderMenuGrid() {
   if (!grid) return;
 
   const dishes = filterAndSortDishes();
-  if (countEl) countEl.innerText = `${dishes.length} Delicious Items Available`;
+  if (countEl) countEl.innerText = `${dishes.length} Items Available`;
 
   if (dishes.length === 0) {
     grid.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
-        <div style="font-size: 3rem; margin-bottom: 12px;">🥩</div>
-        <h3>No non-veg dishes found!</h3>
+        <div style="font-size: 3.5rem; margin-bottom: 12px;">🥩</div>
+        <h3 style="font-size: 1.3rem; color: var(--text-primary);">No non-veg dishes found!</h3>
         <p>Try searching for Biryani, Kebabs, or Tandoori Chicken.</p>
       </div>
     `;
@@ -498,7 +513,7 @@ function renderMenuGrid() {
   }).join('');
 }
 
-// --- 6. CART DRAWER & CUSTOMIZATION ENGINE ---
+// --- 7. CART & CUSTOMIZATION HANDLERS ---
 function handleAddClick(dishId) {
   const dish = DISHES_DATA.find(d => d.id === dishId);
   if (!dish) return;
@@ -575,8 +590,8 @@ function openCustomizationModal(dish) {
     <div class="custom-dish-banner">
       <img src="${dish.image}" class="custom-dish-img" alt="${dish.name}" />
       <div>
-        <h4 style="font-size: 1.1rem; color: #fff;">${dish.name}</h4>
-        <p style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 700;">Base Price: ₹${dish.price}</p>
+        <h4 style="font-size: 1.15rem; color: var(--text-primary); font-weight: 800;">${dish.name}</h4>
+        <p style="font-size: 0.88rem; color: var(--primary); font-weight: 800;">Base Price: ₹${dish.price}</p>
       </div>
     </div>
 
@@ -605,7 +620,7 @@ function openCustomizationModal(dish) {
     ` : ''}
 
     <button class="hero-cta-btn" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="confirmCustomization()">
-      Add Item to Cart
+      Confirm & Add to Cart
     </button>
   `;
 
@@ -626,11 +641,10 @@ function confirmCustomization() {
   closeCustomizationModal();
 }
 
-// --- 7. CART DRAWER & BILL CALCULATIONS ---
+// --- 8. CART DRAWER & BILLING WITH FREE DELIVERY PROGRESS ---
 function renderCartDrawer() {
   const listEl = document.getElementById('cartItemsList');
   const countBadge = document.getElementById('headerCartCount');
-  const drawerCount = document.getElementById('drawerCartCount');
   const subtotalEl = document.getElementById('billSubtotal');
   const deliveryEl = document.getElementById('billDelivery');
   const discountEl = document.getElementById('billDiscount');
@@ -639,15 +653,19 @@ function renderCartDrawer() {
   const cartEmptyState = document.getElementById('cartEmptyState');
   const cartContentArea = document.getElementById('cartContentArea');
 
+  const freeDeliveryMsg = document.getElementById('freeDeliveryMsg');
+  const freeDeliveryProgress = document.getElementById('freeDeliveryProgress');
+
   const totalItems = state.cart.reduce((sum, item) => sum + item.qty, 0);
   if (countBadge) countBadge.innerText = totalItems;
-  if (drawerCount) drawerCount.innerText = `${totalItems} Items`;
 
   if (!listEl) return;
 
   if (state.cart.length === 0) {
     if (cartEmptyState) cartEmptyState.style.display = 'flex';
     if (cartContentArea) cartContentArea.style.display = 'none';
+    if (freeDeliveryProgress) freeDeliveryProgress.style.width = '0%';
+    if (freeDeliveryMsg) freeDeliveryMsg.innerText = 'Add ₹500 for FREE Express Delivery!';
     return;
   }
 
@@ -677,10 +695,22 @@ function renderCartDrawer() {
     </div>
   `).join('');
 
-  // Calculations
+  // Bill Calculations
   const subtotal = state.cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-  let deliveryFee = subtotal > 500 ? 0 : 40;
+  let deliveryFee = subtotal >= 500 ? 0 : 40;
   let discount = 0;
+
+  // Free delivery progress bar
+  if (freeDeliveryProgress && freeDeliveryMsg) {
+    const pct = Math.min(100, Math.round((subtotal / 500) * 100));
+    freeDeliveryProgress.style.width = `${pct}%`;
+    if (subtotal >= 500) {
+      freeDeliveryMsg.innerText = '🎉 Congratulations! You unlocked FREE Delivery!';
+    } else {
+      const remaining = 500 - subtotal;
+      freeDeliveryMsg.innerText = `Add ₹${remaining} more for FREE Express Delivery!`;
+    }
+  }
 
   if (state.appliedCoupon === 'NONVEG50') {
     discount = Math.min(Math.round(subtotal * 0.5), 150);
@@ -709,10 +739,15 @@ function applyCouponCode() {
   if (code === 'NONVEG50' || code === 'FREEDEL' || code === 'FEAST100') {
     state.appliedCoupon = code;
     showToast(`Coupon '${code}' Applied Successfully!`);
-    if (tag) tag.innerHTML = `<span>Applied: <strong>${code}</strong></span> <button onclick="removeCoupon()">✕</button>`;
+    if (tag) tag.innerHTML = `
+      <div style="margin-top: 8px; font-size: 0.82rem; color: var(--accent-green); font-weight: 800; display: flex; justify-content: space-between;">
+        <span>Applied: <strong>${code}</strong></span>
+        <button onclick="removeCoupon()" style="color: var(--primary); font-weight: 900;">✕</button>
+      </div>
+    `;
     renderCartDrawer();
   } else {
-    showToast('Invalid Coupon Code! Try NONVEG50 or FREEDEL');
+    showToast('Invalid Coupon! Try NONVEG50 or FREEDEL');
   }
 }
 
@@ -732,7 +767,7 @@ function setDeliveryTip(amount) {
   renderCartDrawer();
 }
 
-// --- 8. CHECKOUT & SIMULATED LIVE TRACKING ---
+// --- 9. CHECKOUT & SIMULATED TRACKER ---
 function openCheckoutModal() {
   if (state.cart.length === 0) {
     showToast('Your cart is empty!');
@@ -743,7 +778,6 @@ function openCheckoutModal() {
   const modal = document.getElementById('checkoutModal');
   if (!modal) return;
 
-  // Fill default address
   const addr = state.address;
   document.getElementById('checkoutStreet').value = addr.street || '';
   document.getElementById('checkoutCity').value = addr.city || '';
@@ -770,13 +804,11 @@ function handlePlaceOrder(e) {
     return;
   }
 
-  // Update stored address
   state.address = { tag: 'Home', street, city, landmark };
   StorageManager.saveAddress(state.address);
 
-  // Compute total
   const subtotal = state.cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-  const deliveryFee = subtotal > 500 ? 0 : 40;
+  const deliveryFee = subtotal >= 500 ? 0 : 40;
   let discount = 0;
   if (state.appliedCoupon === 'NONVEG50') discount = Math.min(Math.round(subtotal * 0.5), 150);
   else if (state.appliedCoupon === 'FREEDEL') discount = deliveryFee;
@@ -791,13 +823,12 @@ function handlePlaceOrder(e) {
     grandTotal,
     payMethod,
     address: `${street}, ${city} (${landmark})`,
-    statusStep: 1 // 1: Confirmed, 2: Kitchen, 3: Out for delivery, 4: Delivered
+    statusStep: 1
   };
 
   StorageManager.saveOrder(newOrder);
   StorageManager.setActiveOrder(newOrder);
 
-  // Clear cart
   state.cart = [];
   state.appliedCoupon = null;
   StorageManager.saveCart([]);
@@ -805,12 +836,10 @@ function handlePlaceOrder(e) {
   closeCheckoutModal();
   renderAll();
 
-  // Open live tracker
   openOrderTracker(newOrder);
   showToast('🎉 Order Placed Successfully!');
 }
 
-// Order Status Stepper Animation
 function openOrderTracker(order) {
   const modal = document.getElementById('trackerModal');
   const body = document.getElementById('trackerModalBody');
@@ -819,7 +848,6 @@ function openOrderTracker(order) {
   renderTrackerContent(order, body);
   modal.classList.add('active');
 
-  // Simulate status progression over time
   if (order.statusStep < 4) {
     const timer = setInterval(() => {
       if (order.statusStep < 4) {
@@ -831,7 +859,7 @@ function openOrderTracker(order) {
           showToast('🔔 Order Delivered! Bon Appétit! 🍗');
         }
       }
-    }, 9000); // Advances step every 9 sec
+    }, 9000);
   }
 }
 
@@ -839,18 +867,18 @@ function renderTrackerContent(order, container) {
   const steps = [
     { title: 'Order Confirmed', desc: 'Restaurant accepted your delicious non-veg order' },
     { title: 'Kitchen Sizzling', desc: 'Chef is grilling kebabs & dum cooking biryani' },
-    { title: 'Out for Delivery', desc: 'Delivery Hero #Ramesh is en route to your location' },
+    { title: 'Out for Delivery', desc: 'Delivery Partner #Ramesh is en route to your location' },
     { title: 'Order Delivered', desc: 'Enjoy your hot & juicy non-veg feast!' }
   ];
 
   container.innerHTML = `
     <div class="tracking-header">
-      <h3>Live Order Tracking</h3>
-      <div class="order-id">Order ID: #${order.orderId} • Total ₹${order.grandTotal}</div>
-      <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Delivering to: ${order.address}</p>
+      <h3 style="font-size: 1.3rem;">Live Order Progress 🚴</h3>
+      <div class="order-id" style="color: var(--primary); font-weight: 800; margin-top: 4px;">Order ID: #${order.orderId} • Total ₹${order.grandTotal}</div>
+      <p style="font-size: 0.84rem; color: var(--text-secondary); margin-top: 4px;">Delivering to: ${order.address}</p>
     </div>
 
-    <div class="stepper">
+    <div class="stepper" style="margin-top: 20px;">
       ${steps.map((step, idx) => {
         const stepNum = idx + 1;
         const isActive = order.statusStep >= stepNum;
@@ -876,7 +904,7 @@ function closeTrackerModal() {
   document.getElementById('trackerModal')?.classList.remove('active');
 }
 
-// --- 9. USER FAVORITES & ORDERS HISTORY ---
+// --- 10. FAVORITES & ORDERS HISTORY ---
 function toggleFavorite(dishId) {
   const idx = state.favorites.indexOf(dishId);
   if (idx > -1) {
@@ -899,24 +927,24 @@ function openOrdersHistoryModal() {
   if (orders.length === 0) {
     body.innerHTML = `
       <div style="text-align: center; color: var(--text-muted); padding: 40px 0;">
-        <div style="font-size: 2.5rem;">📜</div>
+        <div style="font-size: 3rem; margin-bottom: 10px;">📜</div>
         <p>No past orders found.</p>
       </div>
     `;
   } else {
     body.innerHTML = orders.map(o => `
-      <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px; margin-bottom: 12px;">
-        <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px;">
+      <div style="background: var(--bg-main); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 6px;">
           <span>Order #${o.orderId}</span>
-          <span style="color: var(--accent-gold);">₹${o.grandTotal}</span>
+          <span style="color: var(--primary);">₹${o.grandTotal}</span>
         </div>
-        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 8px;">
+        <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 8px;">
           ${o.timestamp} • ${o.items.length} Items (${o.payMethod})
         </div>
-        <div style="font-size: 0.82rem; color: var(--text-primary); margin-bottom: 10px;">
+        <div style="font-size: 0.85rem; color: var(--text-primary); margin-bottom: 12px;">
           ${o.items.map(i => `${i.name} (${i.qty})`).join(', ')}
         </div>
-        <button class="add-dish-btn" style="width: 100%; font-size: 0.8rem; padding: 6px;" onclick="reorderItems('${o.orderId}')">
+        <button class="add-dish-btn" style="width: 100%; font-size: 0.82rem; padding: 7px;" onclick="reorderItems('${o.orderId}')">
           🔁 Re-Order This Feast
         </button>
       </div>
@@ -941,7 +969,6 @@ function reorderItems(orderId) {
   showToast('Items re-added to your cart!');
 }
 
-// Address modal handler
 function openAddressModal() {
   const modal = document.getElementById('addressModal');
   if (!modal) return;
@@ -967,7 +994,7 @@ function saveAddressFromModal(e) {
   }
 }
 
-// --- 10. TOAST SYSTEM & UTILS ---
+// --- 11. TOAST NOTIFICATIONS & DRAWER UTILS ---
 function showToast(msg) {
   const container = document.getElementById('toastContainer');
   if (!container) return;
@@ -997,7 +1024,6 @@ function toggleCartDrawer(open) {
   }
 }
 
-// --- 11. INITIALIZATION & EVENT BINDINGS ---
 function renderAll() {
   renderMenuGrid();
   renderCartDrawer();
@@ -1009,17 +1035,16 @@ function renderAll() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  applyTheme(state.theme);
   initCarousel();
   renderAll();
 
-  // Search Listener
   const searchInput = document.getElementById('headerSearchInput');
   searchInput?.addEventListener('input', (e) => {
     state.searchQuery = e.target.value;
     renderMenuGrid();
   });
 
-  // Category Filter clicks
   document.querySelectorAll('.cat-card').forEach(card => {
     card.addEventListener('click', () => {
       document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
@@ -1029,7 +1054,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Quick Filter Pills
   document.querySelectorAll('.filter-pill').forEach(pill => {
     pill.addEventListener('click', () => {
       document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
@@ -1039,14 +1063,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Sort Selector
   const sortSelect = document.getElementById('sortSelect');
   sortSelect?.addEventListener('change', (e) => {
     state.sortBy = e.target.value;
     renderMenuGrid();
   });
 
-  // Cart drawer triggers
   document.getElementById('headerCartBtn')?.addEventListener('click', () => toggleCartDrawer(true));
   document.getElementById('closeCartDrawerBtn')?.addEventListener('click', () => toggleCartDrawer(false));
   document.getElementById('cartOverlay')?.addEventListener('click', () => toggleCartDrawer(false));
