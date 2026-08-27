@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CARNIVORE FEAST - FULL PAGE WHITE THEME & CLEAR HERO FOOD VISUALS APP JS
+   CARNIVORE FEAST - 100% PURE LIGHT THEME (EXACT MATCH REFERENCE UI)
    ========================================================================== */
 
 // --- 1. COMPREHENSIVE NON-VEG DISH DATABASE ---
@@ -8,12 +8,12 @@ const DISHES_DATA = [
     id: 'nv-101',
     name: 'Royal Hyderabadi Mutton Biryani',
     category: 'biryani',
-    price: 380,
+    price: 349,
     originalPrice: 450,
     rating: 4.9,
-    ratingCount: 1420,
+    ratingCount: 1490,
     prepTime: '25-30 min',
-    description: 'Aromatic long-grain basmati rice dum cooked with juicy succulent mutton pieces, saffron, herbs & authentic royal spices. Served with Mirchi Ka Salan & Raita.',
+    description: 'Aromatic long-grain basmati rice dum cooked with juicy succulent mutton pieces and royal spices.',
     image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
     isSpicy: true,
@@ -28,12 +28,12 @@ const DISHES_DATA = [
     id: 'nv-102',
     name: 'Fiery Tandoori Chicken (Full)',
     category: 'kebabs',
-    price: 420,
+    price: 449,
     originalPrice: 490,
     rating: 4.8,
     ratingCount: 980,
     prepTime: '20-25 min',
-    description: 'Whole tender chicken marinated in rich spicy hung curd & tandoori masala, charred to perfection in clay oven. Served with mint chutney & onion rings.',
+    description: 'Whole tender chicken marinated in rich spicy hung curd & tandoori masala, charred to perfection.',
     image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
     isSpicy: true,
@@ -48,12 +48,12 @@ const DISHES_DATA = [
     id: 'nv-103',
     name: 'Juicy Gourmet Bacon & Chicken Burger',
     category: 'burgers',
-    price: 260,
-    originalPrice: 310,
+    price: 299,
+    originalPrice: 350,
     rating: 4.7,
     ratingCount: 750,
     prepTime: '15-20 min',
-    description: 'Double grilled chicken patty loaded with crispy smoked bacon strips, melted cheddar cheese, caramelized onions & secret BBQ sauce in brioche bun.',
+    description: 'Double grilled chicken patty loaded with crispy smoked bacon strips, melted cheese & signature sauce.',
     image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
     isSpicy: false,
@@ -73,7 +73,7 @@ const DISHES_DATA = [
     rating: 4.9,
     ratingCount: 1850,
     prepTime: '20-25 min',
-    description: 'Iconic boneless tandoori chicken simmered in rich creamy tomato butter gravy, infused with kasuri methi & fresh farm cream.',
+    description: 'Iconic boneless tandoori chicken simmered in rich creamy tomato butter gravy, infused with fresh cream.',
     image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
     isSpicy: false,
@@ -93,7 +93,7 @@ const DISHES_DATA = [
     rating: 4.8,
     ratingCount: 620,
     prepTime: '20-25 min',
-    description: 'Fresh jumbo tiger prawns pan-seared in rich garlic butter sauce, red pepper flakes, lemon zest & fresh cilantro.',
+    description: 'Fresh jumbo tiger prawns pan-seared in rich garlic butter sauce, red pepper flakes & fresh cilantro.',
     image: 'https://images.unsplash.com/photo-1559742811-822863646df1?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
     isSpicy: true,
@@ -108,7 +108,7 @@ const DISHES_DATA = [
     rating: 4.9,
     ratingCount: 410,
     prepTime: '25-35 min',
-    description: 'Slow smoked mutton ribs glazed with sticky honey bourbon BBQ sauce, paired with 6 crispy spiced fried chicken wings.',
+    description: 'Slow smoked mutton ribs glazed with sticky honey bourbon BBQ sauce, paired with 6 crispy chicken wings.',
     image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
     isSpicy: false,
@@ -143,7 +143,7 @@ const DISHES_DATA = [
     rating: 4.7,
     ratingCount: 1100,
     prepTime: '15-20 min',
-    description: 'Minced chicken blended with aromatic herbs, ginger, garlic & green chillies, skewered and grilled over glowing charcoal.',
+    description: 'Minced chicken blended with aromatic herbs, ginger, garlic & green chillies, skewered and grilled over charcoal.',
     image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
     isSpicy: true,
@@ -158,7 +158,7 @@ const DISHES_DATA = [
     rating: 4.8,
     ratingCount: 1650,
     prepTime: '15-20 min',
-    description: 'Extra crunchy double-dipped fried chicken wings tossed in your choice of Peri-Peri seasoning or Hot Buffalo Dip.',
+    description: 'Extra crunchy double-dipped fried chicken wings tossed in your choice of Peri-Peri seasoning or Buffalo Dip.',
     image: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
     isSpicy: true,
@@ -178,7 +178,7 @@ const DISHES_DATA = [
     rating: 4.9,
     ratingCount: 780,
     prepTime: '25-30 min',
-    description: 'Kashmiri delicacy featuring tender lamb chunks slow cooked in gravy scented with Kashmiri red chillies, fennel & dry ginger.',
+    description: 'Kashmiri delicacy featuring tender lamb chunks slow cooked in gravy scented with Kashmiri red chillies & dry ginger.',
     image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
     isSpicy: true,
@@ -223,7 +223,7 @@ const DISHES_DATA = [
     rating: 4.6,
     ratingCount: 1320,
     prepTime: '12-15 min',
-    description: 'Shredded roasted chicken wrap with garlic mayo, spicy tahini, pickled veggies & french fries wrapped in soft pita bread.',
+    description: 'Shredded roasted chicken wrap with garlic mayo, spicy tahini, pickled veggies & french fries wrapped in soft pita.',
     image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
     isSpicy: false,
@@ -238,7 +238,7 @@ const DISHES_DATA = [
     rating: 4.8,
     ratingCount: 870,
     prepTime: '15-20 min',
-    description: 'Melt-in-mouth chicken breast cubes marinated in cashew paste, fresh cream, cardamom & cheese, gently tandoor roasted.',
+    description: 'Melt-in-mouth chicken breast cubes marinated in cashew paste, fresh cream, cardamom & cheese, tandoor roasted.',
     image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
     isSpicy: false,
@@ -302,9 +302,6 @@ class StorageManager {
   static getFavorites() { return this.get('favorites', []); }
   static saveFavorites(favs) { this.set('favorites', favs); }
 
-  static getTheme() { return this.get('theme', 'light'); }
-  static saveTheme(theme) { this.set('theme', theme); }
-
   static getAddress() {
     return this.get('address', {
       tag: 'Home',
@@ -328,7 +325,6 @@ class StorageManager {
 
 // --- 3. APPLICATION GLOBAL STATE ---
 let state = {
-  theme: StorageManager.getTheme(),
   cart: StorageManager.getCart(),
   favorites: StorageManager.getFavorites(),
   address: StorageManager.getAddress(),
@@ -344,24 +340,7 @@ let state = {
   selectedSpice: null
 };
 
-// --- 4. THEME SWITCHER LOGIC ---
-function applyTheme(theme) {
-  state.theme = theme;
-  document.documentElement.setAttribute('data-theme', theme);
-  StorageManager.saveTheme(theme);
-  const icon = document.getElementById('themeToggleIcon');
-  if (icon) {
-    icon.innerText = theme === 'light' ? '🌙' : '☀️';
-  }
-}
-
-function toggleTheme() {
-  const newTheme = state.theme === 'light' ? 'dark' : 'light';
-  applyTheme(newTheme);
-  showToast(`Switched to ${newTheme.toUpperCase()} Theme!`);
-}
-
-// --- 5. CAROUSEL BANNER LOGIC ---
+// --- 4. CAROUSEL BANNER LOGIC ---
 function initCarousel() {
   const slides = document.querySelectorAll('.full-hero-slide');
   const slidesContainer = document.getElementById('carouselSlides');
@@ -398,7 +377,7 @@ function initCarousel() {
   }, 5000);
 }
 
-// --- 6. FILTER & RENDER DISH GRID ---
+// --- 5. FILTER & RENDER DISH GRID (EXACT REFERENCE CARDS) ---
 function filterAndSortDishes() {
   let filtered = [...DISHES_DATA];
 
@@ -465,36 +444,30 @@ function renderMenuGrid() {
         <div class="dish-img-container">
           <img src="${dish.image}" alt="${dish.name}" class="dish-img" loading="lazy" />
           <div class="dish-overlay-badge">
-            ${dish.isBestseller ? '<span class="tag-badge">🔥 BESTSELLER</span>' : ''}
+            ${dish.isBestseller ? '<span class="tag-badge">★ BESTSELLER</span>' : ''}
             ${dish.isSpicy ? '<span class="tag-badge spicy">🌶️ SPICY</span>' : ''}
           </div>
           <button class="wishlist-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${dish.id}')" title="Add to Wishlist">
-            ${isFav ? '❤️' : '🤍'}
+            ${isFav ? '❤️' : '♡'}
           </button>
         </div>
 
         <div class="dish-info">
-          <div class="dish-meta">
-            <div class="dish-title-wrap">
-              <span class="non-veg-badge"></span>
-              <h3 class="dish-title">${dish.name}</h3>
-            </div>
+          <div class="dish-title-wrap">
+            <span class="non-veg-badge"></span>
+            <h3 class="dish-title">${dish.name}</h3>
           </div>
 
           <p class="dish-desc">${dish.description}</p>
 
-          <div class="dish-specs">
-            <span class="rating-pill">★ ${dish.rating} (${dish.ratingCount}+)</span>
-            <span class="spec-item">⏱️ ${dish.prepTime}</span>
-          </div>
-
-          <div class="dish-footer">
-            <div class="price-box">
-              <span class="current-price">₹${dish.price}</span>
-              ${dish.originalPrice ? `<span class="old-price">₹${dish.originalPrice}</span>` : ''}
+          <div class="dish-footer-row">
+            <div class="dish-left-specs">
+              <span class="rating-orange">★ ${dish.rating} <span style="font-weight:600; color:#94a3b8; font-size:0.78rem;">(${dish.ratingCount}+)</span></span>
+              <span class="prep-time-grey">⏱️ ${dish.prepTime}</span>
             </div>
 
-            <div class="add-btn-wrapper">
+            <div class="dish-right-action">
+              <span class="price-text-bold">₹${dish.price}</span>
               ${inCartQty > 0 ? `
                 <div class="qty-control">
                   <button class="qty-btn" onclick="updateCartQty('${dish.id}', -1)">-</button>
@@ -502,9 +475,8 @@ function renderMenuGrid() {
                   <button class="qty-btn" onclick="updateCartQty('${dish.id}', 1)">+</button>
                 </div>
               ` : `
-                <button class="add-dish-btn" onclick="handleAddClick('${dish.id}')">+ ADD</button>
+                <button class="add-orange-pill-btn" onclick="handleAddClick('${dish.id}')">Add +</button>
               `}
-              ${dish.customizable ? '<div class="customizable-text">Customizable</div>' : ''}
             </div>
           </div>
         </div>
@@ -513,7 +485,7 @@ function renderMenuGrid() {
   }).join('');
 }
 
-// --- 7. CART & CUSTOMIZATION HANDLERS ---
+// --- 6. CART & CUSTOMIZATION HANDLERS ---
 function handleAddClick(dishId) {
   const dish = DISHES_DATA.find(d => d.id === dishId);
   if (!dish) return;
@@ -641,7 +613,7 @@ function confirmCustomization() {
   closeCustomizationModal();
 }
 
-// --- 8. CART DRAWER & BILLING ---
+// --- 7. CART DRAWER & BILLING ---
 function renderCartDrawer() {
   const listEl = document.getElementById('cartItemsList');
   const countBadge = document.getElementById('headerCartCount');
@@ -766,7 +738,7 @@ function setDeliveryTip(amount) {
   renderCartDrawer();
 }
 
-// --- 9. CHECKOUT & SIMULATED TRACKER ---
+// --- 8. CHECKOUT & SIMULATED TRACKER ---
 function openCheckoutModal() {
   if (state.cart.length === 0) {
     showToast('Your cart is empty!');
@@ -891,7 +863,7 @@ function renderTrackerContent(order, container) {
       }).join('')}
     </div>
 
-    <div class="modal-footer" style="margin-top: 24px; text-align: center;">
+    <div style="margin-top: 24px; text-align: center;">
       <button class="nav-btn" style="width: 100%; justify-content: center;" onclick="closeTrackerModal()">
         Close & Continue Browsing
       </button>
@@ -903,7 +875,7 @@ function closeTrackerModal() {
   document.getElementById('trackerModal')?.classList.remove('active');
 }
 
-// --- 10. FAVORITES & ORDERS HISTORY ---
+// --- 9. FAVORITES & ORDERS HISTORY ---
 function toggleFavorite(dishId) {
   const idx = state.favorites.indexOf(dishId);
   if (idx > -1) {
@@ -943,7 +915,7 @@ function openOrdersHistoryModal() {
         <div style="font-size: 0.85rem; color: var(--text-primary); margin-bottom: 12px;">
           ${o.items.map(i => `${i.name} (${i.qty})`).join(', ')}
         </div>
-        <button class="add-dish-btn" style="width: 100%; font-size: 0.82rem; padding: 7px;" onclick="reorderItems('${o.orderId}')">
+        <button class="add-orange-pill-btn" style="width: 100%; font-size: 0.82rem; padding: 7px;" onclick="reorderItems('${o.orderId}')">
           🔁 Re-Order This Feast
         </button>
       </div>
@@ -993,7 +965,7 @@ function saveAddressFromModal(e) {
   }
 }
 
-// --- 11. TOAST NOTIFICATIONS & INITIALIZATION ---
+// --- 10. TOAST NOTIFICATIONS & INITIALIZATION ---
 function showToast(msg) {
   const container = document.getElementById('toastContainer');
   if (!container) return;
@@ -1034,15 +1006,8 @@ function renderAll() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  applyTheme(state.theme);
   initCarousel();
   renderAll();
-
-  const searchInput = document.getElementById('headerSearchInput');
-  searchInput?.addEventListener('input', (e) => {
-    state.searchQuery = e.target.value;
-    renderMenuGrid();
-  });
 
   document.querySelectorAll('.cat-card').forEach(card => {
     card.addEventListener('click', () => {

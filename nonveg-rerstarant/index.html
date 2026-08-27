@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,13 +17,13 @@
     <span>Free Express Delivery on orders above ₹500!</span>
   </div>
 
-  <!-- 2. FULL-SCREEN HERO SECTION WITH BRIGHT CLEAR FOOD IMAGES -->
+  <!-- 2. FULL-SCREEN HERO SECTION WITH CLEAR FOOD IMAGES -->
   <section class="full-hero-section">
     
-    <!-- Transparent / Glass Overlay Navigation Header -->
+    <!-- Transparent Overlay Navigation Header -->
     <header class="overlay-header">
       
-      <!-- Top Left Luxury Logo Badge -->
+      <!-- Top Left Logo Badge -->
       <a href="#" class="brand-logo-badge">
         <span class="badge-icon">🍖</span>
         <div class="badge-text">
@@ -32,7 +32,7 @@
         </div>
       </a>
 
-      <!-- Center Header Navigation Links -->
+      <!-- Center Navigation Links -->
       <ul class="header-nav-links">
         <li><a href="#" class="active">HOME</a></li>
         <li><a href="#menu-heading">MENU</a></li>
@@ -49,11 +49,6 @@
           <span id="headerLocText">Location</span>
         </button>
 
-        <!-- Theme Toggle Button -->
-        <button class="loc-pill-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Light/Dark Theme">
-          <span id="themeToggleIcon">🌙</span>
-        </button>
-
         <!-- Cart Button -->
         <button class="palmshore-cta-btn" id="headerCartBtn" style="padding: 10px 20px; font-size: 0.9rem;">
           <span>🛒 Cart</span>
@@ -63,11 +58,11 @@
 
     </header>
 
-    <!-- Fullscreen Carousel Slides (Images clearly visible!) -->
+    <!-- Fullscreen Carousel Slides -->
     <div class="full-carousel-container">
       <div class="full-carousel-slides" id="carouselSlides">
         
-        <!-- Slide 1 (Hyderabadi Dum Biryani - Bright & Clear!) -->
+        <!-- Slide 1 (Hyderabadi Dum Biryani) -->
         <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1920&q=90');">
           <div class="full-slide-content">
             <div class="full-slide-subtitle">ROYAL HYDERABADI DUM BIRYANI</div>
@@ -79,7 +74,7 @@
           </div>
         </div>
 
-        <!-- Slide 2 (Smokey BBQ Ribs & Wings) -->
+        <!-- Slide 2 (Smokey BBQ Ribs) -->
         <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=90');">
           <div class="full-slide-content">
             <div class="full-slide-subtitle">AUTHENTIC NON-VEG RESTAURANT</div>
@@ -91,7 +86,7 @@
           </div>
         </div>
 
-        <!-- Slide 3 (Fiery Tandoori Chicken) -->
+        <!-- Slide 3 (Tandoori Chicken) -->
         <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=1920&q=90');">
           <div class="full-slide-content">
             <div class="full-slide-subtitle">CHARCOAL CLAY OVEN SPECIAL</div>
@@ -105,7 +100,7 @@
 
       </div>
 
-      <!-- Carousel Controls -->
+      <!-- Controls -->
       <button class="full-carousel-btn prev" id="prevSlideBtn">❮</button>
       <button class="full-carousel-btn next" id="nextSlideBtn">❯</button>
       <div class="full-carousel-dots" id="carouselIndicators"></div>
@@ -113,16 +108,8 @@
 
   </section>
 
-  <!-- 3. CATEGORIES HORIZONTAL SCROLL (WHITE THEME) -->
+  <!-- 3. CATEGORIES HORIZONTAL SCROLL (EXACT MATCH SCREENSHOT) -->
   <section class="categories-section" id="menu-heading">
-    <div class="section-header">
-      <h2 class="section-title">Explore Non-Veg Categories 🍗</h2>
-      <div class="search-bar-header">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="headerSearchInput" placeholder="Search biryani, kebabs, chicken..." />
-      </div>
-    </div>
-
     <div class="category-scroll">
       <div class="cat-card active" data-cat="all">
         <div class="cat-icon-wrap">🔥</div>
@@ -163,7 +150,7 @@
     </div>
   </section>
 
-  <!-- 4. FILTER & SORT CONTROLS BAR -->
+  <!-- 4. FILTER & SORT CONTROLS BAR (EXACT MATCH SCREENSHOT) -->
   <section class="controls-section">
     <div class="controls-bar">
       
@@ -176,7 +163,7 @@
       </div>
 
       <div class="pure-nonveg-badge-banner">
-        <span class="non-veg-badge"></span>
+        <span>🛡️</span>
         <span>100% Pure Non-Veg Guaranteed</span>
       </div>
 
@@ -193,15 +180,15 @@
     </div>
   </section>
 
-  <!-- 5. MAIN DISH GRID (PURE WHITE THEME) -->
+  <!-- 5. MAIN DISH GRID (EXACT MATCH SCREENSHOT DISH CARDS) -->
   <main class="menu-section">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;">
-      <h2 style="font-size: 1.45rem;">Delicious Non-Veg Menu</h2>
-      <span id="dishCountLabel" style="font-size: 0.9rem; color: var(--text-muted); font-weight: 700;"></span>
+    <div class="menu-heading-row">
+      <h2 class="menu-main-title">Delicious Non-Veg Menu</h2>
+      <span class="items-count-text" id="dishCountLabel">16 Items Available</span>
     </div>
 
     <div class="dish-grid" id="dishGrid">
-      <!-- Dynamic Dish Cards -->
+      <!-- Dynamic Dish Cards Injected via JS -->
     </div>
   </main>
 

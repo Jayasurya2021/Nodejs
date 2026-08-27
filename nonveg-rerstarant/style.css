@@ -19,12 +19,11 @@
   --bg-main: #faf7f4;
   --bg-surface: #ffffff;
   --bg-card: #ffffff;
-  --bg-card-hover: #ffffff;
   --bg-secondary: #fdf6ee;
   
   --text-primary: #1e293b;
   --text-secondary: #475569;
-  --text-muted: #64748b;
+  --text-muted: #94a3b8;
   
   --border-color: #f0e6dd;
   --border-active: #f95738;
@@ -77,8 +76,8 @@ input, select { font-family: inherit; color: inherit; }
 
 /* Swiggy Square Non-Veg Badge */
 .non-veg-badge {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border: 2px solid var(--nonveg-red);
   border-radius: 4px;
   display: inline-flex;
@@ -89,8 +88,8 @@ input, select { font-family: inherit; color: inherit; }
 }
 .non-veg-badge::after {
   content: '';
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   background-color: var(--nonveg-red);
   border-radius: 50%;
   box-shadow: 0 0 6px rgba(217, 4, 41, 0.4);
@@ -112,7 +111,7 @@ input, select { font-family: inherit; color: inherit; }
   position: relative;
 }
 .top-announcement .badge {
-  background: #ff6b35;
+  background: #f95738;
   color: #ffffff;
   padding: 2px 10px;
   border-radius: var(--radius-full);
@@ -121,7 +120,7 @@ input, select { font-family: inherit; color: inherit; }
   font-weight: 800;
 }
 
-/* 2. FULL-SCREEN HERO BANNER WITH CLEAR FOOD IMAGE */
+/* 2. FULL-SCREEN HERO BANNER */
 .full-hero-section {
   position: relative;
   width: 100%;
@@ -291,17 +290,17 @@ input, select { font-family: inherit; color: inherit; }
   align-items: center;
   gap: 12px;
   padding: 15px 34px;
-  background: #2e7d32;
+  background: #f95738;
   color: #ffffff;
   font-weight: 900;
   font-size: 1.02rem;
-  border-radius: var(--radius-sm);
-  box-shadow: 0 10px 25px rgba(46, 125, 50, 0.45);
+  border-radius: var(--radius-full);
+  box-shadow: 0 10px 25px rgba(249, 87, 56, 0.45);
   transition: var(--transition);
   text-transform: capitalize;
 }
 .palmshore-cta-btn:hover {
-  background: #1b5e20;
+  background: var(--primary-hover);
   transform: translateY(-3px) scale(1.02);
 }
 
@@ -314,7 +313,7 @@ input, select { font-family: inherit; color: inherit; }
   font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
   transition: var(--transition);
 }
-.full-carousel-btn:hover { background: #2e7d32; border-color: #2e7d32; }
+.full-carousel-btn:hover { background: #f95738; border-color: #f95738; }
 .full-carousel-btn.prev { left: 24px; }
 .full-carousel-btn.next { right: 24px; }
 
@@ -326,9 +325,9 @@ input, select { font-family: inherit; color: inherit; }
   width: 12px; height: 12px; border-radius: 50%;
   background: rgba(255, 255, 255, 0.5); cursor: pointer; transition: var(--transition);
 }
-.full-dot.active { width: 36px; border-radius: var(--radius-full); background: #2e7d32; }
+.full-dot.active { width: 36px; border-radius: var(--radius-full); background: #f95738; }
 
-/* 3. CATEGORY PILLS (EXACT MATCH SCREENSHOT) */
+/* 3. CATEGORY CARDS (EXACT MATCH SCREENSHOT) */
 .categories-section {
   max-width: 1380px;
   margin: 40px auto 20px;
@@ -346,11 +345,11 @@ input, select { font-family: inherit; color: inherit; }
 
 .cat-card {
   flex: 0 0 auto;
-  width: 132px;
+  width: 130px;
   background: #ffffff;
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 16px 10px;
+  padding: 16px 10px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -472,7 +471,7 @@ input, select { font-family: inherit; color: inherit; }
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 10px;
+  margin-top: 6px;
   width: 100%;
 }
 .sort-wrapper label {
@@ -484,7 +483,7 @@ input, select { font-family: inherit; color: inherit; }
   background: #ffffff;
   border: 1.5px solid var(--border-color);
   border-radius: var(--radius-full);
-  padding: 8px 20px;
+  padding: 7px 20px;
   font-size: 0.88rem;
   font-weight: 800;
   color: var(--text-primary);
@@ -492,7 +491,7 @@ input, select { font-family: inherit; color: inherit; }
   cursor: pointer;
 }
 
-/* 5. SECTION HEADING & DISH CARD GRID (EXACT MATCH SCREENSHOT) */
+/* 5. SECTION HEADING & DISH CARDS (EXACT MATCH SCREENSHOT) */
 .menu-section {
   max-width: 1380px;
   margin: 0 auto 80px;
@@ -510,20 +509,21 @@ input, select { font-family: inherit; color: inherit; }
   font-weight: 900;
   color: #1e293b;
   position: relative;
+  padding-top: 6px;
 }
 .menu-main-title::before {
   content: '';
   position: absolute;
-  top: -2px;
+  top: 0;
   left: 0;
-  width: 14px;
+  width: 18px;
   height: 4px;
   background: var(--primary);
   border-radius: 2px;
 }
 
 .items-count-text {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--accent-green);
   font-weight: 800;
 }
@@ -546,7 +546,7 @@ input, select { font-family: inherit; color: inherit; }
 }
 .dish-card:hover {
   transform: translateY(-6px);
-  border-color: var(--primary);
+  border-color: var(--border-color);
   box-shadow: var(--shadow-md);
 }
 
@@ -571,6 +571,8 @@ input, select { font-family: inherit; color: inherit; }
   top: 14px; left: 14px; z-index: 2;
   display: flex; gap: 8px;
 }
+
+/* EXACT MATCH SCREENSHOT DARK OVERLAY BADGES */
 .tag-badge {
   background: rgba(0, 0, 0, 0.78);
   backdrop-filter: blur(4px);
@@ -587,6 +589,7 @@ input, select { font-family: inherit; color: inherit; }
   color: #ef4444;
 }
 
+/* EXACT MATCH SCREENSHOT WISHLIST HEART CIRCLE */
 .wishlist-btn {
   position: absolute;
   top: 14px; right: 14px; z-index: 2;
@@ -595,7 +598,7 @@ input, select { font-family: inherit; color: inherit; }
   background: #ffffff;
   color: #1e293b;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: var(--transition);
 }
@@ -626,7 +629,7 @@ input, select { font-family: inherit; color: inherit; }
 .dish-desc {
   font-size: 0.85rem;
   color: #64748b;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   line-height: 1.45;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -674,6 +677,7 @@ input, select { font-family: inherit; color: inherit; }
   color: #1e293b;
 }
 
+/* EXACT MATCH SCREENSHOT ORANGE ADD BUTTON */
 .add-orange-pill-btn {
   padding: 8px 22px;
   background: var(--primary);
