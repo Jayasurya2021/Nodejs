@@ -23,24 +23,24 @@ import Toast from '../components/Toast';
 import { applicationAPI } from '../services/api';
 
 const STATUS_COLORS = {
-  Wishlist: '#8c7a6b',       // Warm Bronze Sand
-  Applied: '#1c1611',        // Dark Espresso
-  Screening: '#4a3825',      // Rich Bronze
-  Interview: '#000000',      // Pitch Black
-  'Technical Round': '#2d2117', // Dark Roasted Coffee
-  'Final Round': '#d4a373',  // Gold Accent
-  Offer: '#10b981',          // Emerald Accent
-  Rejected: '#b91c1c',       // Deep Crimson
+  Wishlist: '#c4b49f',       // Warm Camel Sand
+  Applied: '#2b2621',        // Dark Coffee Charcoal
+  Screening: '#5c5247',      // Deep Taupe
+  Interview: '#d9d2c9',      // Greige Accent
+  'Technical Round': '#8c7a6b', // Sand Bronze
+  'Final Round': '#d4a373',  // Warm Amber
+  Offer: '#10b981',          // Soft Emerald
+  Rejected: '#b91c1c',       // Crimson
 };
 
 // Generate logo avatar fallback background color
 const getAvatarBg = (name = '') => {
   const colors = [
-    'bg-[#1c1611]',
-    'bg-[#000000]',
-    'bg-[#3d2d1d]',
-    'bg-[#2d2117]',
-    'bg-[#4a3825]',
+    'bg-[#2b2621]',
+    'bg-[#c4b49f]',
+    'bg-[#5c5247]',
+    'bg-[#8c7a6b]',
+    'bg-[#4a3f35]',
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -93,8 +93,8 @@ const Dashboard = () => {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-[#1c1611] border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm font-semibold text-[#3d2d1d]">Loading Dashboard Metrics...</p>
+          <div className="w-10 h-10 border-4 border-[#2b2621] border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm font-semibold text-[#5c5247]">Loading Dashboard Metrics...</p>
         </div>
       </div>
     );
@@ -134,27 +134,27 @@ const Dashboard = () => {
     name: statusName,
     value: count,
     percentage: ((count / totalCountForChart) * 100).toFixed(1),
-    color: STATUS_COLORS[statusName] || '#1c1611',
+    color: STATUS_COLORS[statusName] || '#c4b49f',
   }));
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      {/* 3D Dark Espresso Curved Hero Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#000000] via-[#1c1611] to-[#3d2d1d] rounded-3xl p-6 md:p-8 text-[#e6e1d3] shadow-xl">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+      {/* Curved Warm Hero Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-[#2b2621] via-[#3a332c] to-[#c4b49f] rounded-3xl p-6 md:p-8 text-[#faf9f6] shadow-xl">
+        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="max-w-xl space-y-3">
-            <h1 className="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-2 leading-tight text-white">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-2 leading-tight text-[#faf9f6]">
               Good morning, Jayasurya! 👋
             </h1>
-            <p className="text-[#e6e1d3]/80 text-sm font-medium">
+            <p className="text-[#faf9f6]/90 text-sm font-medium">
               Stay consistent, track smart, and land your dream role.
             </p>
 
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-[#e6e1d3] shadow-2xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-bold text-[#faf9f6] shadow-2xs">
               <span>You've applied to {totalApplications} jobs this month</span>
-              <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
+              <TrendingUp className="w-3.5 h-3.5 text-amber-300" />
             </div>
           </div>
 
@@ -162,19 +162,19 @@ const Dashboard = () => {
           <div className="relative flex items-center justify-center shrink-0 pr-4">
             <div className="w-48 h-32 relative flex items-center justify-center">
               {/* 3D Briefcase Card */}
-              <div className="absolute left-2 top-2 w-24 h-24 bg-gradient-to-tr from-[#1c1611] to-[#3d2d1d] rounded-2xl shadow-2xl rotate-[-6deg] flex items-center justify-center border border-white/20 backdrop-blur-xs">
-                <Briefcase className="w-10 h-10 text-[#e6e1d3] stroke-[1.5]" />
+              <div className="absolute left-2 top-2 w-24 h-24 bg-gradient-to-tr from-[#2b2621] to-[#5c5247] rounded-2xl shadow-2xl rotate-[-6deg] flex items-center justify-center border border-white/20 backdrop-blur-xs">
+                <Briefcase className="w-10 h-10 text-[#faf9f6] stroke-[1.5]" />
               </div>
               {/* Target Graphic */}
-              <div className="absolute right-4 bottom-0 w-20 h-20 bg-gradient-to-tr from-[#000000] to-[#1c1611] rounded-full shadow-2xl flex items-center justify-center border-4 border-[#3d2d1d]">
-                <Target className="w-9 h-9 text-[#e6e1d3]" />
+              <div className="absolute right-4 bottom-0 w-20 h-20 bg-gradient-to-tr from-[#c4b49f] to-[#2b2621] rounded-full shadow-2xl flex items-center justify-center border-4 border-[#faf9f6]">
+                <Target className="w-9 h-9 text-[#faf9f6]" />
               </div>
               {/* Checklist Sheet */}
-              <div className="absolute right-10 top-0 w-16 h-20 bg-[#e6e1d3] rounded-xl shadow-lg rotate-[8deg] p-2 flex flex-col justify-between">
-                <CheckSquare className="w-5 h-5 text-[#1c1611]" />
+              <div className="absolute right-10 top-0 w-16 h-20 bg-[#faf9f6] rounded-xl shadow-lg rotate-[8deg] p-2 flex flex-col justify-between">
+                <CheckSquare className="w-5 h-5 text-[#2b2621]" />
                 <div className="space-y-1">
-                  <div className="h-1.5 w-full bg-[#3d2d1d]/30 rounded-full" />
-                  <div className="h-1.5 w-3/4 bg-[#3d2d1d]/30 rounded-full" />
+                  <div className="h-1.5 w-full bg-[#c4b49f]/40 rounded-full" />
+                  <div className="h-1.5 w-3/4 bg-[#c4b49f]/40 rounded-full" />
                 </div>
               </div>
             </div>
@@ -242,15 +242,15 @@ const Dashboard = () => {
       {/* Middle Grid: Upcoming Interviews & Status Overview */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Upcoming Interviews (40%) */}
-        <div className="lg:col-span-5 bg-white border border-[#d8d2c4] rounded-3xl p-6 shadow-2xs flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-[#faf9f6] border border-[#d9d2c9] rounded-3xl p-6 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-extrabold text-[#000000] text-base flex items-center gap-2">
-              <CalendarIcon className="w-5 h-5 text-[#3d2d1d]" />
+            <h3 className="font-extrabold text-[#2b2621] text-base flex items-center gap-2">
+              <CalendarIcon className="w-5 h-5 text-[#c4b49f]" />
               Upcoming Interviews
             </h3>
             <button
               onClick={() => navigate('/interviews')}
-              className="text-xs font-black text-[#1c1611] hover:text-[#000000] flex items-center gap-1 cursor-pointer"
+              className="text-xs font-black text-[#2b2621] hover:text-[#c4b49f] flex items-center gap-1 cursor-pointer"
             >
               View all <ArrowRight className="w-3.5 h-3.5" />
             </button>
@@ -262,19 +262,19 @@ const Dashboard = () => {
                 <div
                   key={app._id}
                   onClick={() => navigate(`/applications/${app._id}`)}
-                  className="p-3.5 rounded-2xl bg-[#f0ece1]/70 border border-[#d8d2c4] hover:border-[#3d2d1d] transition-all cursor-pointer"
+                  className="p-3.5 rounded-2xl bg-[#efe9e3]/80 border border-[#d9d2c9] hover:border-[#c4b49f] transition-all cursor-pointer"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="font-black text-[#000000] text-sm">
+                    <h4 className="font-black text-[#2b2621] text-sm">
                       {app.jobRole}
                     </h4>
                     <StatusBadge status={app.status} size="small" />
                   </div>
-                  <p className="text-xs text-[#3d2d1d] font-semibold mt-0.5">
+                  <p className="text-xs text-[#5c5247] font-semibold mt-0.5">
                     {app.companyName}
                   </p>
-                  <div className="flex items-center gap-1.5 text-xs text-[#1c1611] mt-2 font-bold">
-                    <Clock className="w-3.5 h-3.5 text-[#3d2d1d]" />
+                  <div className="flex items-center gap-1.5 text-xs text-[#2b2621] mt-2 font-bold">
+                    <Clock className="w-3.5 h-3.5 text-[#c4b49f]" />
                     {new Date(app.interviewDate).toLocaleString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -286,21 +286,21 @@ const Dashboard = () => {
               ))}
             </div>
           ) : (
-            /* 3D Calendar Graphic Empty State matching screenshot */
+            /* 3D Calendar Graphic Empty State */
             <div className="py-8 text-center flex flex-col items-center justify-center space-y-3">
-              <div className="w-24 h-24 rounded-3xl bg-[#e6e1d3] border border-[#d8d2c4] flex flex-col items-center justify-center shadow-inner relative">
-                <CalendarIcon className="w-10 h-10 text-[#1c1611]" />
-                <Clock className="w-5 h-5 text-[#3d2d1d] absolute bottom-2 right-2 bg-white rounded-full p-0.5 border border-[#d8d2c4]" />
+              <div className="w-24 h-24 rounded-3xl bg-[#efe9e3] border border-[#d9d2c9] flex flex-col items-center justify-center shadow-inner relative">
+                <CalendarIcon className="w-10 h-10 text-[#2b2621]" />
+                <Clock className="w-5 h-5 text-[#c4b49f] absolute bottom-2 right-2 bg-white rounded-full p-0.5 border border-[#d9d2c9]" />
               </div>
 
               <div>
-                <h4 className="font-black text-[#000000] text-sm">No upcoming Interviews</h4>
-                <p className="text-xs text-[#3d2d1d] font-medium mt-0.5">You're all caught up!</p>
+                <h4 className="font-black text-[#2b2621] text-sm">No upcoming Interviews</h4>
+                <p className="text-xs text-[#5c5247] font-medium mt-0.5">You're all caught up!</p>
               </div>
 
               <button
                 onClick={() => navigate('/applications')}
-                className="px-4 py-2 rounded-xl bg-[#1c1611] hover:bg-black text-[#e6e1d3] text-xs font-bold transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-[#2b2621] hover:bg-[#1a1714] text-[#faf9f6] text-xs font-bold transition-colors cursor-pointer"
               >
                 Browse Applications
               </button>
@@ -309,17 +309,17 @@ const Dashboard = () => {
         </div>
 
         {/* Right Column: Application Status Overview Donut & Legend Table (60%) */}
-        <div className="lg:col-span-7 bg-white border border-[#d8d2c4] rounded-3xl p-6 shadow-2xs">
+        <div className="lg:col-span-7 bg-[#faf9f6] border border-[#d9d2c9] rounded-3xl p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-extrabold text-[#000000] text-base flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[#3d2d1d]" />
+            <h3 className="font-extrabold text-[#2b2621] text-base flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-[#c4b49f]" />
               Application Status Overview
             </h3>
 
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="px-3 py-1.5 rounded-xl bg-[#f0ece1] border border-[#d8d2c4] text-xs font-bold text-[#000000] focus:outline-none cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-[#efe9e3] border border-[#d9d2c9] text-xs font-bold text-[#2b2621] focus:outline-none cursor-pointer"
             >
               <option value="This Month">This Month</option>
               <option value="All Time">All Time</option>
@@ -341,7 +341,7 @@ const Dashboard = () => {
                     dataKey="value"
                   >
                     {statusPieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} stroke="#ffffff" strokeWidth={2} />
+                      <Cell key={`cell-${index}`} fill={entry.color} stroke="#faf9f6" strokeWidth={2} />
                     ))}
                   </Pie>
                 </PieChart>
@@ -349,10 +349,10 @@ const Dashboard = () => {
 
               {/* Centered Total Overlay */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-2xl font-black text-[#000000] leading-none">
+                <span className="text-2xl font-black text-[#2b2621] leading-none">
                   {totalApplications}
                 </span>
-                <span className="text-[10px] font-bold text-[#3d2d1d] uppercase tracking-wider mt-0.5">
+                <span className="text-[10px] font-bold text-[#5c5247] uppercase tracking-wider mt-0.5">
                   Total
                 </span>
               </div>
@@ -364,21 +364,21 @@ const Dashboard = () => {
                 <div
                   key={item.name}
                   onClick={() => navigate(`/applications?status=${encodeURIComponent(item.name)}`)}
-                  className="flex items-center justify-between p-1.5 px-2 rounded-xl hover:bg-[#f0ece1] transition-colors cursor-pointer"
+                  className="flex items-center justify-between p-1.5 px-2 rounded-xl hover:bg-[#efe9e3] transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-2 truncate">
                     <span
                       className="w-2.5 h-2.5 rounded-full shrink-0"
                       style={{ backgroundColor: item.color }}
                     />
-                    <span className="font-bold text-[#000000] truncate">
+                    <span className="font-bold text-[#2b2621] truncate">
                       {item.name}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="font-black text-[#000000]">{item.value}</span>
-                    <span className="text-[10px] text-[#3d2d1d] font-bold w-9 text-right">
+                    <span className="font-black text-[#2b2621]">{item.value}</span>
+                    <span className="text-[10px] text-[#5c5247] font-bold w-9 text-right">
                       {item.percentage}%
                     </span>
                   </div>
@@ -389,21 +389,21 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Recent Applications Section - Table View Matching Reference Screenshot */}
-      <div className="bg-white border border-[#d8d2c4] rounded-3xl p-6 shadow-2xs space-y-4">
+      {/* Recent Applications Section */}
+      <div className="bg-[#faf9f6] border border-[#d9d2c9] rounded-3xl p-6 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-extrabold text-[#000000]">
+            <h3 className="text-lg font-extrabold text-[#2b2621]">
               Recent Applications
             </h3>
-            <p className="text-xs text-[#3d2d1d] font-medium">
+            <p className="text-xs text-[#5c5247] font-medium">
               Latest jobs you added to your tracker
             </p>
           </div>
 
           <button
             onClick={() => navigate('/applications')}
-            className="text-xs font-black text-[#1c1611] hover:text-[#000000] flex items-center gap-1 cursor-pointer"
+            className="text-xs font-black text-[#2b2621] hover:text-[#c4b49f] flex items-center gap-1 cursor-pointer"
           >
             View all <ArrowRight className="w-3.5 h-3.5" />
           </button>
@@ -414,7 +414,7 @@ const Dashboard = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-[#d8d2c4] text-[11px] font-extrabold uppercase tracking-wider text-[#3d2d1d]">
+                <tr className="border-b border-[#d9d2c9] text-[11px] font-extrabold uppercase tracking-wider text-[#5c5247]">
                   <th className="py-3 px-4">Job Title</th>
                   <th className="py-3 px-4">Company</th>
                   <th className="py-3 px-4">Status</th>
@@ -422,19 +422,19 @@ const Dashboard = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#d8d2c4]/60 font-medium text-slate-800">
+              <tbody className="divide-y divide-[#d9d2c9]/60 font-medium text-slate-800">
                 {recentApplications.map((app) => (
                   <tr
                     key={app._id}
-                    className="hover:bg-[#f0ece1]/60 transition-colors group cursor-pointer"
+                    className="hover:bg-[#efe9e3]/70 transition-colors group cursor-pointer"
                     onClick={() => navigate(`/applications/${app._id}`)}
                   >
                     {/* Job Title & Tech Stack */}
                     <td className="py-3.5 px-4">
-                      <div className="font-extrabold text-[#000000] text-sm group-hover:text-[#3d2d1d] transition-colors">
+                      <div className="font-extrabold text-[#2b2621] text-sm group-hover:text-[#c4b49f] transition-colors">
                         {app.jobRole}
                       </div>
-                      <p className="text-[11px] text-[#3d2d1d]/80 font-semibold mt-0.5">
+                      <p className="text-[11px] text-[#5c5247] font-semibold mt-0.5">
                         {app.workType} • {app.location || 'Remote'}
                       </p>
                     </td>
@@ -452,12 +452,12 @@ const Dashboard = () => {
                           <div
                             className={`w-7 h-7 rounded-lg ${getAvatarBg(
                               app.companyName
-                            )} text-[#e6e1d3] font-bold text-xs flex items-center justify-center`}
+                            )} text-[#faf9f6] font-bold text-xs flex items-center justify-center`}
                           >
                             {app.companyName ? app.companyName[0] : 'J'}
                           </div>
                         )}
-                        <span className="font-bold text-[#000000]">{app.companyName}</span>
+                        <span className="font-bold text-[#2b2621]">{app.companyName}</span>
                       </div>
                     </td>
 
@@ -467,7 +467,7 @@ const Dashboard = () => {
                     </td>
 
                     {/* Applied Date */}
-                    <td className="py-3.5 px-4 text-[#3d2d1d] font-bold">
+                    <td className="py-3.5 px-4 text-[#5c5247] font-bold">
                       {app.appliedDate
                         ? new Date(app.appliedDate).toLocaleDateString('en-US', {
                             month: 'short',
@@ -493,11 +493,11 @@ const Dashboard = () => {
             </table>
           </div>
         ) : (
-          <div className="p-8 text-center border border-dashed border-[#d8d2c4] rounded-2xl space-y-2">
-            <p className="font-bold text-[#000000] text-sm">No recent job applications</p>
+          <div className="p-8 text-center border border-dashed border-[#d9d2c9] rounded-2xl space-y-2">
+            <p className="font-bold text-[#2b2621] text-sm">No recent job applications</p>
             <button
               onClick={() => navigate('/add-application')}
-              className="px-4 py-2 rounded-xl bg-[#1c1611] text-[#e6e1d3] font-bold text-xs shadow-md cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-[#2b2621] text-[#faf9f6] font-bold text-xs shadow-md cursor-pointer"
             >
               + Add Application
             </button>
@@ -511,6 +511,7 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
 
 

@@ -10,11 +10,11 @@ import { applicationAPI } from '../services/api';
 // Generate logo avatar fallback background color
 const getAvatarBg = (name = '') => {
   const colors = [
-    'bg-[#1c1611]',
-    'bg-[#000000]',
-    'bg-[#3d2d1d]',
-    'bg-[#2d2117]',
-    'bg-[#4a3825]',
+    'bg-[#2b2621]',
+    'bg-[#c4b49f]',
+    'bg-[#5c5247]',
+    'bg-[#8c7a6b]',
+    'bg-[#4a3f35]',
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -101,25 +101,25 @@ const Applications = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-black text-[#000000] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-black text-[#2b2621] tracking-tight">
               Job Applications
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-[#e6e1d3] border border-[#d8d2c4] text-[#000000] text-xs font-black">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#c4b49f] border border-[#d9d2c9] text-[#2b2621] text-xs font-black">
               {applications.length}
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-[#3d2d1d] font-medium mt-1">
+          <p className="text-xs sm:text-sm text-[#5c5247] font-medium mt-1">
             Manage, filter, and track all your target jobs and interview pipelines
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Grid vs Table View Switcher */}
-          <div className="flex items-center p-1 rounded-xl bg-white border border-[#d8d2c4] shadow-2xs">
+          <div className="flex items-center p-1 rounded-xl bg-[#faf9f6] border border-[#d9d2c9] shadow-2xs">
             <button
               onClick={() => setViewMode('grid')}
               className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'grid' ? 'bg-[#1c1611] text-[#e6e1d3] shadow-2xs' : 'text-[#3d2d1d] hover:text-[#000000]'
+                viewMode === 'grid' ? 'bg-[#2b2621] text-[#efe9e3] shadow-2xs' : 'text-[#5c5247] hover:text-[#2b2621]'
               }`}
               title="Grid View"
             >
@@ -128,7 +128,7 @@ const Applications = () => {
             <button
               onClick={() => setViewMode('table')}
               className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'table' ? 'bg-[#1c1611] text-[#e6e1d3] shadow-2xs' : 'text-[#3d2d1d] hover:text-[#000000]'
+                viewMode === 'table' ? 'bg-[#2b2621] text-[#efe9e3] shadow-2xs' : 'text-[#5c5247] hover:text-[#2b2621]'
               }`}
               title="Table View"
             >
@@ -138,7 +138,7 @@ const Applications = () => {
 
           <button
             onClick={fetchApplications}
-            className="p-2.5 rounded-xl border border-[#d8d2c4] bg-white text-[#3d2d1d] hover:bg-[#f0ece1] transition-colors shadow-2xs cursor-pointer"
+            className="p-2.5 rounded-xl border border-[#d9d2c9] bg-[#faf9f6] text-[#5c5247] hover:bg-[#efe9e3] transition-colors shadow-2xs cursor-pointer"
             title="Refresh List"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -146,9 +146,9 @@ const Applications = () => {
 
           <button
             onClick={() => navigate('/add-application')}
-            className="px-4 py-2.5 rounded-xl bg-[#1c1611] hover:bg-[#000000] text-[#e6e1d3] font-bold text-xs shadow-md shadow-black/20 transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
+            className="px-4 py-2.5 rounded-xl bg-[#2b2621] hover:bg-[#1a1714] text-[#faf9f6] font-bold text-xs shadow-md shadow-[#2b2621]/20 transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
           >
-            <Plus className="w-4 h-4 text-[#e6e1d3]" />
+            <Plus className="w-4 h-4 text-[#faf9f6]" />
             + Add Application
           </button>
         </div>
@@ -170,7 +170,7 @@ const Applications = () => {
       {/* Applications Grid or Table */}
       {loading ? (
         <div className="flex items-center justify-center min-h-[40vh]">
-          <div className="w-8 h-8 border-4 border-[#1c1611] border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-[#2b2621] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : applications.length > 0 ? (
         viewMode === 'grid' ? (
@@ -185,10 +185,10 @@ const Applications = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-white border border-[#d8d2c4] rounded-3xl p-6 shadow-2xs overflow-x-auto">
+          <div className="bg-[#faf9f6] border border-[#d9d2c9] rounded-3xl p-6 shadow-xs overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-[#d8d2c4] text-[11px] font-extrabold uppercase tracking-wider text-[#3d2d1d]">
+                <tr className="border-b border-[#d9d2c9] text-[11px] font-extrabold uppercase tracking-wider text-[#5c5247]">
                   <th className="py-3 px-4">Job Title</th>
                   <th className="py-3 px-4">Company</th>
                   <th className="py-3 px-4">Work Type</th>
@@ -197,18 +197,18 @@ const Applications = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#d8d2c4]/60 font-medium text-slate-800">
+              <tbody className="divide-y divide-[#d9d2c9]/60 font-medium text-slate-800">
                 {applications.map((app) => (
                   <tr
                     key={app._id}
-                    className="hover:bg-[#f0ece1]/60 transition-colors group cursor-pointer"
+                    className="hover:bg-[#efe9e3]/70 transition-colors group cursor-pointer"
                     onClick={() => navigate(`/applications/${app._id}`)}
                   >
                     <td className="py-3.5 px-4">
-                      <div className="font-extrabold text-[#000000] text-sm group-hover:text-[#3d2d1d] transition-colors">
+                      <div className="font-extrabold text-[#2b2621] text-sm group-hover:text-[#c4b49f] transition-colors">
                         {app.jobRole}
                       </div>
-                      <p className="text-[11px] text-[#3d2d1d]/80 font-semibold mt-0.5">
+                      <p className="text-[11px] text-[#5c5247] font-semibold mt-0.5">
                         {app.location || 'Remote'}
                       </p>
                     </td>
@@ -225,17 +225,17 @@ const Applications = () => {
                           <div
                             className={`w-7 h-7 rounded-lg ${getAvatarBg(
                               app.companyName
-                            )} text-[#e6e1d3] font-bold text-xs flex items-center justify-center`}
+                            )} text-[#faf9f6] font-bold text-xs flex items-center justify-center`}
                           >
                             {app.companyName ? app.companyName[0] : 'J'}
                           </div>
                         )}
-                        <span className="font-bold text-[#000000]">{app.companyName}</span>
+                        <span className="font-bold text-[#2b2621]">{app.companyName}</span>
                       </div>
                     </td>
 
                     <td className="py-3.5 px-4">
-                      <span className="px-2 py-0.5 rounded-md bg-[#e6e1d3] border border-[#d8d2c4] text-[11px] font-bold text-[#000000]">
+                      <span className="px-2 py-0.5 rounded-md bg-[#efe9e3] border border-[#d9d2c9] text-[11px] font-bold text-[#2b2621]">
                         {app.workType}
                       </span>
                     </td>
@@ -244,7 +244,7 @@ const Applications = () => {
                       <StatusBadge status={app.status} size="small" />
                     </td>
 
-                    <td className="py-3.5 px-4 text-[#3d2d1d] font-bold">
+                    <td className="py-3.5 px-4 text-[#5c5247] font-bold">
                       {app.appliedDate
                         ? new Date(app.appliedDate).toLocaleDateString('en-US', {
                             month: 'short',
@@ -270,19 +270,19 @@ const Applications = () => {
           </div>
         )
       ) : (
-        <div className="p-12 text-center bg-white border border-dashed border-[#d8d2c4] rounded-3xl space-y-4 my-6 shadow-2xs">
-          <Briefcase className="w-12 h-12 text-[#3d2d1d]/60 mx-auto" />
+        <div className="p-12 text-center bg-[#faf9f6] border border-dashed border-[#d9d2c9] rounded-3xl space-y-4 my-6 shadow-xs">
+          <Briefcase className="w-12 h-12 text-[#5c5247] mx-auto" />
           <div>
-            <h3 className="text-lg font-extrabold text-[#000000]">
+            <h3 className="text-lg font-extrabold text-[#2b2621]">
               No matching applications found
             </h3>
-            <p className="text-xs text-[#3d2d1d] max-w-md mx-auto mt-1 font-medium">
+            <p className="text-xs text-[#5c5247] max-w-md mx-auto mt-1 font-medium">
               Try adjusting your search query, status, or work type filters to discover more results.
             </p>
           </div>
           <button
             onClick={handleResetFilters}
-            className="px-4 py-2 rounded-xl bg-[#e6e1d3] text-[#000000] text-xs font-bold hover:bg-[#3d2d1d] hover:text-[#e6e1d3] transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-[#c4b49f] text-[#2b2621] text-xs font-bold hover:bg-[#b5a38c] transition-colors cursor-pointer"
           >
             Clear All Filters
           </button>
@@ -295,6 +295,7 @@ const Applications = () => {
 };
 
 export default Applications;
+
 
 
 
