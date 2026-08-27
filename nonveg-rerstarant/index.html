@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Carnivore Feast - 100% Pure Non-Veg Restaurant & Delivery</title>
-  <meta name="description" content="Order sizzling Hyderabadi Biryani, Tandoori Chicken, Juicy Kebabs, Spicy Curries, Seafood & Gourmet Burgers. 100% Pure Non-Veg Specialist with fast delivery." />
+  <meta name="description" content="Order sizzling Hyderabadi Dum Biryani, Tandoori Chicken, Juicy Kebabs, Spicy Curries & Seafood. 100% Pure Non-Veg Specialist." />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,10 +14,10 @@
     <span class="badge">🔥 SPECIAL OFFER</span>
     <span>Use Code <strong>NONVEG50</strong> to get 50% OFF up to ₹150 on your first order!</span>
     <span style="opacity: 0.6;">|</span>
-    <span>Free Delivery on orders above ₹500!</span>
+    <span>Free Express Delivery on orders above ₹500!</span>
   </div>
 
-  <!-- 2. MAIN SWIGGY-STYLE HEADER -->
+  <!-- 2. MAIN HEADER WITH THEME TOGGLE -->
   <header class="main-header">
     <div class="header-container">
       
@@ -49,6 +49,11 @@
           <span class="search-icon">🔍</span>
           <input type="text" id="headerSearchInput" placeholder="Search biryani, kebabs, chicken..." />
         </div>
+
+        <!-- Light / Dark Theme Switcher Button -->
+        <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Light / Dark Theme">
+          <span id="themeToggleIcon">🌙</span>
+        </button>
 
         <!-- Orders History Link -->
         <button class="nav-btn" onclick="openOrdersHistoryModal()" title="View Order History">
@@ -195,13 +200,13 @@
 
   <!-- 6. MAIN MENU GRID -->
   <main class="menu-section">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h2 style="font-size: 1.4rem;">Menu Selection</h2>
-      <span id="dishCountLabel" style="font-size: 0.88rem; color: var(--text-muted); font-weight: 600;"></span>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;">
+      <h2 style="font-size: 1.45rem;">Delicious Non-Veg Menu</h2>
+      <span id="dishCountLabel" style="font-size: 0.9rem; color: var(--text-muted); font-weight: 700;"></span>
     </div>
 
     <div class="dish-grid" id="dishGrid">
-      <!-- Dynamic Dish Cards Injected via JS -->
+      <!-- Dynamic Cards -->
     </div>
   </main>
 
@@ -213,12 +218,20 @@
       <button class="close-drawer-btn" id="closeCartDrawerBtn">✕</button>
     </div>
 
+    <!-- Free Delivery Progress Bar -->
+    <div class="free-delivery-tracker" id="freeDeliveryTracker">
+      <div id="freeDeliveryMsg">Add ₹500 for FREE Delivery!</div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="freeDeliveryProgress" style="width: 0%;"></div>
+      </div>
+    </div>
+
     <div class="cart-body">
       <!-- Empty State -->
       <div class="cart-empty-state" id="cartEmptyState" style="display: none;">
         <span class="icon">🍗</span>
         <h3>Your Cart is Empty</h3>
-        <p>Looks like you haven't added any juicy biryani or kebabs yet!</p>
+        <p>Add some sizzling kebabs or royal biryani to get started!</p>
       </div>
 
       <!-- Active Cart Content -->
@@ -228,7 +241,7 @@
         <!-- Promo Coupon Input -->
         <div class="promo-box">
           <div class="promo-input-group">
-            <input type="text" id="couponCodeInput" placeholder="Enter Coupon (e.g. NONVEG50)" />
+            <input type="text" id="couponCodeInput" placeholder="Promo Code (e.g. NONVEG50)" />
             <button class="apply-coupon-btn" onclick="applyCouponCode()">Apply</button>
           </div>
           <div id="appliedCouponTag"></div>
@@ -279,21 +292,16 @@
   </aside>
 
   <!-- 8. MODALS -->
-
-  <!-- A. Customization Modal -->
   <div class="modal-wrapper" id="customModal">
     <div class="modal-content">
       <div class="modal-header">
         <h4>Customize Your Dish 🌶️</h4>
         <button class="close-modal-btn" onclick="closeCustomizationModal()">✕</button>
       </div>
-      <div class="modal-body" id="customModalBody">
-        <!-- Dynamic Options Injected via JS -->
-      </div>
+      <div class="modal-body" id="customModalBody"></div>
     </div>
   </div>
 
-  <!-- B. Delivery Address Modal -->
   <div class="modal-wrapper" id="addressModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -322,7 +330,6 @@
     </div>
   </div>
 
-  <!-- C. Checkout & Payment Modal -->
   <div class="modal-wrapper" id="checkoutModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -331,9 +338,9 @@
       </div>
       <div class="modal-body">
         <form onsubmit="handlePlaceOrder(event)">
-          <h5 style="color: var(--accent-gold); margin-bottom: 12px; font-size: 0.95rem;">Delivery Information</h5>
+          <h5 style="color: var(--primary); margin-bottom: 12px; font-size: 0.98rem; font-weight: 800;">Delivery Address</h5>
           <div class="form-group">
-            <label>Delivery Address</label>
+            <label>Full Address</label>
             <input type="text" id="checkoutStreet" required />
           </div>
           <div style="display: flex; gap: 12px;">
@@ -351,8 +358,8 @@
             <input type="tel" id="checkoutPhone" placeholder="+91 98765 43210" required />
           </div>
 
-          <h5 style="color: var(--accent-gold); margin: 20px 0 12px; font-size: 0.95rem;">Select Payment Method</h5>
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+          <h5 style="color: var(--primary); margin: 20px 0 12px; font-size: 0.98rem; font-weight: 800;">Select Payment Method</h5>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px;">
             <label class="option-label">
               <span>💵 Cash on Delivery (COD)</span>
               <input type="radio" name="payMethod" value="Cash on Delivery" checked />
@@ -375,47 +382,41 @@
     </div>
   </div>
 
-  <!-- D. Live Order Tracker Modal -->
   <div class="modal-wrapper" id="trackerModal">
     <div class="modal-content">
       <div class="modal-header">
         <h4>Order Progress 🚴</h4>
         <button class="close-modal-btn" onclick="closeTrackerModal()">✕</button>
       </div>
-      <div class="modal-body" id="trackerModalBody">
-        <!-- Dynamic Stepper via JS -->
-      </div>
+      <div class="modal-body" id="trackerModalBody"></div>
     </div>
   </div>
 
-  <!-- E. Past Orders History Modal -->
   <div class="modal-wrapper" id="ordersHistoryModal">
     <div class="modal-content">
       <div class="modal-header">
         <h4>My Past Feast Orders 📜</h4>
         <button class="close-modal-btn" onclick="document.getElementById('ordersHistoryModal').classList.remove('active')">✕</button>
       </div>
-      <div class="modal-body" id="ordersHistoryBody">
-        <!-- Injected via JS -->
-      </div>
+      <div class="modal-body" id="ordersHistoryBody"></div>
     </div>
   </div>
 
-  <!-- 9. TOAST CONTAINERS -->
+  <!-- 9. TOAST CONTAINER -->
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- 10. FOOTER -->
   <footer class="main-footer">
     <div class="footer-container">
       <div class="footer-col">
-        <div class="brand-logo" style="margin-bottom: 14px;">
+        <div class="brand-logo" style="margin-bottom: 16px;">
           <div class="logo-icon">🍖</div>
           <div class="logo-text">
             <span class="title">CARNIVORE <span>FEAST</span></span>
             <span class="subtitle">🔴 100% PURE NON-VEG</span>
           </div>
         </div>
-        <p>The ultimate destination for authentic non-veg lovers. Serving Hyderabadi Dum Biryanis, Clay Tandoori Kebabs, Gourmet Chicken Burgers, and Seafood Delicacies cooked with 100% fresh premium ingredients.</p>
+        <p>The ultimate destination for non-veg gourmets. Serving Hyderabadi Dum Biryanis, Clay Tandoori Kebabs, Gourmet Burgers & Fresh Seafood prepared with 100% fresh premium ingredients.</p>
       </div>
 
       <div class="footer-col">
@@ -430,11 +431,11 @@
       </div>
 
       <div class="footer-col">
-        <h4>Hygiene & Quality Assurance</h4>
+        <h4>Hygiene & Quality Guarantee</h4>
         <p>✔ 100% Fresh Halal & Hand-picked Meat<br/>
            ✔ Prepared in 5-Star Hygienic Kitchens<br/>
            ✔ Zero Preservatives & Artificial Colors<br/>
-           ✔ Temperature Controlled Express Delivery</p>
+           ✔ Express Temperature Controlled Delivery</p>
       </div>
     </div>
 
