@@ -1,17 +1,18 @@
 /* ==========================================================================
-   CARNIVORE FEAST - 100% PURE LIGHT THEME (EXACT MATCH REFERENCE CARDS & UI)
+   REAL MEAT - 100% PURE LIGHT THEME (EXACT BRAND LOGO & REVIEWS/AUTH UI)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* 100% Light Theme Palette */
+  /* REAL MEAT Light Palette */
   --primary: #f95738;
   --primary-hover: #e04324;
   --primary-light: #fff3f0;
   --primary-glow: rgba(249, 87, 56, 0.25);
   
   --accent-green: #2e7d32;
+  --accent-green-hover: #1b5e20;
   --accent-green-bg: #edf7ed;
   --accent-green-border: #c8e6c9;
   --accent-gold: #ffb703;
@@ -36,7 +37,7 @@
   
   --shadow-sm: 0 4px 15px rgba(220, 100, 50, 0.05);
   --shadow-md: 0 8px 25px rgba(220, 100, 50, 0.08);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.12);
   
   --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -72,7 +73,7 @@ h1, h2, h3, h4, h5, h6 {
 
 a { color: inherit; text-decoration: none; }
 button { cursor: pointer; border: none; background: none; font-family: inherit; outline: none; }
-input, select { font-family: inherit; color: inherit; }
+input, select, textarea { font-family: inherit; color: inherit; }
 
 /* Swiggy Square Non-Veg Badge */
 .non-veg-badge {
@@ -120,7 +121,52 @@ input, select { font-family: inherit; color: inherit; }
   font-weight: 800;
 }
 
-/* 2. FULL-SCREEN HERO BANNER */
+/* 2. REAL MEAT BRAND LOGO BADGE (MATCHING USER SCREENSHOT) */
+.brand-logo-badge {
+  background: #ffffff;
+  padding: 10px 22px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 1.5px solid var(--border-color);
+  position: relative;
+}
+.real-meat-logo-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: rgba(46, 125, 50, 0.08);
+  box-shadow: 0 0 10px rgba(46, 125, 50, 0.2);
+}
+.brand-logo-badge .badge-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  border-bottom: 2px solid var(--accent-green);
+  padding-bottom: 3px;
+}
+.brand-logo-badge .green-text {
+  color: var(--accent-green);
+}
+.brand-logo-badge .badge-sub {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* HERO SECTION */
 .full-hero-section {
   position: relative;
   width: 100%;
@@ -139,40 +185,6 @@ input, select { font-family: inherit; color: inherit; }
   align-items: center;
   justify-content: space-between;
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0) 100%);
-}
-
-.brand-logo-badge {
-  background: #ffffff;
-  padding: 10px 20px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  border: 1.5px solid var(--border-color);
-}
-.brand-logo-badge .badge-icon {
-  font-size: 1.8rem;
-  color: #d97706;
-}
-.brand-logo-badge .badge-text {
-  display: flex;
-  flex-direction: column;
-}
-.brand-logo-badge .badge-title {
-  font-size: 1.3rem;
-  font-weight: 900;
-  color: #0f172a;
-  letter-spacing: -0.5px;
-  line-height: 1;
-}
-.brand-logo-badge .badge-sub {
-  font-size: 0.65rem;
-  font-weight: 800;
-  color: #2e7d32;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  margin-top: 2px;
 }
 
 .header-nav-links {
@@ -327,7 +339,7 @@ input, select { font-family: inherit; color: inherit; }
 }
 .full-dot.active { width: 36px; border-radius: var(--radius-full); background: #f95738; }
 
-/* 3. CATEGORY CARDS (EXACT MATCH SCREENSHOT) */
+/* 3. CATEGORY CARDS */
 .categories-section {
   max-width: 1380px;
   margin: 40px auto 20px;
@@ -404,7 +416,7 @@ input, select { font-family: inherit; color: inherit; }
   color: var(--text-primary);
 }
 
-/* 4. FILTER CONTROLS BAR (EXACT MATCH SCREENSHOT) */
+/* 4. FILTER CONTROLS BAR */
 .controls-section {
   max-width: 1380px;
   margin: 10px auto 28px;
@@ -491,7 +503,7 @@ input, select { font-family: inherit; color: inherit; }
   cursor: pointer;
 }
 
-/* 5. SECTION HEADING & DISH CARDS (EXACT MATCH SCREENSHOT) */
+/* 5. MENU SECTION & DISH CARDS */
 .menu-section {
   max-width: 1380px;
   margin: 0 auto 80px;
@@ -543,6 +555,7 @@ input, select { font-family: inherit; color: inherit; }
   flex-direction: column;
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
+  cursor: pointer;
 }
 .dish-card:hover {
   transform: translateY(-6px);
@@ -571,8 +584,6 @@ input, select { font-family: inherit; color: inherit; }
   top: 14px; left: 14px; z-index: 2;
   display: flex; gap: 8px;
 }
-
-/* EXACT MATCH SCREENSHOT DARK OVERLAY BADGES */
 .tag-badge {
   background: rgba(0, 0, 0, 0.78);
   backdrop-filter: blur(4px);
@@ -589,7 +600,6 @@ input, select { font-family: inherit; color: inherit; }
   color: #ef4444;
 }
 
-/* EXACT MATCH SCREENSHOT WISHLIST HEART CIRCLE */
 .wishlist-btn {
   position: absolute;
   top: 14px; right: 14px; z-index: 2;
@@ -677,7 +687,6 @@ input, select { font-family: inherit; color: inherit; }
   color: #1e293b;
 }
 
-/* EXACT MATCH SCREENSHOT ORANGE ADD BUTTON */
 .add-orange-pill-btn {
   padding: 8px 22px;
   background: var(--primary);
@@ -709,6 +718,144 @@ input, select { font-family: inherit; color: inherit; }
 }
 .qty-btn:hover { background: rgba(0, 0, 0, 0.2); }
 .qty-num { padding: 0 8px; color: #fff; font-weight: 900; font-size: 0.95rem; }
+
+/* 6. AUTHENTICATION & PRODUCT DETAIL MODAL STYLES */
+.auth-tabs {
+  display: flex;
+  background: var(--bg-secondary);
+  padding: 4px;
+  border-radius: var(--radius-full);
+  margin-bottom: 20px;
+}
+.auth-tab-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+.auth-tab-btn.active {
+  background: #ffffff;
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.form-group input, .form-group textarea {
+  width: 100%;
+  padding: 11px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  outline: none;
+  transition: var(--transition);
+}
+.form-group input:focus, .form-group textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+/* PRODUCT DETAIL VIEW & REVIEWS LAYOUT */
+.product-detail-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-bottom: 30px;
+}
+.product-detail-img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.reviews-section {
+  border-top: 1.5px solid var(--border-color);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+.reviews-title {
+  font-size: 1.3rem;
+  font-weight: 900;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.add-review-box {
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 24px;
+}
+
+.star-rating-selector {
+  display: flex;
+  gap: 8px;
+  font-size: 1.6rem;
+  cursor: pointer;
+  margin-bottom: 12px;
+  color: #d1d5db;
+}
+.star-rating-selector .star-icon.active {
+  color: var(--primary);
+}
+
+.review-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.reviewer-name {
+  font-weight: 800;
+  font-size: 0.92rem;
+}
+.review-stars {
+  color: var(--primary);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+.review-comment {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.relevant-products-section {
+  border-top: 1.5px solid var(--border-color);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+.relevant-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
 
 /* DRAWER, MODALS & FOOTER */
 .cart-overlay {
@@ -790,6 +937,7 @@ input, select { font-family: inherit; color: inherit; }
   .full-slide-content { padding-left: 36px; }
   .overlay-header { padding: 16px 20px; }
   .header-nav-links { display: none; }
+  .product-detail-hero { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {

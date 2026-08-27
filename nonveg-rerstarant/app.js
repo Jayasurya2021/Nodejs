@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CARNIVORE FEAST - 100% PURE LIGHT THEME (EXACT MATCH REFERENCE UI)
+   REAL MEAT - 100% PURE LIGHT THEME (EXACT BRAND LOGO & REVIEWS/AUTH APP JS)
    ========================================================================== */
 
 // --- 1. COMPREHENSIVE NON-VEG DISH DATABASE ---
@@ -13,7 +13,8 @@ const DISHES_DATA = [
     rating: 4.9,
     ratingCount: 1490,
     prepTime: '25-30 min',
-    description: 'Aromatic long-grain basmati rice dum cooked with juicy succulent mutton pieces and royal spices.',
+    calories: '650 kcal',
+    description: 'Aromatic long-grain basmati rice dum cooked with juicy succulent mutton pieces, saffron, mint leaves & royal spices. Served with Mirchi Ka Salan & Raita.',
     image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
     isSpicy: true,
@@ -33,7 +34,8 @@ const DISHES_DATA = [
     rating: 4.8,
     ratingCount: 980,
     prepTime: '20-25 min',
-    description: 'Whole tender chicken marinated in rich spicy hung curd & tandoori masala, charred to perfection.',
+    calories: '520 kcal',
+    description: 'Whole tender chicken marinated in rich spicy hung curd & tandoori masala, charred to perfection in clay tandoor.',
     image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
     isSpicy: true,
@@ -53,7 +55,8 @@ const DISHES_DATA = [
     rating: 4.7,
     ratingCount: 750,
     prepTime: '15-20 min',
-    description: 'Double grilled chicken patty loaded with crispy smoked bacon strips, melted cheese & signature sauce.',
+    calories: '580 kcal',
+    description: 'Double grilled chicken patty loaded with crispy smoked bacon strips, melted cheddar cheese & signature BBQ sauce.',
     image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
     isSpicy: false,
@@ -73,7 +76,8 @@ const DISHES_DATA = [
     rating: 4.9,
     ratingCount: 1850,
     prepTime: '20-25 min',
-    description: 'Iconic boneless tandoori chicken simmered in rich creamy tomato butter gravy, infused with fresh cream.',
+    calories: '610 kcal',
+    description: 'Iconic boneless tandoori chicken simmered in rich creamy tomato butter gravy, infused with kasuri methi & fresh cream.',
     image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
     isSpicy: false,
@@ -93,6 +97,7 @@ const DISHES_DATA = [
     rating: 4.8,
     ratingCount: 620,
     prepTime: '20-25 min',
+    calories: '440 kcal',
     description: 'Fresh jumbo tiger prawns pan-seared in rich garlic butter sauce, red pepper flakes & fresh cilantro.',
     image: 'https://images.unsplash.com/photo-1559742811-822863646df1?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
@@ -108,6 +113,7 @@ const DISHES_DATA = [
     rating: 4.9,
     ratingCount: 410,
     prepTime: '25-35 min',
+    calories: '720 kcal',
     description: 'Slow smoked mutton ribs glazed with sticky honey bourbon BBQ sauce, paired with 6 crispy chicken wings.',
     image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
@@ -128,6 +134,7 @@ const DISHES_DATA = [
     rating: 4.6,
     ratingCount: 890,
     prepTime: '20-25 min',
+    calories: '590 kcal',
     description: 'Fragrant aromatic rice infused with kewra water, juicy chicken leg, golden fried potato & soft boiled egg.',
     image: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
@@ -143,7 +150,8 @@ const DISHES_DATA = [
     rating: 4.7,
     ratingCount: 1100,
     prepTime: '15-20 min',
-    description: 'Minced chicken blended with aromatic herbs, ginger, garlic & green chillies, skewered and grilled over charcoal.',
+    calories: '410 kcal',
+    description: 'Minced chicken blended with aromatic herbs, ginger, garlic & green chillies, skewered and charcoal grilled.',
     image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
     isSpicy: true,
@@ -158,6 +166,7 @@ const DISHES_DATA = [
     rating: 4.8,
     ratingCount: 1650,
     prepTime: '15-20 min',
+    calories: '480 kcal',
     description: 'Extra crunchy double-dipped fried chicken wings tossed in your choice of Peri-Peri seasoning or Buffalo Dip.',
     image: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
@@ -178,6 +187,7 @@ const DISHES_DATA = [
     rating: 4.9,
     ratingCount: 780,
     prepTime: '25-30 min',
+    calories: '630 kcal',
     description: 'Kashmiri delicacy featuring tender lamb chunks slow cooked in gravy scented with Kashmiri red chillies & dry ginger.',
     image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
@@ -193,6 +203,7 @@ const DISHES_DATA = [
     rating: 4.7,
     ratingCount: 540,
     prepTime: '15-20 min',
+    calories: '430 kcal',
     description: 'Boneless fish fillets marinated in carom seeds (ajwain), gram flour & spicy North Indian spices, deep fried golden.',
     image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
@@ -208,6 +219,7 @@ const DISHES_DATA = [
     rating: 5.0,
     ratingCount: 390,
     prepTime: '30-35 min',
+    calories: '1150 kcal',
     description: 'The King of Non-Veg! Half Tandoori Chicken, 4 Seekh Kebabs, 4 Crispy Wings, 1 Portion Butter Chicken & 2 Rumali Roti.',
     image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80',
     isBestseller: true,
@@ -223,6 +235,7 @@ const DISHES_DATA = [
     rating: 4.6,
     ratingCount: 1320,
     prepTime: '12-15 min',
+    calories: '390 kcal',
     description: 'Shredded roasted chicken wrap with garlic mayo, spicy tahini, pickled veggies & french fries wrapped in soft pita.',
     image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
@@ -238,6 +251,7 @@ const DISHES_DATA = [
     rating: 4.8,
     ratingCount: 870,
     prepTime: '15-20 min',
+    calories: '490 kcal',
     description: 'Melt-in-mouth chicken breast cubes marinated in cashew paste, fresh cream, cardamom & cheese, tandoor roasted.',
     image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
@@ -253,6 +267,7 @@ const DISHES_DATA = [
     rating: 4.8,
     ratingCount: 460,
     prepTime: '25-30 min',
+    calories: '610 kcal',
     description: 'Authentic South Indian mutton curry cooked with freshly ground coconut, star anise, curry leaves & black pepper.',
     image: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
@@ -268,6 +283,7 @@ const DISHES_DATA = [
     rating: 4.9,
     ratingCount: 230,
     prepTime: '20-25 min',
+    calories: '510 kcal',
     description: 'Fresh Norwegian salmon fillet seared with dill butter, garlic, roasted veggies & mashed potatoes.',
     image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80',
     isBestseller: false,
@@ -302,6 +318,10 @@ class StorageManager {
   static getFavorites() { return this.get('favorites', []); }
   static saveFavorites(favs) { this.set('favorites', favs); }
 
+  static getUser() { return this.get('user', null); }
+  static saveUser(user) { this.set('user', user); }
+  static clearUser() { localStorage.removeItem('carnivore_user'); }
+
   static getAddress() {
     return this.get('address', {
       tag: 'Home',
@@ -319,14 +339,27 @@ class StorageManager {
     this.set('orders', orders);
   }
 
-  static getActiveOrder() { return this.get('active_order', null); }
-  static setActiveOrder(order) { this.set('active_order', order); }
+  static getReviews(dishId) {
+    const sampleReviews = [
+      { name: 'Rahul Sharma', rating: 5, comment: 'Absolutely delicious! Extremely fresh meat and perfect dum spices.', date: 'Yesterday' },
+      { name: 'Priya Patel', rating: 5, comment: 'The best non-veg in town. Super fast delivery and smoking hot flavor!', date: '3 days ago' },
+      { name: 'Anik Roy', rating: 4, comment: 'Very juicy meat! Portions are generous.', date: '1 week ago' }
+    ];
+    return this.get(`reviews_${dishId}`, sampleReviews);
+  }
+
+  static saveReview(dishId, review) {
+    const reviews = this.getReviews(dishId);
+    reviews.unshift(review);
+    this.set(`reviews_${dishId}`, reviews);
+  }
 }
 
 // --- 3. APPLICATION GLOBAL STATE ---
 let state = {
   cart: StorageManager.getCart(),
   favorites: StorageManager.getFavorites(),
+  user: StorageManager.getUser(),
   address: StorageManager.getAddress(),
   activeCategory: 'all',
   activeFilter: 'all',
@@ -337,7 +370,8 @@ let state = {
   currentSlide: 0,
   customizingDish: null,
   selectedPortion: null,
-  selectedSpice: null
+  selectedSpice: null,
+  selectedRatingScore: 5
 };
 
 // --- 4. CAROUSEL BANNER LOGIC ---
@@ -377,7 +411,7 @@ function initCarousel() {
   }, 5000);
 }
 
-// --- 5. FILTER & RENDER DISH GRID (EXACT REFERENCE CARDS) ---
+// --- 5. RENDER MENU GRID ---
 function filterAndSortDishes() {
   let filtered = [...DISHES_DATA];
 
@@ -427,7 +461,7 @@ function renderMenuGrid() {
     grid.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
         <div style="font-size: 3.5rem; margin-bottom: 12px;">🥩</div>
-        <h3 style="font-size: 1.3rem; color: var(--text-primary);">No non-veg dishes found!</h3>
+        <h3 style="font-size: 1.3rem; color: var(--text-primary);">No REAL MEAT dishes found!</h3>
         <p>Try searching for Biryani, Kebabs, or Tandoori Chicken.</p>
       </div>
     `;
@@ -441,28 +475,28 @@ function renderMenuGrid() {
 
     return `
       <div class="dish-card" data-id="${dish.id}">
-        <div class="dish-img-container">
+        <div class="dish-img-container" onclick="openProductDetailModal('${dish.id}')">
           <img src="${dish.image}" alt="${dish.name}" class="dish-img" loading="lazy" />
           <div class="dish-overlay-badge">
             ${dish.isBestseller ? '<span class="tag-badge">★ BESTSELLER</span>' : ''}
             ${dish.isSpicy ? '<span class="tag-badge spicy">🌶️ SPICY</span>' : ''}
           </div>
-          <button class="wishlist-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${dish.id}')" title="Add to Wishlist">
+          <button class="wishlist-btn ${isFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorite('${dish.id}')" title="Add to Wishlist">
             ${isFav ? '❤️' : '♡'}
           </button>
         </div>
 
         <div class="dish-info">
-          <div class="dish-title-wrap">
+          <div class="dish-title-wrap" onclick="openProductDetailModal('${dish.id}')">
             <span class="non-veg-badge"></span>
             <h3 class="dish-title">${dish.name}</h3>
           </div>
 
-          <p class="dish-desc">${dish.description}</p>
+          <p class="dish-desc" onclick="openProductDetailModal('${dish.id}')">${dish.description}</p>
 
           <div class="dish-footer-row">
-            <div class="dish-left-specs">
-              <span class="rating-orange">★ ${dish.rating} <span style="font-weight:600; color:#94a3b8; font-size:0.78rem;">(${dish.ratingCount}+)</span></span>
+            <div class="dish-left-specs" onclick="openProductDetailModal('${dish.id}')">
+              <span class="rating-orange">★ ${dish.rating} <span style="font-size: 0.78rem; color: #94a3b8; font-weight: 600;">(${dish.ratingCount}+)</span></span>
               <span class="prep-time-grey">⏱️ ${dish.prepTime}</span>
             </div>
 
@@ -485,7 +519,212 @@ function renderMenuGrid() {
   }).join('');
 }
 
-// --- 6. CART & CUSTOMIZATION HANDLERS ---
+// --- 6. AUTHENTICATION MODAL HANDLERS ---
+function openAuthModal() {
+  const modal = document.getElementById('authModal');
+  if (state.user) {
+    showToast(`Logged in as ${state.user.name} (${state.user.email})`);
+    return;
+  }
+  modal?.classList.add('active');
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal')?.classList.remove('active');
+}
+
+function switchAuthTab(tab) {
+  const loginForm = document.getElementById('loginForm');
+  const regForm = document.getElementById('registerForm');
+  const loginBtn = document.getElementById('loginTabBtn');
+  const regBtn = document.getElementById('registerTabBtn');
+  const title = document.getElementById('authModalTitle');
+
+  if (tab === 'login') {
+    loginForm.style.display = 'block';
+    regForm.style.display = 'none';
+    loginBtn.classList.add('active');
+    regBtn.classList.remove('active');
+    if (title) title.innerText = 'Welcome Back to REAL MEAT 🥩';
+  } else {
+    loginForm.style.display = 'none';
+    regForm.style.display = 'block';
+    loginBtn.classList.remove('active');
+    regBtn.classList.add('active');
+    if (title) title.innerText = 'Create Your REAL MEAT Account 🥩';
+  }
+}
+
+function handleLoginSubmit(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const name = email.split('@')[0];
+  state.user = { name: name.charAt(0).toUpperCase() + name.slice(1), email };
+  StorageManager.saveUser(state.user);
+  closeAuthModal();
+  updateUserHeaderState();
+  showToast(`Welcome back, ${state.user.name}!`);
+}
+
+function handleRegisterSubmit(e) {
+  e.preventDefault();
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  state.user = { name, email };
+  StorageManager.saveUser(state.user);
+  closeAuthModal();
+  updateUserHeaderState();
+  showToast(`Account Created! Welcome ${name}`);
+}
+
+function updateUserHeaderState() {
+  const btnText = document.getElementById('userAuthText');
+  const user = StorageManager.getUser();
+  if (user && btnText) {
+    btnText.innerText = user.name;
+  } else if (btnText) {
+    btnText.innerText = 'Login / Register';
+  }
+}
+
+// --- 7. PRODUCT DETAIL & REVIEWS MODAL ---
+function openProductDetailModal(dishId) {
+  const dish = DISHES_DATA.find(d => d.id === dishId);
+  if (!dish) return;
+
+  const modal = document.getElementById('productDetailModal');
+  const body = document.getElementById('productDetailBody');
+  if (!modal || !body) return;
+
+  const reviews = StorageManager.getReviews(dish.id);
+  const relevantDishes = DISHES_DATA.filter(d => d.category === dish.category && d.id !== dish.id).slice(0, 3);
+
+  body.innerHTML = `
+    <div class="product-detail-hero">
+      <img src="${dish.image}" class="product-detail-img" alt="${dish.name}" />
+
+      <div style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span class="non-veg-badge"></span>
+            <span style="font-size: 0.8rem; font-weight: 800; color: var(--accent-green); text-transform: uppercase;">100% PURE REAL MEAT</span>
+          </div>
+          <h3 style="font-size: 1.6rem; font-weight: 900; margin-bottom: 8px; color: #1e293b;">${dish.name}</h3>
+          <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 16px; line-height: 1.5;">${dish.description}</p>
+          
+          <div style="display: flex; gap: 16px; font-size: 0.88rem; font-weight: 800; margin-bottom: 20px;">
+            <span style="color: var(--primary);">★ ${dish.rating} (${dish.ratingCount}+ Customer Reviews)</span>
+            <span style="color: #64748b;">⏱️ ${dish.prepTime}</span>
+            <span style="color: #64748b;">🔥 ${dish.calories || '550 kcal'}</span>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-secondary); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-size: 0.8rem; color: #64748b; font-weight: 700;">Price Per Portion</div>
+            <div style="font-size: 1.6rem; font-weight: 900; color: #1e293b;">₹${dish.price}</div>
+          </div>
+          <button class="add-orange-pill-btn" style="font-size: 1rem; padding: 12px 30px;" onclick="handleAddClick('${dish.id}')">
+            + Add to Order
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS SECTION -->
+    <div class="reviews-section">
+      <div class="reviews-title">
+        <span>Verified Customer Reviews (${reviews.length}) ⭐</span>
+        <span style="font-size: 0.9rem; color: var(--primary); font-weight: 800;">Average Rating: ${dish.rating} / 5</span>
+      </div>
+
+      <!-- Add Review Form -->
+      <div class="add-review-box">
+        <h5 style="margin-bottom: 8px; font-size: 0.95rem;">Write a Customer Review</h5>
+        <div class="star-rating-selector" id="starSelector">
+          <span onclick="setReviewRating(1)">★</span>
+          <span onclick="setReviewRating(2)">★</span>
+          <span onclick="setReviewRating(3)">★</span>
+          <span onclick="setReviewRating(4)">★</span>
+          <span onclick="setReviewRating(5)" class="active">★</span>
+        </div>
+        <form onsubmit="handleReviewSubmit(event, '${dish.id}')">
+          <div style="display: flex; gap: 12px; margin-bottom: 10px;">
+            <input type="text" id="reviewerName" placeholder="Your Name" required style="flex:1; padding: 9px 14px; border:1px solid var(--border-color); border-radius:8px;" />
+          </div>
+          <textarea id="reviewerComment" placeholder="Share your experience with this dish..." required rows="2" style="width:100%; padding:9px 14px; border:1px solid var(--border-color); border-radius:8px; margin-bottom: 10px;"></textarea>
+          <button type="submit" class="add-orange-pill-btn" style="font-size: 0.85rem; padding: 8px 20px;">
+            Submit Customer Review
+          </button>
+        </form>
+      </div>
+
+      <!-- Reviews List -->
+      <div class="reviews-list">
+        ${reviews.map(r => `
+          <div class="review-card">
+            <div class="review-header">
+              <span class="reviewer-name">👤 ${r.name} <span style="font-size: 0.72rem; color: #10b981; margin-left: 6px;">✔ Verified Buyer</span></span>
+              <span class="review-stars">★ ${r.rating}.0</span>
+            </div>
+            <p class="review-comment">"${r.comment}"</p>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- RELEVANT PRODUCTS SECTION -->
+    ${relevantDishes.length > 0 ? `
+      <div class="relevant-products-section">
+        <h4 style="font-size: 1.15rem; font-weight: 900; color: #1e293b;">More Relevant Dishes You May Also Like 🍗</h4>
+        <div class="relevant-grid">
+          ${relevantDishes.map(rel => `
+            <div style="background:#ffffff; border:1.5px solid var(--border-color); border-radius:14px; padding:12px; display:flex; flex-direction:column; justify-space-between;">
+              <img src="${rel.image}" style="width:100%; height:110px; object-fit:cover; border-radius:10px; margin-bottom:8px;" />
+              <div style="font-size:0.9rem; font-weight:800; color:#1e293b; margin-bottom:4px;">${rel.name}</div>
+              <div style="font-size:0.8rem; color:var(--primary); font-weight:800; margin-bottom:8px;">★ ${rel.rating} • ₹${rel.price}</div>
+              <button class="add-orange-pill-btn" style="font-size:0.78rem; padding:5px 12px; width:100%;" onclick="handleAddClick('${rel.id}')">Add +</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : ''}
+  `;
+
+  modal.classList.add('active');
+}
+
+function closeProductDetailModal() {
+  document.getElementById('productDetailModal')?.classList.remove('active');
+}
+
+function setReviewRating(score) {
+  state.selectedRatingScore = score;
+  const stars = document.querySelectorAll('#starSelector span');
+  stars.forEach((s, idx) => {
+    s.classList.toggle('active', idx < score);
+  });
+}
+
+function handleReviewSubmit(e, dishId) {
+  e.preventDefault();
+  const name = document.getElementById('reviewerName').value;
+  const comment = document.getElementById('reviewerComment').value;
+
+  if (name && comment) {
+    const newRev = {
+      name,
+      rating: state.selectedRatingScore,
+      comment,
+      date: 'Just now'
+    };
+    StorageManager.saveReview(dishId, newRev);
+    openProductDetailModal(dishId);
+    showToast('Thank you! Your customer review was published!');
+  }
+}
+
+// --- 8. CART & CUSTOMIZATION HANDLERS ---
 function handleAddClick(dishId) {
   const dish = DISHES_DATA.find(d => d.id === dishId);
   if (!dish) return;
@@ -613,7 +852,7 @@ function confirmCustomization() {
   closeCustomizationModal();
 }
 
-// --- 7. CART DRAWER & BILLING ---
+// --- 9. CART DRAWER & BILLING ---
 function renderCartDrawer() {
   const listEl = document.getElementById('cartItemsList');
   const countBadge = document.getElementById('headerCartCount');
@@ -738,7 +977,7 @@ function setDeliveryTip(amount) {
   renderCartDrawer();
 }
 
-// --- 8. CHECKOUT & SIMULATED TRACKER ---
+// --- 10. CHECKOUT & TRACKER ---
 function openCheckoutModal() {
   if (state.cart.length === 0) {
     showToast('Your cart is empty!');
@@ -875,7 +1114,7 @@ function closeTrackerModal() {
   document.getElementById('trackerModal')?.classList.remove('active');
 }
 
-// --- 9. FAVORITES & ORDERS HISTORY ---
+// --- 11. FAVORITES & PAST ORDERS ---
 function toggleFavorite(dishId) {
   const idx = state.favorites.indexOf(dishId);
   if (idx > -1) {
@@ -965,7 +1204,7 @@ function saveAddressFromModal(e) {
   }
 }
 
-// --- 10. TOAST NOTIFICATIONS & INITIALIZATION ---
+// --- 12. TOAST & INITIALIZATION ---
 function showToast(msg) {
   const container = document.getElementById('toastContainer');
   if (!container) return;
@@ -998,6 +1237,7 @@ function toggleCartDrawer(open) {
 function renderAll() {
   renderMenuGrid();
   renderCartDrawer();
+  updateUserHeaderState();
   const addr = state.address;
   const locText = document.getElementById('headerLocText');
   if (locText && addr.street) {
