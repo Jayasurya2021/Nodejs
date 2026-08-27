@@ -67,8 +67,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                   className={({ isActive }) =>
                     `flex items-center gap-3.5 px-4 py-3 rounded-2xl font-semibold text-sm transition-all ${
                       isActive
-                        ? 'bg-purple-100/80 text-purple-700 font-extrabold shadow-2xs'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                        ? 'bg-emerald-100/90 text-emerald-900 font-extrabold shadow-2xs'
+                        : 'text-slate-600 hover:bg-emerald-50/50 hover:text-emerald-900'
                     }`
                   }
                 >
@@ -82,10 +82,10 @@ const Sidebar = ({ isOpen, onClose }) => {
 
         {/* Bottom Go Premium Card */}
         <div className="p-4 relative overflow-hidden">
-          {/* Subtle vector mountain background illustration */}
-          <div className="absolute inset-0 bg-gradient-to-t from-purple-50/80 to-transparent pointer-events-none -z-0" />
+          {/* Subtle vector background illustration */}
+          <div className="absolute inset-0 bg-gradient-to-t from-emerald-50/80 to-transparent pointer-events-none -z-0" />
 
-          <div className="relative z-10 bg-white border border-purple-100 rounded-2xl p-4 shadow-sm text-left">
+          <div className="relative z-10 bg-white border border-emerald-100 rounded-2xl p-4 shadow-2xs text-left">
             <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 flex items-center justify-center mb-2">
               <Crown className="w-4 h-4" />
             </div>
@@ -95,7 +95,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             </p>
             <button
               onClick={() => alert('Premium tier features coming soon!')}
-              className="mt-3 w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold text-xs shadow-md shadow-purple-600/20 flex items-center justify-center gap-1 transition-all hover:scale-[1.01] cursor-pointer"
+              className="mt-3 w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-800 hover:from-emerald-700 hover:to-teal-900 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center justify-center gap-1 transition-all hover:scale-[1.01] cursor-pointer"
             >
               Upgrade Now →
             </button>
@@ -107,5 +107,6 @@ const Sidebar = ({ isOpen, onClose }) => {
 };
 
 export default Sidebar;
+
 
 

@@ -21,14 +21,14 @@ const Navbar = ({ onToggleSidebar, searchTerm = '', setSearchTerm }) => {
           onClick={() => navigate('/')}
           className="flex items-center gap-2.5 cursor-pointer group"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-600/20 group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-700 to-teal-900 text-white flex items-center justify-center shadow-md shadow-emerald-700/20 group-hover:scale-105 transition-transform">
             <Briefcase className="w-5 h-5 text-white" />
           </div>
           <div>
             <h1 className="font-black text-slate-900 text-base leading-tight tracking-tight">
               Job Tracker
             </h1>
-            <p className="text-[10px] font-bold text-purple-600 tracking-wider">
+            <p className="text-[10px] font-extrabold text-emerald-700 tracking-wider uppercase">
               Track. Apply. Achieve.
             </p>
           </div>
@@ -44,7 +44,7 @@ const Navbar = ({ onToggleSidebar, searchTerm = '', setSearchTerm }) => {
             placeholder="Search applications, companies..."
             value={searchTerm}
             onChange={(e) => setSearchTerm && setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-full bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all font-medium"
+            className="w-full pl-10 pr-4 py-2 rounded-full bg-slate-50 border border-slate-200/80 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium"
           />
         </div>
       </div>
@@ -54,7 +54,7 @@ const Navbar = ({ onToggleSidebar, searchTerm = '', setSearchTerm }) => {
         {/* + Add Application Primary Button */}
         <button
           onClick={() => navigate('/add-application')}
-          className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-600/20 flex items-center gap-1.5 transition-all hover:scale-[1.02] cursor-pointer"
+          className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition-all hover:scale-[1.02] cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>+ Add Application</span>
@@ -62,7 +62,7 @@ const Navbar = ({ onToggleSidebar, searchTerm = '', setSearchTerm }) => {
 
         {/* Theme Toggle Icon (Moon) */}
         <button
-          className="p-2 rounded-xl text-slate-500 hover:text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
+          className="p-2 rounded-xl text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors cursor-pointer"
           title="Light Theme Active"
         >
           <Moon className="w-4.5 h-4.5" />
@@ -70,18 +70,18 @@ const Navbar = ({ onToggleSidebar, searchTerm = '', setSearchTerm }) => {
 
         {/* Bell Notification Badge */}
         <button
-          className="relative p-2 rounded-xl text-slate-500 hover:text-purple-600 hover:bg-purple-50 transition-colors cursor-pointer"
+          className="relative p-2 rounded-xl text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors cursor-pointer"
           title="Notifications"
         >
           <Bell className="w-4.5 h-4.5" />
-          <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-purple-600 text-white font-black text-[9px] flex items-center justify-center border-2 border-white">
+          <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-emerald-600 text-white font-black text-[9px] flex items-center justify-center border-2 border-white">
             3
           </span>
         </button>
 
         {/* User Profile Badge */}
         <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
-          <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+          <div className="w-8 h-8 rounded-full bg-emerald-700 text-white font-bold text-xs flex items-center justify-center shadow-xs">
             JS
           </div>
           <div className="hidden lg:block text-left leading-tight">
@@ -95,5 +95,6 @@ const Navbar = ({ onToggleSidebar, searchTerm = '', setSearchTerm }) => {
 };
 
 export default Navbar;
+
 
 

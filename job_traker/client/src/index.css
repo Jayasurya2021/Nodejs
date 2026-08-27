@@ -2,12 +2,14 @@
 
 @layer base {
   :root {
-    --bg-primary: #f5f6fa;
+    --bg-primary: #f4f7f6;
     --bg-secondary: #ffffff;
     --text-primary: #0f172a;
-    --text-secondary: #64748b;
+    --text-secondary: #475569;
     --border-color: #e2e8f0;
-    --brand-primary: #7c3aed;
+    --brand-primary: #059669;
+    --brand-dark: #0d2a2a;
+    --brand-light: #ecfdf5;
   }
 
   body {
@@ -31,11 +33,11 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
+  background: rgba(16, 185, 129, 0.3);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.5);
+  background: rgba(5, 150, 105, 0.5);
 }
 
 /* Glassmorphism helpers */
@@ -44,5 +46,6 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
 
 
