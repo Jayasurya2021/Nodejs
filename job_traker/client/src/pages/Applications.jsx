@@ -10,13 +10,13 @@ import { applicationAPI } from '../services/api';
 // Generate logo avatar fallback background color
 const getAvatarBg = (name = '') => {
   const colors = [
-    'bg-indigo-600',
-    'bg-blue-600',
-    'bg-purple-600',
+    'bg-emerald-700',
+    'bg-teal-700',
     'bg-emerald-600',
+    'bg-emerald-800',
     'bg-amber-600',
     'bg-rose-600',
-    'bg-cyan-600',
+    'bg-cyan-700',
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -106,7 +106,7 @@ const Applications = () => {
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Job Applications
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
               {applications.length}
             </span>
           </div>
@@ -121,7 +121,7 @@ const Applications = () => {
             <button
               onClick={() => setViewMode('grid')}
               className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'grid' ? 'bg-purple-600 text-white shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                viewMode === 'grid' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-500 hover:text-slate-800'
               }`}
               title="Grid View"
             >
@@ -130,7 +130,7 @@ const Applications = () => {
             <button
               onClick={() => setViewMode('table')}
               className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'table' ? 'bg-purple-600 text-white shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+                viewMode === 'table' ? 'bg-emerald-600 text-white shadow-2xs' : 'text-slate-500 hover:text-slate-800'
               }`}
               title="Table View"
             >
@@ -148,7 +148,7 @@ const Applications = () => {
 
           <button
             onClick={() => navigate('/add-application')}
-            className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
+            className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
           >
             <Plus className="w-4 h-4" />
             + Add Application
@@ -172,7 +172,7 @@ const Applications = () => {
       {/* Applications Grid or Table */}
       {loading ? (
         <div className="flex items-center justify-center min-h-[40vh]">
-          <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : applications.length > 0 ? (
         viewMode === 'grid' ? (
@@ -203,11 +203,11 @@ const Applications = () => {
                 {applications.map((app) => (
                   <tr
                     key={app._id}
-                    className="hover:bg-purple-50/30 transition-colors group cursor-pointer"
+                    className="hover:bg-emerald-50/40 transition-colors group cursor-pointer"
                     onClick={() => navigate(`/applications/${app._id}`)}
                   >
                     <td className="py-3.5 px-4">
-                      <div className="font-extrabold text-slate-900 text-sm group-hover:text-purple-600 transition-colors">
+                      <div className="font-extrabold text-slate-900 text-sm group-hover:text-emerald-700 transition-colors">
                         {app.jobRole}
                       </div>
                       <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -297,5 +297,6 @@ const Applications = () => {
 };
 
 export default Applications;
+
 
 
