@@ -1,10 +1,29 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Plus, Briefcase, RefreshCw } from 'lucide-react';
+import { Plus, Briefcase, RefreshCw, LayoutGrid, List, MoreVertical } from 'lucide-react';
 import SearchFilter from '../components/SearchFilter';
 import ApplicationCard from '../components/ApplicationCard';
+import StatusBadge from '../components/StatusBadge';
 import Toast from '../components/Toast';
 import { applicationAPI } from '../services/api';
+
+// Generate logo avatar fallback background color
+const getAvatarBg = (name = '') => {
+  const colors = [
+    'bg-indigo-600',
+    'bg-blue-600',
+    'bg-purple-600',
+    'bg-emerald-600',
+    'bg-amber-600',
+    'bg-rose-600',
+    'bg-cyan-600',
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return colors[Math.abs(hash) % colors.length];
+};
 
 const Applications = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -13,6 +32,7 @@ const Applications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState(null);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'table'
 
   // Filter States
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
@@ -86,7 +106,7 @@ const Applications = () => {
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Job Applications
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold">
+            <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-bold">
               {applications.length}
             </span>
           </div>
@@ -96,6 +116,28 @@ const Applications = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Grid vs Table View Switcher */}
+          <div className="flex items-center p-1 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                viewMode === 'grid' ? 'bg-purple-600 text-white shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Grid View"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                viewMode === 'table' ? 'bg-purple-600 text-white shadow-2xs' : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Table View"
+            >
+              <List className="w-4 h-4" />
+            </button>
+          </div>
+
           <button
             onClick={fetchApplications}
             className="p-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
@@ -106,7 +148,7 @@ const Applications = () => {
 
           <button
             onClick={() => navigate('/add-application')}
-            className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
+            className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all flex items-center gap-2 cursor-pointer hover:scale-[1.01]"
           >
             <Plus className="w-4 h-4" />
             + Add Application
@@ -127,22 +169,108 @@ const Applications = () => {
         onReset={handleResetFilters}
       />
 
-      {/* Applications Grid */}
+      {/* Applications Grid or Table */}
       {loading ? (
         <div className="flex items-center justify-center min-h-[40vh]">
-          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : applications.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {applications.map((app) => (
-            <ApplicationCard
-              key={app._id}
-              application={app}
-              onDelete={handleDelete}
-              onStatusChange={handleStatusChange}
-            />
-          ))}
-        </div>
+        viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {applications.map((app) => (
+              <ApplicationCard
+                key={app._id}
+                application={app}
+                onDelete={handleDelete}
+                onStatusChange={handleStatusChange}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-100 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+                  <th className="py-3 px-4">Job Title</th>
+                  <th className="py-3 px-4">Company</th>
+                  <th className="py-3 px-4">Work Type</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4">Applied On</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                {applications.map((app) => (
+                  <tr
+                    key={app._id}
+                    className="hover:bg-purple-50/30 transition-colors group cursor-pointer"
+                    onClick={() => navigate(`/applications/${app._id}`)}
+                  >
+                    <td className="py-3.5 px-4">
+                      <div className="font-extrabold text-slate-900 text-sm group-hover:text-purple-600 transition-colors">
+                        {app.jobRole}
+                      </div>
+                      <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                        {app.location || 'Remote'}
+                      </p>
+                    </td>
+
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-2.5">
+                        {app.companyLogo ? (
+                          <img
+                            src={app.companyLogo}
+                            alt={app.companyName}
+                            className="w-7 h-7 rounded-lg object-contain bg-slate-50 border border-slate-200 p-0.5"
+                          />
+                        ) : (
+                          <div
+                            className={`w-7 h-7 rounded-lg ${getAvatarBg(
+                              app.companyName
+                            )} text-white font-bold text-xs flex items-center justify-center`}
+                          >
+                            {app.companyName ? app.companyName[0] : 'J'}
+                          </div>
+                        )}
+                        <span className="font-bold text-slate-800">{app.companyName}</span>
+                      </div>
+                    </td>
+
+                    <td className="py-3.5 px-4">
+                      <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-700">
+                        {app.workType}
+                      </span>
+                    </td>
+
+                    <td className="py-3.5 px-4">
+                      <StatusBadge status={app.status} size="small" />
+                    </td>
+
+                    <td className="py-3.5 px-4 text-slate-500 font-semibold">
+                      {app.appliedDate
+                        ? new Date(app.appliedDate).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })
+                        : 'N/A'}
+                    </td>
+
+                    <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => handleDelete(app._id, app.companyName, app.jobRole)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        title="Delete Application"
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
       ) : (
         <div className="p-12 text-center bg-white border border-dashed border-slate-300 rounded-3xl space-y-4 my-6 shadow-xs">
           <Briefcase className="w-12 h-12 text-slate-400 mx-auto" />
@@ -169,4 +297,5 @@ const Applications = () => {
 };
 
 export default Applications;
+
 

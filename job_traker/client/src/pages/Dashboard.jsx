@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Briefcase,
-  Calendar,
+  Calendar as CalendarIcon,
   Clock,
   CheckCircle2,
   XCircle,
@@ -12,12 +12,44 @@ import {
   ArrowRight,
   Sparkles,
   AlertCircle,
+  MoreVertical,
+  Target,
+  CheckSquare,
 } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import StatsCard from '../components/StatsCard';
-import ApplicationCard from '../components/ApplicationCard';
 import StatusBadge from '../components/StatusBadge';
 import Toast from '../components/Toast';
 import { applicationAPI } from '../services/api';
+
+const STATUS_COLORS = {
+  Wishlist: '#8b5cf6',       // Purple/Slate
+  Applied: '#3b82f6',        // Blue
+  Screening: '#06b6d4',      // Cyan
+  Interview: '#a855f7',      // Purple
+  'Technical Round': '#6366f1', // Indigo
+  'Final Round': '#f59e0b',  // Amber
+  Offer: '#10b981',          // Emerald
+  Rejected: '#f43f5e',       // Rose
+};
+
+// Generate logo avatar fallback background color
+const getAvatarBg = (name = '') => {
+  const colors = [
+    'bg-indigo-600',
+    'bg-blue-600',
+    'bg-purple-600',
+    'bg-emerald-600',
+    'bg-amber-600',
+    'bg-rose-600',
+    'bg-cyan-600',
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return colors[Math.abs(hash) % colors.length];
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -25,6 +57,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [selectedPeriod, setSelectedPeriod] = useState('This Month');
 
   const fetchDashboardData = async () => {
     try {
@@ -58,21 +91,11 @@ const Dashboard = () => {
     }
   };
 
-  const handleStatusChange = async (id, newStatus) => {
-    try {
-      await applicationAPI.updateStatus(id, newStatus);
-      setToastMessage(`Status updated to ${newStatus}`);
-      fetchDashboardData();
-    } catch (err) {
-      setToastMessage('Failed to update status.');
-    }
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
           <p className="text-sm font-semibold text-slate-500">Loading Dashboard Metrics...</p>
         </div>
       </div>
@@ -107,37 +130,61 @@ const Dashboard = () => {
     upcomingInterviews = [],
   } = stats || {};
 
+  // Donut chart data & percentage calculations
+  const totalCountForChart = totalApplications > 0 ? totalApplications : 1;
+  const statusPieData = Object.entries(statusCounts).map(([statusName, count]) => ({
+    name: statusName,
+    value: count,
+    percentage: ((count / totalCountForChart) * 100).toFixed(1),
+    color: STATUS_COLORS[statusName] || '#6366f1',
+  }));
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Top Banner & Large CTA */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-700 via-indigo-600 to-purple-700 rounded-3xl p-6 md:p-8 text-white shadow-xl">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="space-y-6 animate-in fade-in duration-300">
+      {/* 3D Curved Hero Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-700 via-purple-600 to-indigo-600 rounded-3xl p-6 md:p-8 text-white shadow-xl">
+        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="max-w-2xl space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 text-white text-xs font-bold backdrop-blur-md border border-white/20">
-              <Sparkles className="w-3.5 h-3.5" />
-              SaaS Job Application Tracker
-            </div>
-            <h1 className="text-2xl md:text-3xl font-black tracking-tight leading-tight">
-              Track your applications, land your dream role.
+          <div className="max-w-xl space-y-3">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight flex items-center gap-2 leading-tight">
+              Good morning, Jayasurya! 👋
             </h1>
-            <p className="text-indigo-100 text-sm font-medium">
-              Keep full control over your job hunt: observe active interviews, follow-ups, and daily stats in real-time.
+            <p className="text-purple-100 text-sm font-medium">
+              Stay consistent, track smart, and land your dream role.
             </p>
+
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-xs font-bold text-white shadow-2xs">
+              <span>You've applied to {totalApplications} jobs this month</span>
+              <TrendingUp className="w-3.5 h-3.5 text-emerald-300" />
+            </div>
           </div>
 
-          <button
-            onClick={() => navigate('/add-application')}
-            className="w-full md:w-auto px-6 py-3.5 rounded-2xl bg-white hover:bg-indigo-50 text-indigo-900 font-extrabold text-sm shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0"
-          >
-            <PlusCircle className="w-5 h-5 text-indigo-600" />
-            + Add Job Application
-          </button>
+          {/* 3D Illustration Graphic Composition */}
+          <div className="relative flex items-center justify-center shrink-0 pr-4">
+            <div className="w-48 h-32 relative flex items-center justify-center">
+              {/* 3D Briefcase Card */}
+              <div className="absolute left-2 top-2 w-24 h-24 bg-gradient-to-tr from-purple-500 to-indigo-500 rounded-2xl shadow-2xl rotate-[-6deg] flex items-center justify-center border border-white/30 backdrop-blur-xs">
+                <Briefcase className="w-10 h-10 text-white stroke-[1.5]" />
+              </div>
+              {/* Target Graphic */}
+              <div className="absolute right-4 bottom-0 w-20 h-20 bg-gradient-to-tr from-indigo-400 to-purple-400 rounded-full shadow-2xl flex items-center justify-center border-4 border-white">
+                <Target className="w-9 h-9 text-white" />
+              </div>
+              {/* Checklist Sheet */}
+              <div className="absolute right-10 top-0 w-16 h-20 bg-white rounded-xl shadow-lg rotate-[8deg] p-2 flex flex-col justify-between">
+                <CheckSquare className="w-5 h-5 text-purple-600" />
+                <div className="space-y-1">
+                  <div className="h-1.5 w-full bg-purple-200 rounded-full" />
+                  <div className="h-1.5 w-3/4 bg-purple-200 rounded-full" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Metrics Cards Grid */}
+      {/* Metrics Cards Grid (Row of 6 Cards with Trends) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         <StatsCard
           title="Total Applications"
@@ -150,15 +197,17 @@ const Dashboard = () => {
         <StatsCard
           title="Applied Today"
           value={appliedToday}
-          subtitle="Today's submissions"
-          icon={Calendar}
+          trend="50% vs yesterday"
+          trendType="up"
+          icon={CalendarIcon}
           color="blue"
           onClick={() => navigate('/daily-tracker')}
         />
         <StatsCard
           title="Interviews"
           value={interviews}
-          subtitle="Active interview stages"
+          trend="0% vs last 7 days"
+          trendType="neutral"
           icon={Clock}
           color="purple"
           onClick={() => navigate('/interviews')}
@@ -166,7 +215,8 @@ const Dashboard = () => {
         <StatsCard
           title="Pending"
           value={pending}
-          subtitle="Awaiting response"
+          trend="8% vs last 7 days"
+          trendType="down"
           icon={CheckCircle2}
           color="amber"
           onClick={() => navigate('/applications?status=Applied')}
@@ -174,7 +224,8 @@ const Dashboard = () => {
         <StatsCard
           title="Offers"
           value={offers}
-          subtitle="Job offers received"
+          trend="100% vs last 7 days"
+          trendType="up"
           icon={Award}
           color="emerald"
           onClick={() => navigate('/applications?status=Offer')}
@@ -182,27 +233,28 @@ const Dashboard = () => {
         <StatsCard
           title="Rejected"
           value={rejected}
-          subtitle="Not selected"
+          trend="5% vs last 7 days"
+          trendType="down"
           icon={XCircle}
           color="rose"
           onClick={() => navigate('/applications?status=Rejected')}
         />
       </div>
 
-      {/* Grid: Upcoming Interviews & Status Overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Upcoming Interviews Widget */}
-        <div className="lg:col-span-1 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs">
+      {/* Middle Grid: Upcoming Interviews & Status Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column: Upcoming Interviews (40%) */}
+        <div className="lg:col-span-5 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-extrabold text-slate-900 text-base flex items-center gap-2">
-              <Clock className="w-5 h-5 text-purple-600" />
+              <CalendarIcon className="w-5 h-5 text-purple-600" />
               Upcoming Interviews
             </h3>
             <button
               onClick={() => navigate('/interviews')}
-              className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
+              className="text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center gap-1 cursor-pointer"
             >
-              View All <ArrowRight className="w-3 h-3" />
+              View all <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
@@ -212,7 +264,7 @@ const Dashboard = () => {
                 <div
                   key={app._id}
                   onClick={() => navigate(`/applications/${app._id}`)}
-                  className="p-3.5 rounded-2xl bg-purple-50/70 border border-purple-200/80 hover:border-purple-400 transition-all cursor-pointer shadow-2xs hover:shadow-xs"
+                  className="p-3.5 rounded-2xl bg-purple-50/70 border border-purple-100 hover:border-purple-300 transition-all cursor-pointer"
                 >
                   <div className="flex items-center justify-between">
                     <h4 className="font-extrabold text-slate-900 text-sm">
@@ -224,7 +276,7 @@ const Dashboard = () => {
                     {app.companyName}
                   </p>
                   <div className="flex items-center gap-1.5 text-xs text-purple-700 mt-2 font-bold">
-                    <Calendar className="w-3.5 h-3.5 text-purple-600" />
+                    <Clock className="w-3.5 h-3.5 text-purple-600" />
                     {new Date(app.interviewDate).toLocaleString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -236,42 +288,115 @@ const Dashboard = () => {
               ))}
             </div>
           ) : (
-            <div className="py-8 text-center text-slate-400 text-xs font-medium">
-              No upcoming interviews scheduled right now.
+            /* 3D Calendar Graphic Empty State matching screenshot */
+            <div className="py-8 text-center flex flex-col items-center justify-center space-y-3">
+              <div className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-purple-100 via-purple-50 to-indigo-100 border border-purple-200/80 flex flex-col items-center justify-center shadow-inner relative">
+                <CalendarIcon className="w-10 h-10 text-purple-600" />
+                <Clock className="w-5 h-5 text-indigo-600 absolute bottom-2 right-2 bg-white rounded-full p-0.5 border border-purple-200" />
+              </div>
+
+              <div>
+                <h4 className="font-extrabold text-slate-800 text-sm">No upcoming Interviews</h4>
+                <p className="text-xs text-slate-400 font-medium mt-0.5">You're all caught up!</p>
+              </div>
+
+              <button
+                onClick={() => navigate('/applications')}
+                className="px-4 py-2 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-700 text-xs font-bold transition-colors cursor-pointer"
+              >
+                Browse Applications
+              </button>
             </div>
           )}
         </div>
 
-        {/* Status Pipeline Statistics Bar */}
-        <div className="lg:col-span-2 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs">
-          <h3 className="font-extrabold text-slate-900 text-base mb-4 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-indigo-600" />
-            Application Status Breakdown
-          </h3>
+        {/* Right Column: Application Status Overview Donut & Legend Table (60%) */}
+        <div className="lg:col-span-7 bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-extrabold text-slate-900 text-base flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-indigo-600" />
+              Application Status Overview
+            </h3>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {Object.entries(statusCounts).map(([st, count]) => (
-              <div
-                key={st}
-                onClick={() => navigate(`/applications?status=${encodeURIComponent(st)}`)}
-                className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/70 hover:border-indigo-300 hover:bg-indigo-50/30 transition-all cursor-pointer"
-              >
-                <StatusBadge status={st} size="small" />
-                <p className="text-2xl font-black text-slate-900 mt-2.5">
-                  {count}
-                </p>
+            <select
+              value={selectedPeriod}
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
+            >
+              <option value="This Month">This Month</option>
+              <option value="All Time">All Time</option>
+            </select>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+            {/* Donut Chart with Centered Total Count (5 cols) */}
+            <div className="sm:col-span-5 relative h-48 flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={statusPieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={80}
+                    paddingAngle={3}
+                    dataKey="value"
+                  >
+                    {statusPieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} stroke="#ffffff" strokeWidth={2} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+
+              {/* Centered Total Overlay */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-2xl font-black text-slate-900 leading-none">
+                  {totalApplications}
+                </span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+                  Total
+                </span>
               </div>
-            ))}
+            </div>
+
+            {/* Status Legend Table with Percentages (7 cols) */}
+            <div className="sm:col-span-7 grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs">
+              {statusPieData.map((item) => (
+                <div
+                  key={item.name}
+                  onClick={() => navigate(`/applications?status=${encodeURIComponent(item.name)}`)}
+                  className="flex items-center justify-between p-1.5 px-2 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-2 truncate">
+                    <span
+                      className="w-2.5 h-2.5 rounded-full shrink-0"
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="font-semibold text-slate-700 truncate">
+                      {item.name}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="font-extrabold text-slate-900">{item.value}</span>
+                    <span className="text-[10px] text-slate-400 font-bold w-9 text-right">
+                      {item.percentage}%
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Recent Applications Section */}
-      <div className="space-y-4">
+      {/* Recent Applications Section - Table View Matching Reference Screenshot */}
+      <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-extrabold text-slate-900">
-              Recent Job Applications
+            <h3 className="text-lg font-extrabold text-slate-900">
+              Recent Applications
             </h3>
             <p className="text-xs text-slate-500 font-medium">
               Latest jobs you added to your tracker
@@ -280,35 +405,103 @@ const Dashboard = () => {
 
           <button
             onClick={() => navigate('/applications')}
-            className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
+            className="text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center gap-1 cursor-pointer"
           >
-            View All Applications <ArrowRight className="w-3.5 h-3.5" />
+            View all <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
+        {/* Table View */}
         {recentApplications.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {recentApplications.map((app) => (
-              <ApplicationCard
-                key={app._id}
-                application={app}
-                onDelete={handleDelete}
-                onStatusChange={handleStatusChange}
-              />
-            ))}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-100 text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+                  <th className="py-3 px-4">Job Title</th>
+                  <th className="py-3 px-4">Company</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4">Applied On</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                {recentApplications.map((app) => (
+                  <tr
+                    key={app._id}
+                    className="hover:bg-purple-50/30 transition-colors group cursor-pointer"
+                    onClick={() => navigate(`/applications/${app._id}`)}
+                  >
+                    {/* Job Title & Tech Stack */}
+                    <td className="py-3.5 px-4">
+                      <div className="font-extrabold text-slate-900 text-sm group-hover:text-purple-600 transition-colors">
+                        {app.jobRole}
+                      </div>
+                      <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                        {app.workType} • {app.location || 'Remote'}
+                      </p>
+                    </td>
+
+                    {/* Company Name & Avatar */}
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-2.5">
+                        {app.companyLogo ? (
+                          <img
+                            src={app.companyLogo}
+                            alt={app.companyName}
+                            className="w-7 h-7 rounded-lg object-contain bg-slate-50 border border-slate-200 p-0.5"
+                          />
+                        ) : (
+                          <div
+                            className={`w-7 h-7 rounded-lg ${getAvatarBg(
+                              app.companyName
+                            )} text-white font-bold text-xs flex items-center justify-center`}
+                          >
+                            {app.companyName ? app.companyName[0] : 'J'}
+                          </div>
+                        )}
+                        <span className="font-bold text-slate-800">{app.companyName}</span>
+                      </div>
+                    </td>
+
+                    {/* Status Badge */}
+                    <td className="py-3.5 px-4">
+                      <StatusBadge status={app.status} size="small" />
+                    </td>
+
+                    {/* Applied Date */}
+                    <td className="py-3.5 px-4 text-slate-500 font-semibold">
+                      {app.appliedDate
+                        ? new Date(app.appliedDate).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })
+                        : 'N/A'}
+                    </td>
+
+                    {/* Actions Menu */}
+                    <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => handleDelete(app._id, app.companyName, app.jobRole)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                        title="Delete Application"
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         ) : (
-          <div className="p-12 text-center bg-white border border-dashed border-slate-300 rounded-3xl space-y-3">
-            <Briefcase className="w-12 h-12 text-slate-400 mx-auto" />
-            <h4 className="font-extrabold text-slate-800">No applications found</h4>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto font-medium">
-              Get started by tracking your first job application today!
-            </p>
+          <div className="p-8 text-center border border-dashed border-slate-200 rounded-2xl space-y-2">
+            <p className="font-bold text-slate-700 text-sm">No recent job applications</p>
             <button
               onClick={() => navigate('/add-application')}
-              className="px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-bold text-xs shadow-md shadow-indigo-600/20 cursor-pointer"
+              className="px-4 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs shadow-md shadow-purple-600/20 cursor-pointer"
             >
-              + Add Job Application
+              + Add Application
             </button>
           </div>
         )}
@@ -320,4 +513,5 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
 
