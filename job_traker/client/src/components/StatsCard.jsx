@@ -1,19 +1,18 @@
 import React from 'react';
-import { ArrowUpRight, ArrowDownRight, ArrowRight } from 'lucide-react';
 
 const StatsCard = ({ title, value, subtitle, trend, trendType = 'up', icon: Icon, color = 'indigo', onClick }) => {
   const colorSchemes = {
     indigo: {
-      border: 'hover:border-indigo-300',
-      bgIcon: 'bg-indigo-50 text-indigo-600 border border-indigo-100',
+      border: 'hover:border-[#4a708b]',
+      bgIcon: 'bg-[#f4f0e6] text-[#1f3144] border border-[#d8cebd]',
     },
     blue: {
-      border: 'hover:border-blue-300',
-      bgIcon: 'bg-blue-50 text-blue-600 border border-blue-100',
+      border: 'hover:border-[#4a708b]',
+      bgIcon: 'bg-[#f4f0e6] text-[#4a708b] border border-[#d8cebd]',
     },
     purple: {
-      border: 'hover:border-purple-300',
-      bgIcon: 'bg-purple-50 text-purple-600 border border-purple-100',
+      border: 'hover:border-[#4a708b]',
+      bgIcon: 'bg-[#f4f0e6] text-[#1f3144] border border-[#d8cebd]',
     },
     amber: {
       border: 'hover:border-amber-300',
@@ -34,7 +33,7 @@ const StatsCard = ({ title, value, subtitle, trend, trendType = 'up', icon: Icon
   return (
     <div
       onClick={onClick}
-      className={`relative overflow-hidden bg-white border border-slate-200/80 rounded-2xl p-4.5 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between ${scheme.border} ${
+      className={`relative overflow-hidden bg-white border border-[#d8cebd] rounded-2xl p-4.5 shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between ${scheme.border} ${
         onClick ? 'cursor-pointer' : ''
       }`}
     >
@@ -46,10 +45,10 @@ const StatsCard = ({ title, value, subtitle, trend, trendType = 'up', icon: Icon
           </div>
 
           <div>
-            <p className="text-[11px] font-bold text-slate-500 leading-tight">
+            <p className="text-[11px] font-bold text-[#4a708b] leading-tight">
               {title}
             </p>
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-0.5">
+            <h3 className="text-2xl sm:text-3xl font-black text-[#1f3144] tracking-tight mt-0.5">
               {value}
             </h3>
           </div>
@@ -57,7 +56,7 @@ const StatsCard = ({ title, value, subtitle, trend, trendType = 'up', icon: Icon
       </div>
 
       {/* Bottom Trend or Subtitle Row */}
-      <div className="mt-4 pt-2 border-t border-slate-100/80 flex items-center justify-between">
+      <div className="mt-4 pt-2 border-t border-[#d8cebd]/60 flex items-center justify-between">
         {trend ? (
           <div className="flex items-center gap-1 text-[11px] font-extrabold">
             {trendType === 'up' && (
@@ -66,7 +65,7 @@ const StatsCard = ({ title, value, subtitle, trend, trendType = 'up', icon: Icon
               </span>
             )}
             {trendType === 'neutral' && (
-              <span className="text-slate-500 flex items-center gap-0.5">
+              <span className="text-[#4a708b] flex items-center gap-0.5">
                 → {trend}
               </span>
             )}
@@ -77,14 +76,14 @@ const StatsCard = ({ title, value, subtitle, trend, trendType = 'up', icon: Icon
             )}
           </div>
         ) : (
-          <p className="text-[11px] font-medium text-slate-400">
+          <p className="text-[11px] font-medium text-[#4a708b]">
             {subtitle || 'All recorded jobs'}
           </p>
         )}
 
         {/* Mini sparkline curve for Total Applications */}
         {color === 'indigo' && (
-          <svg className="w-12 h-5 text-indigo-500" viewBox="0 0 50 20" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg className="w-12 h-5 text-[#4a708b]" viewBox="0 0 50 20" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M2 16 L12 12 L22 15 L32 7 L48 2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         )}
@@ -94,5 +93,6 @@ const StatsCard = ({ title, value, subtitle, trend, trendType = 'up', icon: Icon
 };
 
 export default StatsCard;
+
 
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Briefcase, Clock, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { applicationAPI } from '../services/api';
-import StatusBadge from '../components/StatusBadge';
 
 const CalendarPage = () => {
   const navigate = useNavigate();
@@ -71,49 +70,49 @@ const CalendarPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-purple-600 mb-1">
-            <CalendarIcon className="w-4 h-4" /> Application Schedule
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#4a708b] mb-1">
+            <CalendarIcon className="w-4 h-4 text-[#1f3144]" /> Application Schedule
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#1f3144] tracking-tight">
             Calendar View
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+          <p className="text-xs sm:text-sm text-[#4a708b] font-medium mt-1">
             Track interview dates, application submissions, and follow-ups on a monthly timeline
           </p>
         </div>
 
         <button
           onClick={() => navigate('/add-application')}
-          className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-600/20 flex items-center gap-1.5 cursor-pointer"
+          className="px-4 py-2.5 rounded-xl bg-[#1f3144] hover:bg-[#142230] text-[#efe6d5] font-bold text-xs shadow-md shadow-[#1f3144]/20 flex items-center gap-1.5 cursor-pointer"
         >
-          <Plus className="w-4 h-4" /> + Add Application
+          <Plus className="w-4 h-4 text-[#efe6d5]" /> + Add Application
         </button>
       </div>
 
       {/* Calendar Card */}
-      <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-xs space-y-6">
+      <div className="bg-white border border-[#d8cebd] rounded-3xl p-6 shadow-xs space-y-6">
         {/* Navigation bar */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-          <h2 className="text-xl font-extrabold text-slate-900">
+        <div className="flex items-center justify-between pb-4 border-b border-[#d8cebd]/60">
+          <h2 className="text-xl font-extrabold text-[#1f3144]">
             {monthNames[month]} {year}
           </h2>
 
           <div className="flex items-center gap-2">
             <button
               onClick={prevMonth}
-              className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+              className="p-2 rounded-xl border border-[#d8cebd] text-[#4a708b] hover:bg-[#f4f0e6] transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => setCurrentDate(new Date())}
-              className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-50 cursor-pointer"
+              className="px-3 py-1.5 rounded-xl border border-[#d8cebd] text-xs font-bold text-[#1f3144] hover:bg-[#f4f0e6] cursor-pointer"
             >
               Today
             </button>
             <button
               onClick={nextMonth}
-              className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer"
+              className="p-2 rounded-xl border border-[#d8cebd] text-[#4a708b] hover:bg-[#f4f0e6] transition-colors cursor-pointer"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -121,7 +120,7 @@ const CalendarPage = () => {
         </div>
 
         {/* Days of Week Header */}
-        <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+        <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-[#4a708b] uppercase tracking-wider">
           <div>Sun</div>
           <div>Mon</div>
           <div>Tue</div>
@@ -135,7 +134,7 @@ const CalendarPage = () => {
         <div className="grid grid-cols-7 gap-2">
           {daysArray.map((day, idx) => {
             if (!day) {
-              return <div key={`empty-${idx}`} className="h-28 rounded-2xl bg-slate-50/40 border border-slate-100/50" />;
+              return <div key={`empty-${idx}`} className="h-28 rounded-2xl bg-[#f4f0e6]/40 border border-[#d8cebd]/40" />;
             }
 
             const dayApps = getAppsForDay(day);
@@ -149,20 +148,20 @@ const CalendarPage = () => {
                 key={`day-${day}`}
                 className={`h-28 p-2 rounded-2xl border transition-all flex flex-col justify-between overflow-y-auto ${
                   isToday
-                    ? 'bg-purple-50/50 border-purple-300 ring-2 ring-purple-500/20'
-                    : 'bg-white border-slate-200/80 hover:border-purple-200'
+                    ? 'bg-[#f4f0e6] border-[#4a708b] ring-2 ring-[#4a708b]/20'
+                    : 'bg-white border-[#d8cebd] hover:border-[#4a708b]'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span
                     className={`text-xs font-extrabold w-6 h-6 rounded-full flex items-center justify-center ${
-                      isToday ? 'bg-purple-600 text-white shadow-2xs' : 'text-slate-700'
+                      isToday ? 'bg-[#1f3144] text-[#efe6d5] shadow-2xs' : 'text-[#1f3144]'
                     }`}
                   >
                     {day}
                   </span>
                   {dayApps.length > 0 && (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-700">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#4a708b]/20 text-[#1f3144]">
                       {dayApps.length}
                     </span>
                   )}
@@ -173,7 +172,7 @@ const CalendarPage = () => {
                     <div
                       key={app._id}
                       onClick={() => navigate(`/applications/${app._id}`)}
-                      className="p-1 px-1.5 rounded-lg bg-slate-100 hover:bg-purple-100 text-[10px] font-bold text-slate-800 truncate cursor-pointer transition-colors"
+                      className="p-1 px-1.5 rounded-lg bg-[#f4f0e6] hover:bg-[#8eb0c0]/30 text-[10px] font-bold text-[#1f3144] truncate cursor-pointer transition-colors"
                       title={`${app.jobRole} at ${app.companyName}`}
                     >
                       {app.companyName}
@@ -190,3 +189,4 @@ const CalendarPage = () => {
 };
 
 export default CalendarPage;
+

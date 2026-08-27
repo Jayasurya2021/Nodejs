@@ -56,28 +56,28 @@ const Wishlist = () => {
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="flex items-center justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-            <Bookmark className="w-4 h-4 text-indigo-600" /> Bookmarks
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#4a708b] mb-1">
+            <Bookmark className="w-4 h-4 text-[#1f3144]" /> Bookmarks
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#1f3144] tracking-tight">
             Job Wishlist ({wishlist.length})
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+          <p className="text-xs sm:text-sm text-[#4a708b] font-medium mt-1">
             Saved job postings you intend to customize resumes for and submit
           </p>
         </div>
 
         <button
           onClick={() => navigate('/add-application')}
-          className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 flex items-center gap-1.5 cursor-pointer hover:scale-[1.01]"
+          className="px-4 py-2.5 rounded-xl bg-[#1f3144] hover:bg-[#142230] text-[#efe6d5] font-bold text-xs shadow-md shadow-[#1f3144]/20 flex items-center gap-1.5 cursor-pointer hover:scale-[1.01]"
         >
-          <Plus className="w-4 h-4" /> Save New Wishlist Job
+          <Plus className="w-4 h-4 text-[#efe6d5]" /> Save New Wishlist Job
         </button>
       </div>
 
       {loading ? (
         <div className="flex items-center justify-center min-h-[40vh]">
-          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-[#1f3144] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : wishlist.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -91,12 +91,12 @@ const Wishlist = () => {
           ))}
         </div>
       ) : (
-        <div className="p-12 text-center bg-white border border-dashed border-slate-300 rounded-3xl space-y-3 shadow-xs">
-          <Bookmark className="w-12 h-12 text-slate-400 mx-auto" />
-          <h3 className="text-lg font-extrabold text-slate-800">
+        <div className="p-12 text-center bg-white border border-dashed border-[#d8cebd] rounded-3xl space-y-3 shadow-xs">
+          <Bookmark className="w-12 h-12 text-[#4a708b] mx-auto" />
+          <h3 className="text-lg font-extrabold text-[#1f3144]">
             Your wishlist is empty
           </h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto font-medium">
+          <p className="text-xs text-[#4a708b] max-w-sm mx-auto font-medium">
             Save interesting job openings as Wishlist items before applying!
           </p>
         </div>
@@ -108,4 +108,5 @@ const Wishlist = () => {
 };
 
 export default Wishlist;
+
 

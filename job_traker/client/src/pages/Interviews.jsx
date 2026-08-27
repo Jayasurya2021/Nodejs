@@ -62,13 +62,13 @@ const Interviews = () => {
     <div className="space-y-6 animate-in fade-in duration-300">
       <div className="flex items-center justify-between">
         <div>
-          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-purple-600 mb-1">
-            <Video className="w-4 h-4" /> Interview Center
+          <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#4a708b] mb-1">
+            <Video className="w-4 h-4 text-[#1f3144]" /> Interview Center
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#1f3144] tracking-tight">
             Scheduled Interviews ({interviews.length})
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+          <p className="text-xs sm:text-sm text-[#4a708b] font-medium mt-1">
             All screening sessions, technical rounds, and final interviews in one hub
           </p>
         </div>
@@ -76,7 +76,7 @@ const Interviews = () => {
 
       {loading ? (
         <div className="flex items-center justify-center min-h-[40vh]">
-          <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-[#1f3144] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : interviews.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -90,12 +90,12 @@ const Interviews = () => {
           ))}
         </div>
       ) : (
-        <div className="p-12 text-center bg-white border border-dashed border-slate-300 rounded-3xl space-y-3 shadow-xs">
-          <Clock className="w-12 h-12 text-purple-500 mx-auto" />
-          <h3 className="text-lg font-extrabold text-slate-800">
+        <div className="p-12 text-center bg-white border border-dashed border-[#d8cebd] rounded-3xl space-y-3 shadow-xs">
+          <Clock className="w-12 h-12 text-[#4a708b] mx-auto" />
+          <h3 className="text-lg font-extrabold text-[#1f3144]">
             No active interviews scheduled yet
           </h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto font-medium">
+          <p className="text-xs text-[#4a708b] max-w-sm mx-auto font-medium">
             When you update an application to Interview, Technical Round, or Final Round status, it will automatically appear here!
           </p>
         </div>
@@ -107,4 +107,5 @@ const Interviews = () => {
 };
 
 export default Interviews;
+
 

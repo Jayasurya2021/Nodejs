@@ -33,22 +33,22 @@ const SearchFilter = ({
     sortBy !== 'newest';
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs mb-6 transition-colors">
+    <div className="bg-white border border-[#d8cebd] rounded-2xl p-4 shadow-xs mb-6 transition-colors">
       <div className="flex flex-col md:flex-row items-center gap-3">
         {/* Search Input */}
         <div className="relative flex-1 w-full">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4a708b]" />
           <input
             type="text"
             placeholder="Search company, job role, or location..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] text-sm text-[#1f3144] placeholder-[#4a708b]/60 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#4a708b]/30 focus:border-[#4a708b] transition-all font-medium"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4a708b] hover:text-[#1f3144]"
             >
               <X className="w-4 h-4" />
             </button>
@@ -62,7 +62,7 @@ const SearchFilter = ({
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+              className="px-3 py-2.5 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] text-xs font-semibold text-[#1f3144] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#4a708b]/30 cursor-pointer"
             >
               {statuses.map((st) => (
                 <option key={st} value={st}>
@@ -77,7 +77,7 @@ const SearchFilter = ({
             <select
               value={selectedWorkType}
               onChange={(e) => setSelectedWorkType(e.target.value)}
-              className="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+              className="px-3 py-2.5 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] text-xs font-semibold text-[#1f3144] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#4a708b]/30 cursor-pointer"
             >
               {workTypes.map((wt) => (
                 <option key={wt} value={wt}>
@@ -92,7 +92,7 @@ const SearchFilter = ({
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+              className="px-3 py-2.5 rounded-xl bg-[#f4f0e6]/60 border border-[#d8cebd] text-xs font-semibold text-[#1f3144] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#4a708b]/30 cursor-pointer"
             >
               <option value="newest">Sort: Newest First</option>
               <option value="oldest">Sort: Oldest First</option>
@@ -118,4 +118,5 @@ const SearchFilter = ({
 };
 
 export default SearchFilter;
+
 

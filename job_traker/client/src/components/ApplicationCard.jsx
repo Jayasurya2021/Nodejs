@@ -17,14 +17,11 @@ import StatusBadge from './StatusBadge';
 // Generate consistent background color based on company name hash
 const getAvatarBg = (name = '') => {
   const colors = [
-    'bg-indigo-600',
-    'bg-blue-600',
-    'bg-purple-600',
-    'bg-emerald-600',
-    'bg-amber-600',
-    'bg-rose-600',
-    'bg-cyan-600',
-    'bg-teal-600',
+    'bg-[#1f3144]',
+    'bg-[#4a708b]',
+    'bg-[#35526c]',
+    'bg-[#2b4156]',
+    'bg-[#172533]',
   ];
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
@@ -92,7 +89,7 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
   ];
 
   return (
-    <div className="group relative bg-white border border-slate-200/80 hover:border-indigo-400/80 rounded-2xl p-5 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+    <div className="group relative bg-white border border-[#d8cebd] hover:border-[#4a708b] rounded-2xl p-5 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
       <div>
         {/* Top Header */}
         <div className="flex items-start justify-between gap-3 mb-4">
@@ -103,23 +100,23 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
                 src={companyLogo}
                 alt={companyName}
                 onError={() => setImgError(true)}
-                className="w-12 h-12 rounded-xl object-contain bg-slate-50 p-1 border border-slate-200 shadow-2xs"
+                className="w-12 h-12 rounded-xl object-contain bg-slate-50 p-1 border border-[#d8cebd] shadow-2xs"
               />
             ) : (
               <div
                 className={`w-12 h-12 rounded-xl ${getAvatarBg(
                   companyName
-                )} text-white font-extrabold text-lg flex items-center justify-center shadow-md shadow-indigo-600/15`}
+                )} text-[#efe6d5] font-extrabold text-lg flex items-center justify-center shadow-md shadow-[#1f3144]/15`}
               >
                 {initials}
               </div>
             )}
 
             <div>
-              <h4 className="font-extrabold text-slate-900 text-base leading-tight group-hover:text-indigo-600 transition-colors">
+              <h4 className="font-extrabold text-[#1f3144] text-base leading-tight group-hover:text-[#4a708b] transition-colors">
                 {jobRole}
               </h4>
-              <p className="text-sm font-semibold text-slate-500 mt-0.5">
+              <p className="text-sm font-semibold text-[#4a708b] mt-0.5">
                 {companyName}
               </p>
             </div>
@@ -132,12 +129,12 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
               className="flex items-center gap-1 focus:outline-none cursor-pointer"
             >
               <StatusBadge status={status} />
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 hover:text-slate-600" />
+              <ChevronDown className="w-3.5 h-3.5 text-[#4a708b] hover:text-[#1f3144]" />
             </button>
 
             {showStatusDropdown && (
-              <div className="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-xl z-30 py-1.5 animate-in fade-in zoom-in-95">
-                <p className="px-3 py-1 text-[10px] uppercase font-extrabold text-slate-400 tracking-wider">
+              <div className="absolute right-0 mt-2 w-44 bg-white border border-[#d8cebd] rounded-xl shadow-xl z-30 py-1.5 animate-in fade-in zoom-in-95">
+                <p className="px-3 py-1 text-[10px] uppercase font-extrabold text-[#4a708b] tracking-wider">
                   Change Status
                 </p>
                 {statuses.map((st) => (
@@ -147,12 +144,12 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
                       onStatusChange && onStatusChange(_id, st);
                       setShowStatusDropdown(false);
                     }}
-                    className={`w-full text-left px-3 py-1.5 text-xs font-medium hover:bg-indigo-50/70 transition-colors flex items-center justify-between cursor-pointer ${
-                      st === status ? 'text-indigo-600 font-bold' : 'text-slate-700'
+                    className={`w-full text-left px-3 py-1.5 text-xs font-medium hover:bg-[#f4f0e6] transition-colors flex items-center justify-between cursor-pointer ${
+                      st === status ? 'text-[#1f3144] font-bold' : 'text-[#4a708b]'
                     }`}
                   >
                     {st}
-                    {st === status && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />}
+                    {st === status && <span className="w-1.5 h-1.5 rounded-full bg-[#1f3144]" />}
                   </button>
                 ))}
               </div>
@@ -161,27 +158,27 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
         </div>
 
         {/* Info Grid */}
-        <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-slate-600 my-3">
+        <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs text-[#4a708b] my-3">
           <div className="flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <MapPin className="w-3.5 h-3.5 text-[#4a708b] shrink-0" />
             <span className="truncate font-medium">{location || 'Remote'}</span>
           </div>
 
           <div className="flex items-center gap-1.5">
-            <Briefcase className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-            <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-700">
+            <Briefcase className="w-3.5 h-3.5 text-[#4a708b] shrink-0" />
+            <span className="px-2 py-0.5 rounded-md bg-[#f4f0e6] border border-[#d8cebd] text-[11px] font-bold text-[#1f3144]">
               {workType}
             </span>
           </div>
 
           <div className="flex items-center gap-1.5">
-            <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+            <Calendar className="w-3.5 h-3.5 text-[#4a708b] shrink-0" />
             <span className="font-medium">Applied: {formattedAppliedDate}</span>
           </div>
 
           {salary && (
             <div className="flex items-center gap-1.5">
-              <DollarSign className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+              <DollarSign className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
               <span className="font-bold text-emerald-600 truncate">
                 {salary}
               </span>
@@ -191,29 +188,29 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
 
         {/* Upcoming Interview Tag */}
         {formattedInterviewDate && (
-          <div className="mt-3 p-2 rounded-xl bg-purple-50 border border-purple-200 flex items-center gap-2 text-xs text-purple-700 font-semibold">
-            <Clock className="w-3.5 h-3.5 text-purple-600 animate-pulse shrink-0" />
+          <div className="mt-3 p-2 rounded-xl bg-[#f4f0e6] border border-[#4a708b]/40 flex items-center gap-2 text-xs text-[#1f3144] font-semibold">
+            <Clock className="w-3.5 h-3.5 text-[#4a708b] animate-pulse shrink-0" />
             <span className="truncate">Interview: {formattedInterviewDate}</span>
           </div>
         )}
 
         {/* Notes Preview */}
         {notes && (
-          <p className="mt-3 text-xs text-slate-600 line-clamp-2 italic bg-slate-50 p-2.5 rounded-xl border border-slate-200/60 font-serif">
+          <p className="mt-3 text-xs text-[#1f3144] line-clamp-2 italic bg-[#f4f0e6]/60 p-2.5 rounded-xl border border-[#d8cebd] font-serif">
             "{notes}"
           </p>
         )}
       </div>
 
       {/* Card Actions Footer */}
-      <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+      <div className="mt-5 pt-3 border-t border-[#d8cebd]/60 flex items-center justify-between gap-2">
         <div className="flex items-center gap-1">
           {jobUrl && (
             <a
               href={jobUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition-colors"
+              className="p-1.5 text-[#4a708b] hover:text-[#1f3144] rounded-lg hover:bg-[#f4f0e6] transition-colors"
               title="Visit Job Listing"
             >
               <ExternalLink className="w-4 h-4" />
@@ -224,7 +221,7 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
         <div className="flex items-center gap-1">
           <Link
             to={`/applications/${_id}`}
-            className="p-1.5 text-slate-600 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors flex items-center gap-1 text-xs font-bold"
+            className="p-1.5 text-[#1f3144] hover:text-[#4a708b] rounded-lg hover:bg-[#f4f0e6] transition-colors flex items-center gap-1 text-xs font-bold"
             title="View Details"
           >
             <Eye className="w-4 h-4" />
@@ -233,7 +230,7 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
 
           <Link
             to={`/applications/${_id}/edit`}
-            className="p-1.5 text-slate-500 hover:text-amber-600 rounded-lg hover:bg-amber-50 transition-colors"
+            className="p-1.5 text-[#4a708b] hover:text-amber-600 rounded-lg hover:bg-amber-50 transition-colors"
             title="Edit Application"
           >
             <Edit2 className="w-4 h-4" />
@@ -241,7 +238,7 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
 
           <button
             onClick={() => onDelete && onDelete(_id, companyName, jobRole)}
-            className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
+            className="p-1.5 text-[#4a708b] hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors cursor-pointer"
             title="Delete Application"
           >
             <Trash2 className="w-4 h-4" />
@@ -253,4 +250,5 @@ const ApplicationCard = ({ application, onDelete, onStatusChange }) => {
 };
 
 export default ApplicationCard;
+
 

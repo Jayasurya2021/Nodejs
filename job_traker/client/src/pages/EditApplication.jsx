@@ -58,13 +58,13 @@ const EditApplication = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#1f3144] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-xs animate-in fade-in duration-300">
+    <div className="max-w-4xl mx-auto bg-white border border-[#d8cebd] rounded-3xl p-6 sm:p-8 shadow-xs animate-in fade-in duration-300">
       <ApplicationForm
         title="Edit Job Application"
         initialValues={initialData}
@@ -81,4 +81,5 @@ const EditApplication = () => {
 };
 
 export default EditApplication;
+
 
