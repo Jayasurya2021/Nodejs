@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Carnivore Feast - 100% Pure Non-Veg Restaurant & Delivery</title>
-  <meta name="description" content="Order sizzling Hyderabadi Dum Biryani, Tandoori Chicken, Juicy Kebabs, Spicy Curries & Seafood. 100% Pure Non-Veg Specialist." />
+  <title>Carnivore Feast - 100% Pure Non-Veg Restaurant & Dum Biryani</title>
+  <meta name="description" content="Authentic Non-Veg Restaurant serving Crispy Chicken Cuts, Royal Hyderabadi Mutton Biryani, Charcoal Kebabs & Seafood." />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- 1. TOP ANNOUNCEMENT PROMO TICKER -->
+  <!-- 1. TOP ANNOUNCEMENT BAR -->
   <div class="top-announcement">
     <span class="badge">🔥 SPECIAL OFFER</span>
     <span>Use Code <strong>NONVEG50</strong> to get 50% OFF up to ₹150 on your first order!</span>
@@ -17,98 +17,88 @@
     <span>Free Express Delivery on orders above ₹500!</span>
   </div>
 
-  <!-- 2. MAIN SWIGGY-STYLE HEADER -->
-  <header class="main-header">
-    <div class="header-container">
+  <!-- 2. PALMSHORE-STYLE FULL-SCREEN HERO SECTION -->
+  <section class="full-hero-section">
+    
+    <!-- Transparent Overlay Navigation Header -->
+    <header class="overlay-header">
       
-      <!-- Brand Logo -->
-      <div class="brand-wrapper">
-        <a href="#" class="brand-logo">
-          <div class="logo-icon">🍖</div>
-          <div class="logo-text">
-            <span class="title">CARNIVORE <span>FEAST</span></span>
-            <span class="subtitle">🔴 100% PURE NON-VEG</span>
-          </div>
-        </a>
-
-        <!-- Location Selector -->
-        <div class="location-widget" onclick="openAddressModal()">
-          <span class="loc-icon">📍</span>
-          <div class="loc-info">
-            <span class="loc-label">DELIVER TO</span>
-            <span class="loc-val" id="headerLocText">Select Delivery Address</span>
-          </div>
-          <span class="loc-arrow">▼</span>
+      <!-- Top Left Palmshore-style Luxury Ivory Logo Badge -->
+      <a href="#" class="brand-logo-badge">
+        <span class="badge-icon">🍖</span>
+        <div class="badge-text">
+          <span class="badge-title">CARNIVORE FEAST</span>
+          <span class="badge-sub">AUTHENTIC NON-VEG RESTAURANT</span>
         </div>
-      </div>
+      </a>
 
-      <!-- Header Actions -->
-      <div class="header-actions">
-        <!-- Live Search -->
-        <div class="search-bar-header">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="headerSearchInput" placeholder="Search biryani, kebabs, chicken..." />
-        </div>
+      <!-- Center Header Navigation Links -->
+      <ul class="header-nav-links">
+        <li><a href="#" class="active">HOME</a></li>
+        <li><a href="#menu-heading">MENU</a></li>
+        <li><a href="#" onclick="openOrdersHistoryModal()">MY ORDERS</a></li>
+        <li><a href="#" onclick="openAddressModal()">LOCATION</a></li>
+        <li><a href="#footer-section">CONTACT</a></li>
+      </ul>
 
-        <!-- Light / Dark Theme Switcher Button -->
-        <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Light / Dark Theme">
+      <!-- Right Header Actions -->
+      <div class="header-right-tools">
+        <!-- Location Picker Button -->
+        <button class="loc-pill-btn" onclick="openAddressModal()">
+          <span>📍</span>
+          <span id="headerLocText">Location</span>
+        </button>
+
+        <!-- Theme Toggle Button -->
+        <button class="loc-pill-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Switch Light/Dark Theme">
           <span id="themeToggleIcon">☀️</span>
         </button>
 
-        <!-- Orders History Link -->
-        <button class="nav-btn" onclick="openOrdersHistoryModal()" title="View Order History">
-          <span>📜</span>
-          <span>My Orders</span>
-        </button>
-
-        <!-- Cart Drawer Toggle -->
-        <button class="nav-btn nav-btn-cart" id="headerCartBtn">
-          <span>🛒</span>
-          <span>Cart</span>
+        <!-- Cart Button -->
+        <button class="palmshore-cta-btn" id="headerCartBtn" style="padding: 10px 20px; font-size: 0.9rem;">
+          <span>🛒 Cart</span>
           <span class="cart-count-badge" id="headerCartCount">0</span>
         </button>
       </div>
 
-    </div>
-  </header>
+    </header>
 
-  <!-- 3. TEMPTING HERO BANNER CAROUSEL (RESTORED SWIGGY SLIDER) -->
-  <section class="hero-section">
-    <div class="carousel-container">
-      <div class="carousel-slides" id="carouselSlides">
+    <!-- Fullscreen Carousel Slides -->
+    <div class="full-carousel-container">
+      <div class="full-carousel-slides" id="carouselSlides">
         
-        <!-- Slide 1 -->
-        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1400&q=80');">
-          <div class="slide-content">
-            <span class="slide-tag">🔥 CHEF'S SIGNATURE</span>
-            <h1 class="slide-title">Royal Hyderabadi <span>Mutton Biryani</span></h1>
-            <p class="slide-desc">Slow dum-cooked tender mutton marinated in rich spices & saffron basmati rice.</p>
-            <button class="hero-cta-btn" onclick="handleAddClick('nv-101')">
-              Order Now - ₹380 <span style="font-size: 1.1rem;">➔</span>
+        <!-- Slide 1 (Palmshore BBQ Ribs & Crispy Chicken Platter Style) -->
+        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1800&q=80');">
+          <div class="full-slide-content">
+            <div class="full-slide-subtitle">AUTHENTIC NON-VEG RESTAURANT</div>
+            <h1 class="full-slide-title">Carnivore <span>Feast</span></h1>
+            <p class="full-slide-desc">Savor crispy seasoned chicken cutlets, smoky grilled mutton ribs & hand-crafted dips cooked with authentic royal spices.</p>
+            <button class="palmshore-cta-btn" onclick="document.getElementById('menu-heading').scrollIntoView({behavior: 'smooth'})">
+              Order Now ➔
             </button>
           </div>
         </div>
 
-        <!-- Slide 2 -->
-        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=1400&q=80');">
-          <div class="slide-content">
-            <span class="slide-tag">🌶️ SIZZLING TANDOOR</span>
-            <h1 class="slide-title">Charcoal Grilled <span>Fiery Tandoori</span></h1>
-            <p class="slide-desc">Juicy whole chicken marinated in red spicy hung curd, charred over clay oven.</p>
-            <button class="hero-cta-btn" onclick="handleAddClick('nv-102')">
-              Order Tandoori Feast <span style="font-size: 1.1rem;">➔</span>
+        <!-- Slide 2 (Royal Mutton Biryani) -->
+        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1800&q=80');">
+          <div class="full-slide-content">
+            <div class="full-slide-subtitle">ROYAL HYDERABADI DUM BIRYANI</div>
+            <h1 class="full-slide-title">Mutton <span>Handi Biryani</span></h1>
+            <p class="full-slide-desc">Slow dum-cooked tender mutton pieces layered with saffron basmati rice, served with spicy salan & chilled raita.</p>
+            <button class="palmshore-cta-btn" onclick="handleAddClick('nv-101')">
+              Order Now ➔
             </button>
           </div>
         </div>
 
-        <!-- Slide 3 -->
-        <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1400&q=80');">
-          <div class="slide-content">
-            <span class="slide-tag">🍔 MONSTER BURGER</span>
-            <h1 class="slide-title">Double Bacon & <span>Juicy Chicken</span></h1>
-            <p class="slide-desc">Loaded with crispy bacon, melted cheddar cheese & secret honey BBQ sauce.</p>
-            <button class="hero-cta-btn" onclick="handleAddClick('nv-103')">
-              Grab Monster Burger <span style="font-size: 1.1rem;">➔</span>
+        <!-- Slide 3 (Fiery Tandoori Chicken) -->
+        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=1800&q=80');">
+          <div class="full-slide-content">
+            <div class="full-slide-subtitle">CHARCOAL CLAY OVEN SPECIAL</div>
+            <h1 class="full-slide-title">Fiery <span>Tandoori Chicken</span></h1>
+            <p class="full-slide-desc">Whole juicy chicken marinated overnight in red spicy hung curd and roasted over glowing charcoal embers.</p>
+            <button class="palmshore-cta-btn" onclick="handleAddClick('nv-102')">
+              Order Now ➔
             </button>
           </div>
         </div>
@@ -116,16 +106,22 @@
       </div>
 
       <!-- Controls -->
-      <button class="carousel-btn prev" id="prevSlideBtn">❮</button>
-      <button class="carousel-btn next" id="nextSlideBtn">❯</button>
-      <div class="carousel-indicators" id="carouselIndicators"></div>
+      <button class="full-carousel-btn prev" id="prevSlideBtn">❮</button>
+      <button class="full-carousel-btn next" id="nextSlideBtn">❯</button>
+      <div class="full-carousel-dots" id="carouselIndicators"></div>
     </div>
+
   </section>
 
-  <!-- 4. CATEGORIES HORIZONTAL SCROLL -->
-  <section class="categories-section">
+  <!-- 3. CATEGORIES HORIZONTAL SCROLL -->
+  <section class="categories-section" id="menu-heading">
     <div class="section-header">
       <h2 class="section-title">Explore Non-Veg Categories 🍗</h2>
+      <!-- Search Bar -->
+      <div class="search-bar-header" style="width: 320px;">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="headerSearchInput" placeholder="Search biryani, kebabs, chicken..." />
+      </div>
     </div>
 
     <div class="category-scroll">
@@ -168,7 +164,7 @@
     </div>
   </section>
 
-  <!-- 5. FILTER & SORT CONTROLS BAR -->
+  <!-- 4. FILTER & SORT CONTROLS BAR -->
   <section class="controls-section">
     <div class="controls-bar">
       
@@ -198,7 +194,7 @@
     </div>
   </section>
 
-  <!-- 6. MAIN MENU GRID -->
+  <!-- 5. MAIN MENU GRID -->
   <main class="menu-section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;">
       <h2 style="font-size: 1.45rem;">Delicious Non-Veg Menu</h2>
@@ -206,11 +202,11 @@
     </div>
 
     <div class="dish-grid" id="dishGrid">
-      <!-- Dynamic Dish Cards Injected via JS -->
+      <!-- Dynamic Dish Cards -->
     </div>
   </main>
 
-  <!-- 7. SLIDE-OUT CART DRAWER -->
+  <!-- 6. SLIDE-OUT CART DRAWER -->
   <div class="cart-overlay" id="cartOverlay"></div>
   <aside class="cart-drawer" id="cartDrawer">
     <div class="cart-header">
@@ -285,7 +281,7 @@
     </div>
   </aside>
 
-  <!-- 8. MODALS -->
+  <!-- 7. MODALS -->
   <div class="modal-wrapper" id="customModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -316,7 +312,7 @@
             <label>Nearby Landmark (Optional)</label>
             <input type="text" id="inputLandmark" placeholder="e.g. Near Central Park" />
           </div>
-          <button type="submit" class="hero-cta-btn" style="width: 100%; justify-content: center; margin-top: 10px;">
+          <button type="submit" class="palmshore-cta-btn" style="width: 100%; justify-content: center; margin-top: 10px;">
             Save & Update Address
           </button>
         </form>
@@ -332,7 +328,7 @@
       </div>
       <div class="modal-body">
         <form onsubmit="handlePlaceOrder(event)">
-          <h5 style="color: var(--primary); margin-bottom: 12px; font-size: 0.98rem; font-weight: 800;">Delivery Address</h5>
+          <h5 style="color: var(--accent-gold); margin-bottom: 12px; font-size: 0.98rem; font-weight: 800;">Delivery Address</h5>
           <div class="form-group">
             <label>Full Address</label>
             <input type="text" id="checkoutStreet" required />
@@ -352,7 +348,7 @@
             <input type="tel" id="checkoutPhone" placeholder="+91 98765 43210" required />
           </div>
 
-          <h5 style="color: var(--primary); margin: 20px 0 12px; font-size: 0.98rem; font-weight: 800;">Select Payment Method</h5>
+          <h5 style="color: var(--accent-gold); margin: 20px 0 12px; font-size: 0.98rem; font-weight: 800;">Select Payment Method</h5>
           <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px;">
             <label class="option-label">
               <span>💵 Cash on Delivery (COD)</span>
@@ -368,7 +364,7 @@
             </label>
           </div>
 
-          <button type="submit" class="hero-cta-btn" style="width: 100%; justify-content: center;">
+          <button type="submit" class="palmshore-cta-btn" style="width: 100%; justify-content: center;">
             🔥 Confirm & Place Order Now
           </button>
         </form>
@@ -396,21 +392,21 @@
     </div>
   </div>
 
-  <!-- 9. TOAST CONTAINER -->
+  <!-- 8. TOAST CONTAINER -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- 10. FOOTER -->
+  <!-- 9. FOOTER -->
   <footer class="main-footer" id="footer-section">
     <div class="footer-container">
       <div class="footer-col">
-        <div class="brand-logo" style="margin-bottom: 16px;">
-          <div class="logo-icon">🍖</div>
-          <div class="logo-text">
-            <span class="title">CARNIVORE <span>FEAST</span></span>
-            <span class="subtitle">🔴 100% PURE NON-VEG</span>
+        <div class="brand-logo-badge" style="display: inline-flex; margin-bottom: 16px;">
+          <span class="badge-icon">🍖</span>
+          <div class="badge-text">
+            <span class="badge-title">CARNIVORE FEAST</span>
+            <span class="badge-sub">AUTHENTIC NON-VEG RESTAURANT</span>
           </div>
         </div>
-        <p>The ultimate destination for non-veg gourmets. Serving Hyderabadi Dum Biryanis, Clay Tandoori Kebabs, Gourmet Burgers & Fresh Seafood prepared with 100% fresh premium ingredients.</p>
+        <p>The ultimate destination for non-veg gourmets. Serving Hyderabadi Dum Biryanis, Clay Tandoori Kebabs, Crispy Cutlets & Fresh Seafood prepared with 100% fresh premium ingredients.</p>
       </div>
 
       <div class="footer-col">

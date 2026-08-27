@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CARNIVORE FEAST - LIGHT THEME & APPETIZING NON-VEG RESTAURANT APP JS
+   CARNIVORE FEAST - FULL PAGE DARK LUXURY NON-VEG RESTAURANT APP JS
    ========================================================================== */
 
 // --- 1. COMPREHENSIVE NON-VEG DISH DATABASE ---
@@ -302,7 +302,7 @@ class StorageManager {
   static getFavorites() { return this.get('favorites', []); }
   static saveFavorites(favs) { this.set('favorites', favs); }
 
-  static getTheme() { return this.get('theme', 'light'); }
+  static getTheme() { return this.get('theme', 'dark'); }
   static saveTheme(theme) { this.set('theme', theme); }
 
   static getAddress() {
@@ -351,19 +351,19 @@ function applyTheme(theme) {
   StorageManager.saveTheme(theme);
   const icon = document.getElementById('themeToggleIcon');
   if (icon) {
-    icon.innerText = theme === 'light' ? '🌙' : '☀️';
+    icon.innerText = theme === 'dark' ? '☀️' : '🌙';
   }
 }
 
 function toggleTheme() {
-  const newTheme = state.theme === 'light' ? 'dark' : 'light';
+  const newTheme = state.theme === 'dark' ? 'light' : 'dark';
   applyTheme(newTheme);
   showToast(`Switched to ${newTheme.toUpperCase()} Theme!`);
 }
 
 // --- 5. CAROUSEL BANNER LOGIC ---
 function initCarousel() {
-  const slides = document.querySelectorAll('.hero-slide');
+  const slides = document.querySelectorAll('.full-hero-slide');
   const slidesContainer = document.getElementById('carouselSlides');
   const prevBtn = document.getElementById('prevSlideBtn');
   const nextBtn = document.getElementById('nextSlideBtn');
@@ -374,7 +374,7 @@ function initCarousel() {
   indicatorsContainer.innerHTML = '';
   slides.forEach((_, idx) => {
     const dot = document.createElement('div');
-    dot.className = `indicator-dot ${idx === 0 ? 'active' : ''}`;
+    dot.className = `full-dot ${idx === 0 ? 'active' : ''}`;
     dot.addEventListener('click', () => goToSlide(idx));
     indicatorsContainer.appendChild(dot);
   });
@@ -385,7 +385,7 @@ function initCarousel() {
     state.currentSlide = index;
     slidesContainer.style.transform = `translateX(-${index * 100}%)`;
 
-    document.querySelectorAll('.indicator-dot').forEach((dot, idx) => {
+    document.querySelectorAll('.full-dot').forEach((dot, idx) => {
       dot.classList.toggle('active', idx === index);
     });
   }
@@ -395,7 +395,7 @@ function initCarousel() {
 
   setInterval(() => {
     goToSlide(state.currentSlide + 1);
-  }, 4500);
+  }, 5000);
 }
 
 // --- 6. FILTER & RENDER DISH GRID ---
@@ -591,7 +591,7 @@ function openCustomizationModal(dish) {
       <img src="${dish.image}" class="custom-dish-img" alt="${dish.name}" />
       <div>
         <h4 style="font-size: 1.15rem; color: var(--text-primary); font-weight: 800;">${dish.name}</h4>
-        <p style="font-size: 0.88rem; color: var(--primary); font-weight: 800;">Base Price: ₹${dish.price}</p>
+        <p style="font-size: 0.88rem; color: var(--accent-gold); font-weight: 800;">Base Price: ₹${dish.price}</p>
       </div>
     </div>
 
@@ -619,7 +619,7 @@ function openCustomizationModal(dish) {
       </div>
     ` : ''}
 
-    <button class="hero-cta-btn" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="confirmCustomization()">
+    <button class="palmshore-cta-btn" style="width: 100%; justify-content: center; margin-top: 10px;" onclick="confirmCustomization()">
       Confirm & Add to Cart
     </button>
   `;
@@ -641,7 +641,7 @@ function confirmCustomization() {
   closeCustomizationModal();
 }
 
-// --- 8. CART DRAWER & BILLING WITH FREE DELIVERY PROGRESS ---
+// --- 8. CART DRAWER & BILLING ---
 function renderCartDrawer() {
   const listEl = document.getElementById('cartItemsList');
   const countBadge = document.getElementById('headerCartCount');
@@ -700,7 +700,6 @@ function renderCartDrawer() {
   let deliveryFee = subtotal >= 500 ? 0 : 40;
   let discount = 0;
 
-  // Free delivery progress bar
   if (freeDeliveryProgress && freeDeliveryMsg) {
     const pct = Math.min(100, Math.round((subtotal / 500) * 100));
     freeDeliveryProgress.style.width = `${pct}%`;
@@ -740,7 +739,7 @@ function applyCouponCode() {
     state.appliedCoupon = code;
     showToast(`Coupon '${code}' Applied Successfully!`);
     if (tag) tag.innerHTML = `
-      <div style="margin-top: 8px; font-size: 0.82rem; color: var(--accent-green); font-weight: 800; display: flex; justify-content: space-between;">
+      <div style="margin-top: 8px; font-size: 0.82rem; color: #10b981; font-weight: 800; display: flex; justify-content: space-between;">
         <span>Applied: <strong>${code}</strong></span>
         <button onclick="removeCoupon()" style="color: var(--primary); font-weight: 900;">✕</button>
       </div>
@@ -874,7 +873,7 @@ function renderTrackerContent(order, container) {
   container.innerHTML = `
     <div class="tracking-header">
       <h3 style="font-size: 1.3rem;">Live Order Progress 🚴</h3>
-      <div class="order-id" style="color: var(--primary); font-weight: 800; margin-top: 4px;">Order ID: #${order.orderId} • Total ₹${order.grandTotal}</div>
+      <div class="order-id" style="color: var(--accent-gold); font-weight: 800; margin-top: 4px;">Order ID: #${order.orderId} • Total ₹${order.grandTotal}</div>
       <p style="font-size: 0.84rem; color: var(--text-secondary); margin-top: 4px;">Delivering to: ${order.address}</p>
     </div>
 
@@ -933,10 +932,10 @@ function openOrdersHistoryModal() {
     `;
   } else {
     body.innerHTML = orders.map(o => `
-      <div style="background: var(--bg-main); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px;">
+      <div style="background: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px;">
         <div style="display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 6px;">
           <span>Order #${o.orderId}</span>
-          <span style="color: var(--primary);">₹${o.grandTotal}</span>
+          <span style="color: var(--accent-gold);">₹${o.grandTotal}</span>
         </div>
         <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 8px;">
           ${o.timestamp} • ${o.items.length} Items (${o.payMethod})
@@ -994,7 +993,7 @@ function saveAddressFromModal(e) {
   }
 }
 
-// --- 11. TOAST NOTIFICATIONS & DRAWER UTILS ---
+// --- 11. TOAST NOTIFICATIONS & INITIALIZATION ---
 function showToast(msg) {
   const container = document.getElementById('toastContainer');
   if (!container) return;
