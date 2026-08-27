@@ -3,202 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>REAL MEAT - 100% Pure Non-Veg Restaurant & Dum Biryani</title>
-  <meta name="description" content="REAL MEAT - Authentic Non-Veg Restaurant serving Crispy Chicken Cuts, Royal Hyderabadi Mutton Biryani, Charcoal Kebabs & Seafood." />
+  <title>Product View - REAL MEAT Pure Non-Veg Restaurant</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="product-page-body">
 
-  <!-- 1. TOP ANNOUNCEMENT BAR -->
-  <div class="top-announcement">
-    <span class="badge">🔥 SPECIAL OFFER</span>
-    <span>Use Code <strong>NONVEG50</strong> to get 50% OFF up to ₹150 on your first order!</span>
-    <span style="opacity: 0.6;">|</span>
-    <span>Free Express Delivery on orders above ₹500!</span>
-  </div>
+  <!-- TOP HEADER NAVBAR -->
+  <header class="standalone-page-header">
+    <div class="standalone-header-container">
+      <a href="index.html" class="back-home-link" style="font-weight: 800;">← Back to Menu</a>
 
-  <!-- 2. FULL-SCREEN HERO SECTION -->
-  <section class="full-hero-section">
-    
-    <!-- Transparent Overlay Navigation Header -->
-    <header class="overlay-header">
-      
-      <!-- SIMPLE & SLEEK NAVBAR LOGO -->
-      <a href="index.html" class="brand-logo-sleek">
+      <a href="index.html" class="brand-logo-sleek" style="background: rgba(249, 87, 56, 0.08); border-color: rgba(249, 87, 56, 0.2);">
         <div class="logo-icon-pill">🥩</div>
         <div class="logo-text-group">
-          <span class="logo-title">REAL <span class="accent-orange">MEAT</span></span>
-          <span class="logo-tagline">100% PURE NON-VEG</span>
+          <span class="logo-title" style="color: #0f172a;">REAL <span class="accent-orange">MEAT</span></span>
+          <span class="logo-tagline" style="color: #64748b;">100% PURE NON-VEG</span>
         </div>
       </a>
 
-      <!-- Center Navigation Links -->
-      <ul class="header-nav-links">
-        <li><a href="index.html" class="active">HOME</a></li>
-        <li><a href="#menu-heading">MENU</a></li>
-        <li><a href="#" onclick="openOrdersHistoryModal()">MY ORDERS</a></li>
-        <li><a href="#" onclick="openAddressModal()">LOCATION</a></li>
-        <li><a href="#footer-section">CONTACT</a></li>
-      </ul>
-
-      <!-- Right Header Actions -->
       <div class="header-right-tools">
-        <!-- Location Picker Button -->
-        <button class="loc-pill-btn" onclick="openAddressModal()">
-          <span>📍</span>
-          <span id="headerLocText">Location</span>
+        <button class="loc-pill-btn" style="color: #1e293b; border-color: var(--border-color); background: #ffffff;" onclick="openAddressModal()">
+          <span>📍</span> <span id="headerLocText">Location</span>
         </button>
 
-        <!-- Dedicated Separate Login / Register Link -->
-        <a href="login.html" class="loc-pill-btn" id="userAuthBtn">
-          <span id="userAuthIcon">👤</span>
-          <span id="userAuthText">Login / Register</span>
+        <a href="login.html" class="loc-pill-btn" style="color: #1e293b; border-color: var(--border-color); background: #ffffff;" id="userAuthBtn">
+          <span id="userAuthIcon">👤</span> <span id="userAuthText">Login / Register</span>
         </a>
 
-        <!-- Cart Button -->
         <button class="palmshore-cta-btn" id="headerCartBtn" style="padding: 10px 20px; font-size: 0.9rem;">
           <span>🛒 Cart</span>
           <span class="cart-count-badge" id="headerCartCount">0</span>
         </button>
       </div>
-
-    </header>
-
-    <!-- Fullscreen Carousel Slides -->
-    <div class="full-carousel-container">
-      <div class="full-carousel-slides" id="carouselSlides">
-        
-        <!-- Slide 1 (Hyderabadi Dum Biryani) -->
-        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1920&q=90');">
-          <div class="full-slide-content">
-            <div class="full-slide-subtitle">REAL MEAT SPECIALS</div>
-            <h1 class="full-slide-title">Royal Hyderabadi <span>Mutton Biryani</span></h1>
-            <p class="full-slide-desc">Slow dum-cooked tender mutton pieces layered with saffron basmati rice, served with spicy salan & chilled raita.</p>
-            <a href="product.html?id=nv-101" class="palmshore-cta-btn">
-              View Product & Reviews ➔
-            </a>
-          </div>
-        </div>
-
-        <!-- Slide 2 (Smokey BBQ Ribs) -->
-        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=90');">
-          <div class="full-slide-content">
-            <div class="full-slide-subtitle">AUTHENTIC NON-VEG RESTAURANT</div>
-            <h1 class="full-slide-title">REAL MEAT <span>Feast Platter</span></h1>
-            <p class="full-slide-desc">Savor crispy seasoned chicken cutlets, smoky grilled mutton ribs & hand-crafted dips cooked with authentic royal spices.</p>
-            <button class="palmshore-cta-btn" onclick="document.getElementById('menu-heading').scrollIntoView({behavior: 'smooth'})">
-              Order Now ➔
-            </button>
-          </div>
-        </div>
-
-        <!-- Slide 3 (Tandoori Chicken) -->
-        <div class="full-hero-slide" style="background-image: url('https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=1920&q=90');">
-          <div class="full-slide-content">
-            <div class="full-slide-subtitle">CHARCOAL CLAY OVEN SPECIAL</div>
-            <h1 class="full-slide-title">Fiery <span>Tandoori Chicken</span></h1>
-            <p class="full-slide-desc">Whole juicy chicken marinated overnight in red spicy hung curd and roasted over glowing charcoal embers.</p>
-            <a href="product.html?id=nv-102" class="palmshore-cta-btn">
-              View Product & Reviews ➔
-            </a>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Controls -->
-      <button class="full-carousel-btn prev" id="prevSlideBtn">❮</button>
-      <button class="full-carousel-btn next" id="nextSlideBtn">❯</button>
-      <div class="full-carousel-dots" id="carouselIndicators"></div>
     </div>
+  </header>
 
-  </section>
-
-  <!-- 3. CATEGORIES HORIZONTAL SCROLL -->
-  <section class="categories-section" id="menu-heading">
-    <div class="category-scroll">
-      <div class="cat-card active" data-cat="all">
-        <div class="cat-icon-wrap">🔥</div>
-        <span class="cat-name">All Items</span>
-      </div>
-      <div class="cat-card" data-cat="biryani">
-        <div class="cat-icon-wrap">🍲</div>
-        <span class="cat-name">Biryani Dum</span>
-      </div>
-      <div class="cat-card" data-cat="kebabs">
-        <div class="cat-icon-wrap">🍢</div>
-        <span class="cat-name">Tandoori & Kebabs</span>
-      </div>
-      <div class="cat-card" data-cat="burgers">
-        <div class="cat-icon-wrap">🍔</div>
-        <span class="cat-name">Burgers & Wraps</span>
-      </div>
-      <div class="cat-card" data-cat="curries">
-        <div class="cat-icon-wrap">🥘</div>
-        <span class="cat-name">Rich Curries</span>
-      </div>
-      <div class="cat-card" data-cat="seafood">
-        <div class="cat-icon-wrap">🦐</div>
-        <span class="cat-name">Fresh Seafood</span>
-      </div>
-      <div class="cat-card" data-cat="bbq">
-        <div class="cat-icon-wrap">🥩</div>
-        <span class="cat-name">BBQ & Ribs</span>
-      </div>
-      <div class="cat-card" data-cat="starters">
-        <div class="cat-icon-wrap">🍗</div>
-        <span class="cat-name">Starters & Wings</span>
-      </div>
-      <div class="cat-card" data-cat="combos">
-        <div class="cat-icon-wrap">👑</div>
-        <span class="cat-name">Royal Combos</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- 4. FILTER & SORT CONTROLS BAR -->
-  <section class="controls-section">
-    <div class="controls-bar">
-      
-      <div class="filter-pills">
-        <button class="filter-pill active" data-filter="all">All Dishes</button>
-        <button class="filter-pill" data-filter="bestseller">🔥 Bestsellers</button>
-        <button class="filter-pill" data-filter="top-rated">⭐ Top Rated (4.8+)</button>
-        <button class="filter-pill" data-filter="spicy">🌶️ Extra Spicy</button>
-        <button class="filter-pill" data-filter="fast">⚡ Fast Prep (&lt;20m)</button>
-      </div>
-
-      <div class="pure-nonveg-badge-banner">
-        <span>🛡️</span>
-        <span>100% Pure REAL MEAT Guaranteed</span>
-      </div>
-
-      <div class="sort-wrapper">
-        <label for="sortSelect">Sort By:</label>
-        <select id="sortSelect">
-          <option value="relevance">Relevance</option>
-          <option value="rating">Customer Rating</option>
-          <option value="price-low">Price: Low to High</option>
-          <option value="price-high">Price: High to Low</option>
-        </select>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- 5. MAIN DISH GRID -->
-  <main class="menu-section">
-    <div class="menu-heading-row">
-      <h2 class="menu-main-title">Delicious Non-Veg Menu</h2>
-      <span class="items-count-text" id="dishCountLabel">16 Items Available</span>
-    </div>
-
-    <div class="dish-grid" id="dishGrid">
-      <!-- Dynamic Dish Cards -->
+  <!-- MAIN PRODUCT VIEW CONTENT CONTAINER -->
+  <main class="standalone-product-main">
+    <div class="standalone-product-container" id="standaloneProductRoot">
+      <!-- Dynamic Product Content Populated via JavaScript -->
     </div>
   </main>
 
-  <!-- 6. SLIDE-OUT CART DRAWER -->
+  <!-- SLIDE-OUT CART DRAWER -->
   <div class="cart-overlay" id="cartOverlay"></div>
   <aside class="cart-drawer" id="cartDrawer">
     <div class="cart-header">
@@ -273,17 +120,7 @@
     </div>
   </aside>
 
-  <!-- 7. MODALS -->
-  <div class="modal-wrapper" id="customModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>Customize Your Dish 🌶️</h4>
-        <button class="close-modal-btn" onclick="closeCustomizationModal()">✕</button>
-      </div>
-      <div class="modal-body" id="customModalBody"></div>
-    </div>
-  </div>
-
+  <!-- MODALS FOR CHECKOUT & ADDRESS -->
   <div class="modal-wrapper" id="addressModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -374,20 +211,10 @@
     </div>
   </div>
 
-  <div class="modal-wrapper" id="ordersHistoryModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4>My Past Feast Orders 📜</h4>
-        <button class="close-modal-btn" onclick="document.getElementById('ordersHistoryModal').classList.remove('active')">✕</button>
-      </div>
-      <div class="modal-body" id="ordersHistoryBody"></div>
-    </div>
-  </div>
-
-  <!-- 8. TOAST CONTAINER -->
+  <!-- TOAST CONTAINER -->
   <div class="toast-container" id="toastContainer"></div>
 
-  <!-- 9. FOOTER -->
+  <!-- FOOTER -->
   <footer class="main-footer" id="footer-section">
     <div class="footer-container">
       <div class="footer-col">
@@ -404,11 +231,9 @@
       <div class="footer-col">
         <h4>Quick Links</h4>
         <ul class="footer-links">
-          <li><a href="#" onclick="state.activeCategory='biryani'; renderMenuGrid();">Hyderabadi Dum Biryani</a></li>
-          <li><a href="#" onclick="state.activeCategory='kebabs'; renderMenuGrid();">Charcoal Tandoori & Kebabs</a></li>
+          <li><a href="index.html">Main Menu</a></li>
           <li><a href="login.html">Sign In to Account</a></li>
           <li><a href="register.html">Create New Account</a></li>
-          <li><a href="#" onclick="openOrdersHistoryModal();">Track & Manage Orders</a></li>
         </ul>
       </div>
 
@@ -427,5 +252,10 @@
   </footer>
 
   <script src="app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initStandaloneProductPage();
+    });
+  </script>
 </body>
 </html>

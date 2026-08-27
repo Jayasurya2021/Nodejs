@@ -1,5 +1,5 @@
 /* ==========================================================================
-   REAL MEAT - 100% PURE LIGHT THEME (SUPER CLEAN ORDER CUSTOMIZATION APP JS)
+   REAL MEAT - 100% PURE LIGHT THEME (SUPER CLEAN SEPARATED PAGES APP JS)
    ========================================================================== */
 
 // --- 1. COMPREHENSIVE NON-VEG DISH DATABASE ---
@@ -475,7 +475,7 @@ function renderMenuGrid() {
 
     return `
       <div class="dish-card" data-id="${dish.id}">
-        <div class="dish-img-container" onclick="openProductDetailModal('${dish.id}')">
+        <div class="dish-img-container" onclick="window.location.href='product.html?id=${dish.id}'">
           <img src="${dish.image}" alt="${dish.name}" class="dish-img" loading="lazy" />
           <div class="dish-overlay-badge">
             ${dish.isBestseller ? '<span class="tag-badge">★ BESTSELLER</span>' : ''}
@@ -487,15 +487,15 @@ function renderMenuGrid() {
         </div>
 
         <div class="dish-info">
-          <div class="dish-title-wrap" onclick="openProductDetailModal('${dish.id}')">
+          <div class="dish-title-wrap" onclick="window.location.href='product.html?id=${dish.id}'">
             <span class="non-veg-badge"></span>
             <h3 class="dish-title">${dish.name}</h3>
           </div>
 
-          <p class="dish-desc" onclick="openProductDetailModal('${dish.id}')">${dish.description}</p>
+          <p class="dish-desc" onclick="window.location.href='product.html?id=${dish.id}'">${dish.description}</p>
 
           <div class="dish-footer-row">
-            <div class="dish-left-specs" onclick="openProductDetailModal('${dish.id}')">
+            <div class="dish-left-specs" onclick="window.location.href='product.html?id=${dish.id}'">
               <span class="rating-orange">★ ${dish.rating} <span style="font-size: 0.78rem; color: #94a3b8; font-weight: 600;">(${dish.ratingCount}+)</span></span>
               <span class="prep-time-grey">⏱️ ${dish.prepTime}</span>
             </div>
@@ -519,7 +519,121 @@ function renderMenuGrid() {
   }).join('');
 }
 
-// --- 6. SUPER CLEAN & BEAUTIFUL ORDER CUSTOMIZATION MODAL UI ---
+// --- 6. STANDALONE DEDICATED PRODUCT VIEW PAGE INIT ---
+function initStandaloneProductPage() {
+  const root = document.getElementById('standaloneProductRoot');
+  if (!root) return;
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const dishId = urlParams.get('id') || 'nv-101';
+  const dish = DISHES_DATA.find(d => d.id === dishId) || DISHES_DATA[0];
+
+  const reviews = StorageManager.getReviews(dish.id);
+  const relevantDishes = DISHES_DATA.filter(d => d.category === dish.category && d.id !== dish.id).slice(0, 3);
+
+  document.title = `${dish.name} - REAL MEAT Pure Non-Veg Restaurant`;
+
+  root.innerHTML = `
+    <!-- Standalone Product Hero Section -->
+    <div class="standalone-hero-card">
+      <div class="standalone-img-box">
+        <img src="${dish.image}" alt="${dish.name}" />
+      </div>
+
+      <div class="standalone-details-box">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span class="non-veg-badge"></span>
+            <span style="font-size: 0.82rem; font-weight: 800; color: var(--accent-green); text-transform: uppercase;">100% PURE REAL MEAT</span>
+            ${dish.isBestseller ? '<span class="tag-badge">★ BESTSELLER</span>' : ''}
+          </div>
+
+          <h1 style="font-size: 2.2rem; font-weight: 900; color: #1e293b; margin-bottom: 12px;">${dish.name}</h1>
+          <p style="font-size: 1.02rem; color: #64748b; margin-bottom: 20px; line-height: 1.6;">${dish.description}</p>
+
+          <div style="display: flex; gap: 20px; font-size: 0.95rem; font-weight: 800; margin-bottom: 28px;">
+            <span style="color: var(--primary);">★ ${dish.rating} (${dish.ratingCount}+ Verified Reviews)</span>
+            <span style="color: #64748b;">⏱️ ${dish.prepTime}</span>
+            <span style="color: #64748b;">🔥 ${dish.calories || '550 kcal'}</span>
+          </div>
+        </div>
+
+        <div class="standalone-price-bar">
+          <div>
+            <div style="font-size: 0.82rem; color: #64748b; font-weight: 700;">Price Per Portion</div>
+            <div style="font-size: 1.8rem; font-weight: 900; color: #1e293b;">₹${dish.price}</div>
+          </div>
+
+          <button class="palmshore-cta-btn" style="font-size: 1.05rem; padding: 14px 38px;" onclick="handleAddClick('${dish.id}')">
+            🔥 Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Verified Customer Reviews Section -->
+    <div class="reviews-section">
+      <div class="reviews-title">
+        <span>Verified Customer Reviews (${reviews.length}) ⭐</span>
+        <span style="font-size: 0.92rem; color: var(--primary); font-weight: 800;">Average Rating: ${dish.rating} / 5</span>
+      </div>
+
+      <div class="add-review-box">
+        <h5 style="margin-bottom: 8px; font-size: 0.98rem; font-weight: 800;">Write a Customer Review</h5>
+        <div class="star-rating-selector" id="starSelector">
+          <span onclick="setReviewRating(1)">★</span>
+          <span onclick="setReviewRating(2)">★</span>
+          <span onclick="setReviewRating(3)">★</span>
+          <span onclick="setReviewRating(4)">★</span>
+          <span onclick="setReviewRating(5)" class="active">★</span>
+        </div>
+        <form onsubmit="handleReviewSubmit(event, '${dish.id}')">
+          <div style="display: flex; gap: 12px; margin-bottom: 10px;">
+            <input type="text" id="reviewerName" placeholder="Your Name" required style="flex:1; padding: 10px 14px; border:1.5px solid var(--border-color); border-radius:8px;" />
+          </div>
+          <textarea id="reviewerComment" placeholder="Share your experience with this dish..." required rows="3" style="width:100%; padding:10px 14px; border:1.5px solid var(--border-color); border-radius:8px; margin-bottom: 12px;"></textarea>
+          <button type="submit" class="add-orange-pill-btn" style="font-size: 0.9rem; padding: 10px 24px;">
+            Submit Customer Review
+          </button>
+        </form>
+      </div>
+
+      <div class="reviews-list">
+        ${reviews.map(r => `
+          <div class="review-card">
+            <div class="review-header">
+              <span class="reviewer-name">👤 ${r.name} <span style="font-size: 0.75rem; color: #10b981; margin-left: 6px;">✔ Verified Buyer</span></span>
+              <span class="review-stars">★ ${r.rating}.0</span>
+            </div>
+            <p class="review-comment">"${r.comment}"</p>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- More Relevant Products Section -->
+    ${relevantDishes.length > 0 ? `
+      <div class="relevant-products-section">
+        <h4 style="font-size: 1.3rem; font-weight: 900; color: #1e293b;">More Relevant Dishes You May Also Like 🍗</h4>
+        <div class="relevant-grid">
+          ${relevantDishes.map(rel => `
+            <div style="background:#ffffff; border:1.5px solid var(--border-color); border-radius:14px; padding:14px; display:flex; flex-direction:column; justify-space-between;">
+              <img src="${rel.image}" style="width:100%; height:130px; object-fit:cover; border-radius:10px; margin-bottom:10px;" />
+              <div style="font-size:0.95rem; font-weight:800; color:#1e293b; margin-bottom:4px;">${rel.name}</div>
+              <div style="font-size:0.85rem; color:var(--primary); font-weight:800; margin-bottom:10px;">★ ${rel.rating} • ₹${rel.price}</div>
+              <button class="add-orange-pill-btn" style="font-size:0.82rem; padding:7px 14px; width:100%;" onclick="window.location.href='product.html?id=${rel.id}'">View Dish & Reviews ➔</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : ''}
+  `;
+
+  renderCartDrawer();
+  updateUserHeaderState();
+}
+
+// --- 7. ORDER CUSTOMIZATION MODAL UI ---
 function openCustomizationModal(dish) {
   state.customizingDish = dish;
   state.selectedPortion = dish.portions ? dish.portions[0] : null;
@@ -544,7 +658,6 @@ function renderCustomizationModalContent() {
   }
 
   body.innerHTML = `
-    <!-- Top Image Card Header -->
     <div class="custom-dish-card-header">
       <img src="${dish.image}" alt="${dish.name}" />
       <div class="custom-dish-header-overlay">
@@ -559,7 +672,6 @@ function renderCustomizationModalContent() {
       </div>
     </div>
 
-    <!-- Portion Selection -->
     ${dish.portions ? `
       <div class="custom-option-group">
         <div class="custom-option-title"><span>🍖</span> Choose Portion Size</div>
@@ -577,7 +689,6 @@ function renderCustomizationModalContent() {
       </div>
     ` : ''}
 
-    <!-- Spice Level Selection -->
     ${dish.spiceLevels ? `
       <div class="custom-option-group">
         <div class="custom-option-title"><span>🌶️</span> Select Spice Level</div>
@@ -594,7 +705,6 @@ function renderCustomizationModalContent() {
       </div>
     ` : ''}
 
-    <!-- Sticky Footer Bar -->
     <div class="custom-sticky-footer-bar">
       <div>
         <div class="custom-total-label">Item Total</div>
@@ -633,183 +743,7 @@ function confirmCustomization() {
   closeCustomizationModal();
 }
 
-// --- 7. AUTHENTICATION HANDLERS ---
-function openAuthModal() {
-  const modal = document.getElementById('authModal');
-  if (state.user) {
-    showToast(`Logged in as ${state.user.name} (${state.user.email})`);
-    return;
-  }
-  modal?.classList.add('active');
-}
-
-function closeAuthModal() {
-  document.getElementById('authModal')?.classList.remove('active');
-}
-
-function switchAuthTab(tab) {
-  const loginForm = document.getElementById('loginForm');
-  const regForm = document.getElementById('registerForm');
-  const loginBtn = document.getElementById('loginTabBtn');
-  const regBtn = document.getElementById('registerTabBtn');
-  const title = document.getElementById('authModalTitle');
-
-  if (tab === 'login') {
-    loginForm.style.display = 'block';
-    regForm.style.display = 'none';
-    loginBtn.classList.add('active');
-    regBtn.classList.remove('active');
-    if (title) title.innerText = 'Welcome Back to REAL MEAT 🥩';
-  } else {
-    loginForm.style.display = 'none';
-    regForm.style.display = 'block';
-    loginBtn.classList.remove('active');
-    regBtn.classList.add('active');
-    if (title) title.innerText = 'Create Your REAL MEAT Account 🥩';
-  }
-}
-
-function handleLoginSubmit(e) {
-  e.preventDefault();
-  const email = document.getElementById('loginEmail').value;
-  const name = email.split('@')[0];
-  state.user = { name: name.charAt(0).toUpperCase() + name.slice(1), email };
-  StorageManager.saveUser(state.user);
-  closeAuthModal();
-  updateUserHeaderState();
-  showToast(`Welcome back, ${state.user.name}!`);
-}
-
-function handleRegisterSubmit(e) {
-  e.preventDefault();
-  const name = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
-  state.user = { name, email };
-  StorageManager.saveUser(state.user);
-  closeAuthModal();
-  updateUserHeaderState();
-  showToast(`Account Created! Welcome ${name}`);
-}
-
-function updateUserHeaderState() {
-  const btnText = document.getElementById('userAuthText');
-  const user = StorageManager.getUser();
-  if (user && btnText) {
-    btnText.innerText = user.name;
-  } else if (btnText) {
-    btnText.innerText = 'Login / Register';
-  }
-}
-
-// --- 8. PRODUCT DETAIL & REVIEWS MODAL ---
-function openProductDetailModal(dishId) {
-  const dish = DISHES_DATA.find(d => d.id === dishId);
-  if (!dish) return;
-
-  const modal = document.getElementById('productDetailModal');
-  const body = document.getElementById('productDetailBody');
-  if (!modal || !body) return;
-
-  const reviews = StorageManager.getReviews(dish.id);
-  const relevantDishes = DISHES_DATA.filter(d => d.category === dish.category && d.id !== dish.id).slice(0, 3);
-
-  body.innerHTML = `
-    <div class="product-detail-hero">
-      <img src="${dish.image}" class="product-detail-img" alt="${dish.name}" />
-
-      <div style="display: flex; flex-direction: column; justify-content: space-between;">
-        <div>
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            <span class="non-veg-badge"></span>
-            <span style="font-size: 0.8rem; font-weight: 800; color: var(--accent-green); text-transform: uppercase;">100% PURE REAL MEAT</span>
-          </div>
-          <h3 style="font-size: 1.6rem; font-weight: 900; margin-bottom: 8px; color: #1e293b;">${dish.name}</h3>
-          <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 16px; line-height: 1.5;">${dish.description}</p>
-          
-          <div style="display: flex; gap: 16px; font-size: 0.88rem; font-weight: 800; margin-bottom: 20px;">
-            <span style="color: var(--primary);">★ ${dish.rating} (${dish.ratingCount}+ Customer Reviews)</span>
-            <span style="color: #64748b;">⏱️ ${dish.prepTime}</span>
-            <span style="color: #64748b;">🔥 ${dish.calories || '550 kcal'}</span>
-          </div>
-        </div>
-
-        <div style="background: var(--bg-secondary); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; display: flex; align-items: center; justify-content: space-between;">
-          <div>
-            <div style="font-size: 0.8rem; color: #64748b; font-weight: 700;">Price Per Portion</div>
-            <div style="font-size: 1.6rem; font-weight: 900; color: #1e293b;">₹${dish.price}</div>
-          </div>
-          <button class="add-orange-pill-btn" style="font-size: 1rem; padding: 12px 30px;" onclick="closeProductDetailModal(); handleAddClick('${dish.id}')">
-            + Add to Order
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- REVIEWS SECTION -->
-    <div class="reviews-section">
-      <div class="reviews-title">
-        <span>Verified Customer Reviews (${reviews.length}) ⭐</span>
-        <span style="font-size: 0.9rem; color: var(--primary); font-weight: 800;">Average Rating: ${dish.rating} / 5</span>
-      </div>
-
-      <div class="add-review-box">
-        <h5 style="margin-bottom: 8px; font-size: 0.95rem;">Write a Customer Review</h5>
-        <div class="star-rating-selector" id="starSelector">
-          <span onclick="setReviewRating(1)">★</span>
-          <span onclick="setReviewRating(2)">★</span>
-          <span onclick="setReviewRating(3)">★</span>
-          <span onclick="setReviewRating(4)">★</span>
-          <span onclick="setReviewRating(5)" class="active">★</span>
-        </div>
-        <form onsubmit="handleReviewSubmit(event, '${dish.id}')">
-          <div style="display: flex; gap: 12px; margin-bottom: 10px;">
-            <input type="text" id="reviewerName" placeholder="Your Name" required style="flex:1; padding: 9px 14px; border:1px solid var(--border-color); border-radius:8px;" />
-          </div>
-          <textarea id="reviewerComment" placeholder="Share your experience with this dish..." required rows="2" style="width:100%; padding:9px 14px; border:1px solid var(--border-color); border-radius:8px; margin-bottom: 10px;"></textarea>
-          <button type="submit" class="add-orange-pill-btn" style="font-size: 0.85rem; padding: 8px 20px;">
-            Submit Customer Review
-          </button>
-        </form>
-      </div>
-
-      <div class="reviews-list">
-        ${reviews.map(r => `
-          <div class="review-card">
-            <div class="review-header">
-              <span class="reviewer-name">👤 ${r.name} <span style="font-size: 0.72rem; color: #10b981; margin-left: 6px;">✔ Verified Buyer</span></span>
-              <span class="review-stars">★ ${r.rating}.0</span>
-            </div>
-            <p class="review-comment">"${r.comment}"</p>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-
-    <!-- RELEVANT PRODUCTS SECTION -->
-    ${relevantDishes.length > 0 ? `
-      <div class="relevant-products-section">
-        <h4 style="font-size: 1.15rem; font-weight: 900; color: #1e293b;">More Relevant Dishes You May Also Like 🍗</h4>
-        <div class="relevant-grid">
-          ${relevantDishes.map(rel => `
-            <div style="background:#ffffff; border:1.5px solid var(--border-color); border-radius:14px; padding:12px; display:flex; flex-direction:column; justify-space-between;">
-              <img src="${rel.image}" style="width:100%; height:110px; object-fit:cover; border-radius:10px; margin-bottom:8px;" />
-              <div style="font-size:0.9rem; font-weight:800; color:#1e293b; margin-bottom:4px;">${rel.name}</div>
-              <div style="font-size:0.8rem; color:var(--primary); font-weight:800; margin-bottom:8px;">★ ${rel.rating} • ₹${rel.price}</div>
-              <button class="add-orange-pill-btn" style="font-size:0.78rem; padding:5px 12px; width:100%;" onclick="closeProductDetailModal(); handleAddClick('${rel.id}')">Add +</button>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    ` : ''}
-  `;
-
-  modal.classList.add('active');
-}
-
-function closeProductDetailModal() {
-  document.getElementById('productDetailModal')?.classList.remove('active');
-}
-
+// --- 8. REVIEWS SUBMISSION ---
 function setReviewRating(score) {
   state.selectedRatingScore = score;
   const stars = document.querySelectorAll('#starSelector span');
@@ -831,12 +765,23 @@ function handleReviewSubmit(e, dishId) {
       date: 'Just now'
     };
     StorageManager.saveReview(dishId, newRev);
-    openProductDetailModal(dishId);
+    initStandaloneProductPage();
     showToast('Thank you! Your customer review was published!');
   }
 }
 
-// --- 9. CART HANDLERS ---
+// --- 9. USER HEADER STATE ---
+function updateUserHeaderState() {
+  const btnText = document.getElementById('userAuthText');
+  const user = StorageManager.getUser();
+  if (user && btnText) {
+    btnText.innerText = user.name;
+  } else if (btnText) {
+    btnText.innerText = 'Login / Register';
+  }
+}
+
+// --- 10. CART HANDLERS ---
 function handleAddClick(dishId) {
   const dish = DISHES_DATA.find(d => d.id === dishId);
   if (!dish) return;
@@ -900,7 +845,7 @@ function updateCartKeyQty(cartKey, change) {
   }
 }
 
-// --- 10. CART DRAWER & BILLING ---
+// --- 11. CART DRAWER & BILLING ---
 function renderCartDrawer() {
   const listEl = document.getElementById('cartItemsList');
   const countBadge = document.getElementById('headerCartCount');
@@ -954,7 +899,6 @@ function renderCartDrawer() {
     </div>
   `).join('');
 
-  // Bill Calculations
   const subtotal = state.cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
   let deliveryFee = subtotal >= 500 ? 0 : 40;
   let discount = 0;
@@ -1025,7 +969,7 @@ function setDeliveryTip(amount) {
   renderCartDrawer();
 }
 
-// --- 11. CHECKOUT & TRACKER ---
+// --- 12. CHECKOUT & TRACKER ---
 function openCheckoutModal() {
   if (state.cart.length === 0) {
     showToast('Your cart is empty!');
@@ -1085,7 +1029,6 @@ function handlePlaceOrder(e) {
   };
 
   StorageManager.saveOrder(newOrder);
-  StorageManager.setActiveOrder(newOrder);
 
   state.cart = [];
   state.appliedCoupon = null;
@@ -1110,7 +1053,6 @@ function openOrderTracker(order) {
     const timer = setInterval(() => {
       if (order.statusStep < 4) {
         order.statusStep += 1;
-        StorageManager.setActiveOrder(order);
         renderTrackerContent(order, body);
         if (order.statusStep === 4) {
           clearInterval(timer);
@@ -1162,7 +1104,7 @@ function closeTrackerModal() {
   document.getElementById('trackerModal')?.classList.remove('active');
 }
 
-// --- 12. FAVORITES & PAST ORDERS ---
+// --- 13. FAVORITES & ADDRESS ---
 function toggleFavorite(dishId) {
   const idx = state.favorites.indexOf(dishId);
   if (idx > -1) {
@@ -1174,57 +1116,6 @@ function toggleFavorite(dishId) {
   }
   StorageManager.saveFavorites(state.favorites);
   renderAll();
-}
-
-function openOrdersHistoryModal() {
-  const modal = document.getElementById('ordersHistoryModal');
-  const body = document.getElementById('ordersHistoryBody');
-  if (!modal || !body) return;
-
-  const orders = StorageManager.getOrders();
-  if (orders.length === 0) {
-    body.innerHTML = `
-      <div style="text-align: center; color: var(--text-muted); padding: 40px 0;">
-        <div style="font-size: 3rem; margin-bottom: 10px;">📜</div>
-        <p>No past orders found.</p>
-      </div>
-    `;
-  } else {
-    body.innerHTML = orders.map(o => `
-      <div style="background: var(--bg-secondary); border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px;">
-        <div style="display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 6px;">
-          <span>Order #${o.orderId}</span>
-          <span style="color: var(--primary);">₹${o.grandTotal}</span>
-        </div>
-        <div style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 8px;">
-          ${o.timestamp} • ${o.items.length} Items (${o.payMethod})
-        </div>
-        <div style="font-size: 0.85rem; color: var(--text-primary); margin-bottom: 12px;">
-          ${o.items.map(i => `${i.name} (${i.qty})`).join(', ')}
-        </div>
-        <button class="add-orange-pill-btn" style="width: 100%; font-size: 0.82rem; padding: 7px;" onclick="reorderItems('${o.orderId}')">
-          🔁 Re-Order This Feast
-        </button>
-      </div>
-    `).join('');
-  }
-
-  modal.classList.add('active');
-}
-
-function reorderItems(orderId) {
-  const orders = StorageManager.getOrders();
-  const target = orders.find(o => o.orderId === orderId);
-  if (!target) return;
-
-  target.items.forEach(i => {
-    const dish = DISHES_DATA.find(d => d.id === i.id);
-    if (dish) addToCart(dish, i.qty, i.options);
-  });
-
-  document.getElementById('ordersHistoryModal')?.classList.remove('active');
-  toggleCartDrawer(true);
-  showToast('Items re-added to your cart!');
 }
 
 function openAddressModal() {
@@ -1252,7 +1143,7 @@ function saveAddressFromModal(e) {
   }
 }
 
-// --- 13. TOAST & INITIALIZATION ---
+// --- 14. TOAST & GENERAL INITIALIZATION ---
 function showToast(msg) {
   const container = document.getElementById('toastContainer');
   if (!container) return;
