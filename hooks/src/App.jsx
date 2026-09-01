@@ -1,14 +1,17 @@
-import React, { createContext, useContext } from 'react'
-import { UserContext } from './compoenents/userProvider'
+import React from 'react'
+import { createContext } from "react";
+import CompenentA from "./compoenents/CompenentA"
 
+export const profileConext = createContext(null)
 function App() {
-
-  const { name } = useContext(UserContext)
-
   return (
-    <div>
-      {name}
-    </div>
+    <>
+      <profileConext.provider value={"surya"}>
+        <CompenentA />
+      </profileConext.provider>
+
+
+    </>
   )
 }
 
